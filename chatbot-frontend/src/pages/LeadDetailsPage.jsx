@@ -225,8 +225,8 @@ const LeadDetailsPage = () => {
                     Informations Leads
                   </h2>
                   {[
-                    { label: "Nom", value: lead.request_name || "-" },
-                    { label: "Prénom", value: lead.request_lastname || "-" },
+                    // { label: "Nom", value: lead.request_name || "-" },
+                    { label: "Prénom et Nom", value: lead.request_lastname || "-" },
                     { label: "Email", value: lead.request_email || "-" },
                     { label: "Téléphone", value: lead.request_phone || "-" },
                     { label: "Status", value: lead.request_who || "-" },
@@ -332,16 +332,16 @@ const LeadDetailsPage = () => {
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Left Column */}
-                    <Form.Item
+                    {/* <Form.Item
                       label="Nom"
                       name="request_name"
                       rules={[{ required: true, message: "Nom is required" }]}
                     >
                       <Input className="w-full p-2 border rounded-lg" />
-                    </Form.Item>
+                    </Form.Item> */}
 
                     <Form.Item
-                      label="Prénom"
+                      label="Nom et Prénom"
                       name="request_lastname"
                       rules={[
                         { required: true, message: "Prénom is required" },
@@ -535,7 +535,7 @@ const LeadDetailsPage = () => {
             <div className="flex flex-col space-y-6 justify-center">
               {/* Form Fields */}
               <div className="flex gap-4">
-                <div className="flex flex-col gap-2 w-full">
+                {/* <div className="flex flex-col gap-2 w-full">
                   <label className="text-lg font-medium text-gray-700">
                     Nom
                   </label>
@@ -547,7 +547,7 @@ const LeadDetailsPage = () => {
                     className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
                     placeholder="Enter Lead's Name"
                   />
-                </div>
+                </div> */}
                 <div className="flex flex-col gap-2 w-full">
                   <label className="text-lg font-medium text-gray-700">
                     Email
@@ -579,7 +579,7 @@ const LeadDetailsPage = () => {
                 </div>
                 <div className="flex flex-col gap-2 w-full">
                   <label className="text-lg font-medium text-gray-700">
-                    Prenom
+                    Prénom et Nom
                   </label>
                   <input
                     type="text"

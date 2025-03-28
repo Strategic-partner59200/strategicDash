@@ -172,7 +172,7 @@ const Leads = () => {
       dataIndex: "request_fullname",
       render: (text, record) => (
         <div className="cursor-pointer" onClick={() => handleLeadClick(record)}>
-          <div>{`${record.request_lastname} ${record.request_name}`}</div>
+            <div>{`${record.request_lastname || ""} ${record.request_name || ""}`}</div>
         </div>
       ),
     },
@@ -218,19 +218,19 @@ const Leads = () => {
       title: "TELEPHONE",
       dataIndex: "request_phone",
       key: "request_phone",
-      render: (text) => text || "-",
+      render: (text) => text || "",
     },
     {
       title: "Status",
       dataIndex: "request_who",
       key: "request_who",
-      render: (text, record) => text || record.request_who || "-",
+      render: (text, record) => text || record.request_who || "",
     },
     {
       title: "Besoin",
       dataIndex: "information_request",
       key: "information_request",
-      render: (text, record) => text || record.information_request || "-",
+      render: (text, record) => text || record.information_request || "",
     },
     {
       title: "STATUS LEAD",
@@ -252,7 +252,7 @@ const Leads = () => {
       dataIndex: "initial",
       key: "initial",
       render: (text, record) => (
-        <div className="text-gray-500 text-xs">{record.initial || "-"},</div>
+        <div className="text-gray-500 text-xs">{record.initial || ""}</div>
       ),
     },
 
