@@ -57,7 +57,7 @@ const chatSchema = new mongoose.Schema(
 const Chat = mongoose.model("Chat", chatSchema);
 
 module.exports = Chat;
-const mongoose = require("mongoose");
+// const mongoose = require("mongoose");
 
 // const commentSchema = new mongoose.Schema({
 //   text: { type: String, required: true },
