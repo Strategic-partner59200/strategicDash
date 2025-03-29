@@ -27,7 +27,7 @@ app.use(cookieParser());
 
 // middleware to connect with frontend
 app.use(cors({
-    origin: ["https://dash-botgener-ai.vercel.app", "https://solar-simulator-aczlyj2rd-zaim-0c7db352.vercel.app", "http://localhost:5173"],
+    origin: ["https://strategic-dash.vercel.app", "https://strategic-chatbot.vercel.app"],
     credentials: true,
 }));
 
