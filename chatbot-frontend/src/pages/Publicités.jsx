@@ -85,7 +85,7 @@ useEffect(() => {
       }
 
       // Deactivate the publicité on the server
-      await axios.delete(`http://localhost:3000/pub/${pubId}`);
+      await axios.delete(`https://strategic-chatbot-fn3c.onrender.com/pub/${pubId}`);
 
       // Update state
       setPubs((prevPubs) => prevPubs.filter((p) => p._id !== pubId));
