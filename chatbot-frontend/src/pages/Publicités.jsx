@@ -134,85 +134,164 @@ useEffect(() => {
   }
 
   return (
-    <div className="p-2">
-      <div className="mb-4">
-        <Button
-          type="primary"
-          className="bg-purple-800 text-white"
-          icon={<PlusOutlined />}
-          onClick={handleCreateNewBanner}
-        >
-          Create nouveau Publicité
-        </Button>
-      </div>
+//     <div className="p-2">
+//       <div className="mb-4">
+//         <Button
+//           type="primary"
+//           className="bg-purple-800 text-white"
+//           icon={<PlusOutlined />}
+//           onClick={handleCreateNewBanner}
+//         >
+//           Create nouveau Publicité
+//         </Button>
+//       </div>
 
-      <h1 className="text-2xl font-bold mb-4">Publicités</h1>
-      <div className="p-2">
-        <Row gutter={[16, 16]}>
-          {pub.map((p) => (
-            <Col span={8} xs={64} sm={24} md={12} key={p._id}>
-              <Card
-                hoverable
-                cover={<img alt="Banner Image" src={p.imageUrl} className="banner-image" />}
+//       <h1 className="text-2xl font-bold mb-4">Publicités</h1>
+//       <div className="p-2">
+//         <Row gutter={[16, 16]}>
+//           {pub.map((p) => (
+//             <Col span={8} xs={64} sm={24} md={12} key={p._id}>
+//               <Card
+//                 hoverable
+//                 cover={<img alt="Banner Image" src={p.imageUrl} className="banner-image" />}
+//               >
+//                 <Card.Meta
+//                   title={p.title}
+//                   description={p.mainText}
+//                   className="text-md font-semibold"
+//                 />
+//                 <div className="mt-4 flex justify-between items-center">
+//                   <Button
+//                     onClick={() => handleActivatePub(p._id)}
+//                     disabled={activePubId !== null}
+//                   >
+//                     Activer
+//                   </Button>
+
+//                   <div className="flex space-x-2">
+//                     <Link to={`/create-publicité/${p._id}`}>
+//                       <Button icon={<EditOutlined />} type="link" />
+//                     </Link>
+
+//                     <Button
+//   icon={<DeleteOutlined />}
+//   onClick={() => handleDeleteBanner(p._id)}
+//   type="danger"
+//   className="text-red-500"
+//   disabled={p._id === activePubId}
+// />
+
+//                   </div>
+//                 </div>
+//               </Card>
+//             </Col>
+//           ))}
+//         </Row>
+//       </div>
+
+//       <div className="p-2 mt-8">
+//         <h2 className="text-xl font-semibold mb-4">Publicités Actives</h2>
+//         <Row gutter={[16, 16]}>
+//           {pubs.map((p) => (
+//             <Col span={8} xs={64} sm={24} md={12} key={p._id}>
+//               <Card
+//                 hoverable
+//                 cover={<img alt="Banner Image" src={p.imageUrl} />}
+//               >
+//                 <Card.Meta title={p.title} description={p.mainText} />
+//                 <div className="mt-4">
+//                   <Button
+//                     onClick={() => handleDeactivatePub(p._id)}
+//                     className="bg-red-500"
+//                   >
+//                     Désactiver
+//                   </Button>
+//                 </div>
+//               </Card>
+//             </Col>
+//           ))}
+//         </Row>
+//       </div>
+//     </div>
+<div className="p-2">
+  <div className="mb-4">
+    <Button
+      type="primary"
+      className="bg-purple-800 text-white"
+      icon={<PlusOutlined />}
+      onClick={handleCreateNewBanner}
+    >
+      Create nouveau Publicité
+    </Button>
+  </div>
+
+  <h1 className="text-2xl font-bold mb-4">Publicités</h1>
+  <div className="p-2">
+    <Row gutter={[16, 16]}>
+      {pub.map((p) => (
+        <Col span={24} xs={24} sm={12} md={8} lg={6} key={p._id}>
+          <Card
+            hoverable
+            cover={<img alt="Banner Image" src={p.imageUrl} className="banner-image" />}
+          >
+            <Card.Meta
+              title={p.title}
+              description={p.mainText}
+              className="text-md font-semibold"
+            />
+            <div className="mt-4 flex justify-between items-center">
+              <Button
+                onClick={() => handleActivatePub(p._id)}
+                disabled={activePubId !== null}
               >
-                <Card.Meta
-                  title={p.title}
-                  description={p.mainText}
-                  className="text-md font-semibold"
+                Activer
+              </Button>
+
+              <div className="flex space-x-2">
+                <Link to={`/create-publicité/${p._id}`}>
+                  <Button icon={<EditOutlined />} type="link" />
+                </Link>
+
+                <Button
+                  icon={<DeleteOutlined />}
+                  onClick={() => handleDeleteBanner(p._id)}
+                  type="danger"
+                  className="text-red-500"
+                  disabled={p._id === activePubId}
                 />
-                <div className="mt-4 flex justify-between items-center">
-                  <Button
-                    onClick={() => handleActivatePub(p._id)}
-                    disabled={activePubId !== null}
-                  >
-                    Activer
-                  </Button>
+              </div>
+            </div>
+          </Card>
+        </Col>
+      ))}
+    </Row>
+  </div>
 
-                  <div className="flex space-x-2">
-                    <Link to={`/create-publicité/${p._id}`}>
-                      <Button icon={<EditOutlined />} type="link" />
-                    </Link>
-
-                    <Button
-  icon={<DeleteOutlined />}
-  onClick={() => handleDeleteBanner(p._id)}
-  type="danger"
-  className="text-red-500"
-  disabled={p._id === activePubId}
-/>
-
-                  </div>
-                </div>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </div>
-
-      <div className="p-2 mt-8">
-        <h2 className="text-xl font-semibold mb-4">Publicités Actives</h2>
-        <Row gutter={[16, 16]}>
-          {pubs.map((p) => (
-            <Col span={8} xs={64} sm={24} md={12} key={p._id}>
-              <Card
-                hoverable
-                cover={<img alt="Banner Image" src={p.imageUrl} />}
+  <div className="p-2 mt-8">
+    <h2 className="text-xl font-semibold mb-4">Publicités Actives</h2>
+    <Row gutter={[16, 16]}>
+      {pubs.map((p) => (
+        <Col span={24} xs={24} sm={12} md={8} lg={6} key={p._id}>
+          <Card
+            hoverable
+            cover={<img alt="Banner Image" src={p.imageUrl} />}
+          >
+            <Card.Meta title={p.title} description={p.mainText} />
+            <div className="mt-4">
+              <Button
+                onClick={() => handleDeactivatePub(p._id)}
+                className="bg-red-500"
               >
-                <Card.Meta title={p.title} description={p.mainText} />
-                <div className="mt-4">
-                  <Button
-                    onClick={() => handleDeactivatePub(p._id)}
-                    className="bg-red-500"
-                  >
-                    Désactiver
-                  </Button>
-                </div>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </div>
-    </div>
+                Désactiver
+              </Button>
+            </div>
+          </Card>
+        </Col>
+      ))}
+    </Row>
+  </div>
+</div>
+
   );
 };
 

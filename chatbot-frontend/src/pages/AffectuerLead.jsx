@@ -445,7 +445,7 @@ useEffect(() => {
           <Button
             type=""
             onClick={() => setIsUnassignModalVisible(true)}
-            className="bg-purple-800 text-white ml-2"
+            className="bg-purple-800 text-white lg:ml-2"
           >
             Désaffecter les leads du Commercial
           </Button>
@@ -467,6 +467,7 @@ useEffect(() => {
 
         <span className="font-thin text-gray-600">résultats par page</span>
       </div>
+      <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 overflow-x-auto">
       <Table
          dataSource={filteredData.length ? filteredData : chatData}
         columns={[
@@ -499,11 +500,11 @@ useEffect(() => {
           onChange: (page) => setCurrentPage(page),
         }}
         bordered
-        className="custom-table"
         rowSelection={rowSelection}
-        tableLayout="fixed"
+        className="custom-table text-xs sm:text-sm"
+        tableLayout="auto"
       />
-
+</div>
       <Modal
         title="Affecter les leads au Commercial"
         visible={isAssignModalVisible}

@@ -153,16 +153,16 @@ const SideBar = () => {
             />
           ),
         },
-        {
-          key: "/magic-sms",
-          label: "Magic SMS",
-          icon: (
-            <FontAwesomeIcon
-              icon={faList}
-              style={{ fontSize: "23px", marginRight: "10px" }}
-            />
-          ),
-        },
+          // {
+          //   key: "/magic-sms",
+          //   label: "Magic SMS",
+          //   icon: (
+          //     <FontAwesomeIcon
+          //       icon={faList}
+          //       style={{ fontSize: "23px", marginRight: "10px" }}
+          //     />
+          //   ),
+          // },
       ],
     },
     {

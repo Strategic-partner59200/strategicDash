@@ -12,7 +12,7 @@ import Entreprise from "./pages/Entreprise";
 import CreateBannières from "./pages/CreateBannières";
 import LeadDetailsPage from "./pages/LeadDetailsPage";
 import Banner from "./pages/Banner";
-import MagicSms from "./pages/MagicSms";
+// import MagicSms from "./pages/MagicSms";
 import Setting from "./pages/Setting";
 import CommentairePage from "./pages/CommentairePage";
 import AffectuerLead from "./pages/AffectuerLead";
@@ -52,7 +52,7 @@ function App() {
             <Route path="/affect-leads" element={<AffectuerLead />} />
             <Route path="/settings" element={<CommerciauxPage />} />
             <Route path="/list-leads" element={<ListLeads />} />
-            <Route path="/magic-sms" element={<MagicSms />} />
+            {/* <Route path="/magic-sms" element={<MagicSms />} /> */}
             <Route path="/publicités" element={<Publicités />} />
             <Route path="/create-publicité" element={<CreatePub />} />
             <Route path="/create-publicité/:id" element={<CreatePub />} />
