@@ -108,7 +108,7 @@ import {
     };
   
     return (
-      <div className="bg-white rounded-lg shadow-[0px_2px_6px_rgba(0,0,0,0.1),0px_8px_24px_rgba(0,0,0,0.15)] p-6 mt-8">
+      <div className="bg-white max-w-full rounded-lg shadow-[0px_2px_6px_rgba(0,0,0,0.1),0px_8px_24px_rgba(0,0,0,0.15)] p-6 mt-8">
         <h4 className="text-lg font-semibold text-gray-700 mb-6 text-start">
           ADS
         </h4>
@@ -116,13 +116,13 @@ import {
           {pieData.map(({ platform, icon, color, chartData, dummyPercentages }) => (
             <div
               key={platform}
-              className="flex items-center gap-12 justify-between cursor-pointer"
+              className="flex items-center lg:gap-16 gap-2 justify-between cursor-pointer"
               onClick={() => handleClick(platform)}
             >
               <div className="flex items-center">
                 <FontAwesomeIcon
                   icon={icon}
-                  className={`text-3xl ${color} mr-4`}
+                  className={`text-3xl ${color} mr-2`}
                 />
                 <h5 className="text-md font-semibold text-gray-600">
                   {platform}

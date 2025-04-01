@@ -45,14 +45,22 @@ const Home = () => {
 
   return (
     <div className="p-4 rounded-md bg-white">
-      <div className="flex items-center justify-between space-x-4">
+      {/* <div className="flex items-center justify-between space-x-4">
         <h2 className="text-2xl font-bold">Dashboard</h2>
         <span className="flex items-center space-x-2 text-sm bg-gray-100 p-2 rounded-md text-gray-500">
-          {/* Calendar Icon */}
           <FontAwesomeIcon icon={faCalendarAlt} />
           <span>{currentMonthRange}</span>
         </span>
-      </div>
+      </div> */}
+      <div className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 sm:space-x-4">
+  <h2 className="text-xl sm:text-2xl font-bold text-center sm:text-left">Dashboard</h2>
+  <span className="flex items-center space-x-2 text-sm bg-gray-100 p-2 rounded-md text-gray-500">
+    {/* Calendar Icon */}
+    <FontAwesomeIcon icon={faCalendarAlt} />
+    <span>{currentMonthRange}</span>
+  </span>
+</div>
+
       <DashboardCards />
     </div>
   );
