@@ -333,7 +333,7 @@ const Leads = () => {
   return (
     <div className=" bg-gray-50 h-full mb-6 rounded-md">
       <div className="flex justify-between items-center p-4 bg-white rounded-t-md shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-700">Leads Filter</h2>
+        {/* <h2 className="text-lg font-semibold text-gray-700">Leads Filter</h2>
         <div className="space-x-2">
           <Button
             type={activeFilter === "nouveau" ? "primary" : "default"}
@@ -353,7 +353,28 @@ const Leads = () => {
           >
             Client
           </Button>
-        </div>
+        </div> */}
+        <h2 className="text-lg font-semibold text-gray-700">Leads Filter</h2>
+  <div className="flex flex-wrap gap-2 sm:gap-4">
+    <Button
+      type={activeFilter === "nouveau" ? "primary" : "default"}
+      onClick={() => handleFilter("nouveau")}
+    >
+      Tous
+    </Button>
+    <Button
+      type={activeFilter === "prospect" ? "primary" : "default"}
+      onClick={() => handleFilter("prospect")}
+    >
+      Prospect
+    </Button>
+    <Button
+      type={activeFilter === "client" ? "primary" : "default"}
+      onClick={() => handleFilter("client")}
+    >
+      Client
+    </Button>
+  </div>
       </div>
       <div className="mb-4 p-4 flex items-center rounded-md gap-4">
         <span className="font-thin text-gray-600">Afficher</span>
@@ -372,7 +393,7 @@ const Leads = () => {
         <span className="font-thin text-gray-600">résultats par page</span>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-4">
+      {/* <div className="bg-white rounded-lg shadow-md p-4">
         <Table
           columns={[
             ...columns.map((col) => ({
@@ -411,7 +432,45 @@ const Leads = () => {
           rowSelection={rowSelection}
           tableLayout="fixed"
         />
-      </div>
+      </div> */}
+      <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 overflow-x-auto">
+  <Table
+    columns={[
+      ...columns.map((col) => ({
+        ...col,
+        title: (
+          <div className="flex flex-col items-center">
+            <div className="text-xs">{col.title}</div>
+            {col.key !== "action" && (
+              <Input
+                placeholder={`${col.title}`}
+                onChange={(e) => handleColumnSearch(e, col.key)}
+                className="mt-2 text-sm sm:text-base w-full sm:w-auto"
+                size="medium"
+              />
+            )}
+          </div>
+        ),
+      })),
+    ]}
+    dataSource={filteredData.slice(
+      (currentPage - 1) * pageSize,
+      currentPage * pageSize
+    )}
+    pagination={{
+      current: currentPage,
+      pageSize,
+      total: filteredData.length,
+      onChange: (page) => setCurrentPage(page),
+    }}
+    rowKey={(record) => record._id}
+    bordered
+    className="custom-table text-xs sm:text-sm"
+    rowSelection={rowSelection}
+    tableLayout="auto"
+  />
+</div>
+
     </div>
   );
 };

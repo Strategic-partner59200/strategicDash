@@ -180,6 +180,12 @@ nav a {
   gap: 16px; /* Space between the cards */
 }
 
+@media (max-width: 767px) {
+  .program-container {
+    grid-template-columns: 1fr; /* Stacks the cards on smaller screens */
+    padding: 8px; /* Adjust padding for smaller screens */
+  }
+}
 .program-card {
   display: flex;
   flex-direction: column;
@@ -187,14 +193,14 @@ nav a {
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  height: 600px; /* Fixed height for cards */
+  white: 100%
 }
 
 .program-card-image {
   width: 100%;
   height: 200px;
 }
-
+/* 
 .program-card-content {
   flex-grow: 1;
   padding: 16px;
@@ -210,6 +216,38 @@ nav a {
   font-size: 1rem;
   color: #333;
   margin-bottom: 16px;
+} */
+.program-card-content {
+  flex-grow: 1;
+  padding: 16px;
+}
+
+.program-title {
+  font-size: 1.25rem; /* Default font size for larger screens */
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.program-description {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 767px) {
+  .program-card-content {
+    padding: 12px; /* Reduce padding on mobile */
+  }
+
+  .program-title {
+    font-size: 1rem; /* Smaller font size for mobile */
+    margin-bottom: 6px; /* Adjust margin for mobile */
+  }
+
+  .program-description {
+    font-size: 0.875rem; /* Reduce font size for mobile */
+    margin-bottom: 12px; /* Adjust margin for mobile */
+  }
 }
 
 .program-card-actions {

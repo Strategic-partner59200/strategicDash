@@ -251,7 +251,7 @@ const Programmes = () => {
   }
 
   return (
-    <div className="p-4">
+    <div className="p-4 max-w-full">
       <div className="mb-6">
         <Button
           type="primary"
@@ -265,7 +265,7 @@ const Programmes = () => {
 
       <h1 className="text-2xl font-bold mb-4">Produits</h1>
 
-      <div className="program-container">
+      <div className="program-container sm:max-w-full sm:flex-1 sm:w-full">
         {program.map((pro) => (
           <div className="program-card" key={pro._id}>
             <div className="program-card-image">
