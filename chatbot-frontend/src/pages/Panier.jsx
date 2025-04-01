@@ -1,15 +1,34 @@
 // import React, { useState, useEffect } from "react";
 // import axios from "axios";
 // import { Card, Col, Row, message, Button } from "antd";
-// import { useNavigate } from "react-router-dom";
+// import { useNavigate, useParams } from "react-router-dom";
 
-// const Panier = () => {
+// const Panier = () => {  // Assuming `id` is passed as a prop or retrieved from the URL
 //   const [program, setProgram] = useState([]);
+//   const [leadId, setLeadId] = useState(null);  // State for storing leadId
 //   const [loading, setLoading] = useState(true);
-//   const navigate = useNavigate(); // For navigation
+//   const navigate = useNavigate();
+//   const {id} = useParams();  
+//   console.log("Lead ID:", id);
 
+//   // Fetch the lead details using the `id` prop
 //   useEffect(() => {
-//     const fetchBanners = async () => {
+//     const fetchLead = async () => {
+//       try {
+//         const response = await axios.get(`/lead/${id}`);
+//         setLeadId(response.data.chat);  // Assuming the lead id is stored in `chat._id`
+//         console.log("Lead Details:", response.data.chat);
+//       } catch (error) {
+//         console.error("Error fetching lead details:", error);
+//       }
+//     };
+
+//     fetchLead();
+//   }, [id]);  // Dependency on `id`
+
+//   // Fetch programs
+//   useEffect(() => {
+//     const fetchPrograms = async () => {
 //       try {
 //         const response = await axios.get("/program");
 //         setProgram(response.data);
@@ -22,12 +41,21 @@
 //       }
 //     };
 
-//     fetchBanners();
-//   }, []);
+//     fetchPrograms();
+//   }, []);  // Empty dependency array means this effect runs once on mount
 
 //   if (loading) {
 //     return <div>Loading...</div>;
 //   }
+
+//   // Handle navigation to create command with leadId
+//   const handleNavigate = (programId) => {
+//     if (id) {
+//       navigate(`/create-command/${programId}?leadId=${id}`);
+//     } else {
+//       message.error("Lead ID is missing.");
+//     }
+//   };
 
 //   return (
 //     <div className="p-2 w-full">
@@ -44,12 +72,12 @@
 //                 />
 //               }
 //               className="border border-gray-200 shadow-lg rounded-md"
-//               onClick={() => navigate(`/create-command/${pro._id}`)} // Navigate on click
+//               onClick={() => handleNavigate(pro._id)} // Navigate on card click
 //               style={{
-//                 height: '400px',  // Fixed height for all cards
-//                 width: '100%', // Ensure card width is full
-//                 display: 'flex', 
-//                 flexDirection: 'column', // Align content vertically
+//                 height: '400px',
+//                 width: '100%',
+//                 display: 'flex',
+//                 flexDirection: 'column',
 //                 justifyContent: 'space-between',
 //               }}
 //             >
@@ -75,26 +103,24 @@
 // };
 
 // export default Panier;
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Card, Col, Row, message, Button } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 
-const Panier = () => {  // Assuming `id` is passed as a prop or retrieved from the URL
+const Panier = () => {
   const [program, setProgram] = useState([]);
-  const [leadId, setLeadId] = useState(null);  // State for storing leadId
+  const [leadId, setLeadId] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const {id} = useParams();  
+  const { id } = useParams();
   console.log("Lead ID:", id);
 
-  // Fetch the lead details using the `id` prop
   useEffect(() => {
     const fetchLead = async () => {
       try {
         const response = await axios.get(`/lead/${id}`);
-        setLeadId(response.data.chat);  // Assuming the lead id is stored in `chat._id`
+        setLeadId(response.data.chat);
         console.log("Lead Details:", response.data.chat);
       } catch (error) {
         console.error("Error fetching lead details:", error);
@@ -102,9 +128,8 @@ const Panier = () => {  // Assuming `id` is passed as a prop or retrieved from t
     };
 
     fetchLead();
-  }, [id]);  // Dependency on `id`
+  }, [id]);
 
-  // Fetch programs
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
@@ -120,13 +145,12 @@ const Panier = () => {  // Assuming `id` is passed as a prop or retrieved from t
     };
 
     fetchPrograms();
-  }, []);  // Empty dependency array means this effect runs once on mount
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  // Handle navigation to create command with leadId
   const handleNavigate = (programId) => {
     if (id) {
       navigate(`/create-command/${programId}?leadId=${id}`);
@@ -139,36 +163,36 @@ const Panier = () => {  // Assuming `id` is passed as a prop or retrieved from t
     <div className="p-2 w-full">
       <Row gutter={[16, 16]} justify="center">
         {program.map((pro) => (
-          <Col xs={24} sm={12} md={8} lg={8} key={pro._id}>
+          <Col
+            xs={24} sm={12} md={8} lg={6} xl={4} key={pro._id} // Added responsive breakpoints
+          >
             <Card
               hoverable
               cover={
                 <img
                   alt="Programme"
                   src={pro.imageUrl}
-                  className="h-40 w-full object-cover rounded-t-md"
+                  className="w-full object-cover rounded-t-md"
+                  style={{ height: "200px" }} // Ensuring a consistent image height
                 />
               }
               className="border border-gray-200 shadow-lg rounded-md"
-              onClick={() => handleNavigate(pro._id)} // Navigate on card click
+              onClick={() => handleNavigate(pro._id)}
               style={{
-                height: '400px',
-                width: '100%',
+                height: '430px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
               }}
             >
               <Card.Meta
-                title={<span className="font-semibold">{pro.title}</span>}
-                description={
-                  <p className="text-sm text-gray-600">{pro.mainText}</p>
-                }
+                title={<span className="font-semibold text-sm sm:text-base">{pro.title}</span>} 
+                description={<p className="text-xs sm:text-sm text-gray-600">{pro.mainText}</p>}
               />
               <Button
                 type="primary"
                 htmlType="submit"
-                className="px-4 py-2 mt-2 bg-blue-600 text-white rounded-lg"
+                className="px-2 py-1 sm:px-2 sm:py-1 mt-2 bg-blue-600 text-white rounded-lg text-xs sm:text-sm" // Smaller button size for mobile
               >
                 Ajouter Commande
               </Button>

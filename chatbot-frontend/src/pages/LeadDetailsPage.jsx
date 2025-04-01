@@ -200,7 +200,7 @@ const LeadDetailsPage = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto mt-10 p-2">
+    <div className="lg:max-w-6xl mx-auto mt-10 p-2">
       {/* Page Title */}
       <div className="flex-1 mb-12">
         <h1 className="text-center text-2xl font-bold text-gray-800">
@@ -214,18 +214,16 @@ const LeadDetailsPage = () => {
       </div>
 
       {/* Two Boxes Side by Side */}
-      <div className="flex justify-between space-x-4">
+      {/* <div className="flex justify-between space-x-4">
         <div className="flex-1 bg-white shadow-md rounded-lg p-6">
           <Tabs activeKey={activeTab} onChange={handleTabChange}>
             <TabPane tab="Informations" key="1">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Left Column (Informations Leads) */}
                 <div className="space-y-4 mt-4">
                   <h2 className="text-xl font-semibold text-gray-800">
                     Informations Leads
                   </h2>
                   {[
-                    // { label: "Nom", value: lead.request_name || "-" },
                     { label: "Prénom et Nom", value: lead.request_lastname || "-" },
                     { label: "Email", value: lead.request_email || "-" },
                     { label: "Téléphone", value: lead.request_phone || "-" },
@@ -241,7 +239,6 @@ const LeadDetailsPage = () => {
                   ))}
                 </div>
 
-                {/* Right Column (Informations Commercial) */}
                 <div className="space-y-4 mt-4">
                   <h2 className="text-xl font-semibold text-gray-800">
                     Informations Commercial
@@ -292,9 +289,7 @@ const LeadDetailsPage = () => {
                         <div className="flex justify-between">
                           <div>
                             <p className="text-gray-800">{comment.text}</p>
-                            {/* <p className="text-gray-600 text-sm">
-                              Added by: {comment.addedBy?.name || "Unknown"}
-                            </p> */}
+  
                             <p className="text-gray-600 text-sm">
                               {comment.addedAt
                                 ? new Date(comment.addedAt).toLocaleString()
@@ -322,8 +317,6 @@ const LeadDetailsPage = () => {
                 <h2 className="text-xl font-semibold text-gray-800">
                   Ajouter un Lead
                 </h2>
-
-                {/* Form */}
                 <Form
                   form={form}
                   onFinish={handleFormSubmit}
@@ -331,15 +324,6 @@ const LeadDetailsPage = () => {
                   className="space-y-4"
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Left Column */}
-                    {/* <Form.Item
-                      label="Nom"
-                      name="request_name"
-                      rules={[{ required: true, message: "Nom is required" }]}
-                    >
-                      <Input className="w-full p-2 border rounded-lg" />
-                    </Form.Item> */}
-
                     <Form.Item
                       label="Nom et Prénom"
                       name="request_lastname"
@@ -404,8 +388,6 @@ const LeadDetailsPage = () => {
                       <Input className="w-full p-2 border rounded-lg" />
                     </Form.Item>
                   </div>
-
-                  {/* Submit Button */}
                   <div className="mt-4">
                     <Button
                       type="primary"
@@ -420,14 +402,11 @@ const LeadDetailsPage = () => {
             </TabPane>
             <TabPane tab="Calendar" key="4">
               <Row gutter={24}>
-                {/* Left Column for Event Details */}
                 <Col span={12}>
                   <div className="space-y-4">
                     <h2 className="text-xl font-semibold text-gray-800">
                       Ajouter un Événement
                     </h2>
-
-                    {/* Form */}
                     <Form
                       form={form}
                       onFinish={handleFormSubmitCalendar}
@@ -476,8 +455,6 @@ const LeadDetailsPage = () => {
                       <Form.Item label="Commentaire" name="comment">
                         <Input.TextArea rows={4} />
                       </Form.Item>
-
-                      {/* Submit Button */}
                       <Button
                         type="primary"
                         htmlType="submit"
@@ -488,8 +465,6 @@ const LeadDetailsPage = () => {
                     </Form>
                   </div>
                 </Col>
-
-                {/* Right Column for Calendar */}
                 <Col span={12}>
                   <Calendar onSelect={onDateSelect} fullscreen={true} />
                 </Col>
@@ -508,10 +483,331 @@ const LeadDetailsPage = () => {
             </TabPane>
           </Tabs>
         </div>
-      </div>
+      </div> */}
+      <div className="flex justify-between space-x-4">
+      <div className="flex-1 bg-white shadow-md rounded-lg lg:p-6 p-4 w-full max-w-xs sm:max-w-md md:max-w-2xl lg:max-w-full">
+    <Tabs activeKey={activeTab} onChange={handleTabChange}>
+      <TabPane tab="Informations" key="1">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left Column (Informations Leads) */}
+          <div className="space-y-4 mt-4">
+            <h2 className="text-xl font-semibold text-gray-800">Informations Leads</h2>
+            {[{ label: "Prénom et Nom", value: lead.request_lastname || "-" },
+              { label: "Email", value: lead.request_email || "-" },
+              { label: "Téléphone", value: lead.request_phone || "-" },
+              { label: "Status", value: lead.request_who || "-" },
+              { label: "Contacter", value: lead.initial || "-" },
+              { label: "Besoin", value: lead.information_request || "-" },
+              { label: "Status de lead", value: lead.type || "-" }
+            ].map(({ label, value }) => (
+              <div className="flex items-center gap-2" key={label}>
+                <p className="text-gray-600 font-semibold">{label}:</p>
+                <p className="text-gray-800 font-semibold">{value}</p>
+              </div>
+            ))}
+          </div>
 
-      {/* Buttons */}
-      <div className="flex justify-between mt-6">
+          {/* Right Column (Informations Commercial) */}
+          <div className="space-y-4 mt-4">
+            <h2 className="text-xl font-semibold text-gray-800">Informations Commercial</h2>
+            {[{
+              label: "Commercial prénom",
+              value: lead.commercial?.prenom || "-",
+            }, {
+              label: "Commercial nom",
+              value: lead.commercial?.nom || "-",
+            }].map(({ label, value }) => (
+              <div className="flex items-center gap-2" key={label}>
+                <p className="text-gray-600 font-semibold">{label}:</p>
+                <p className="text-gray-800 font-semibold">{value}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </TabPane>
+
+      {/* <TabPane tab="Commentaires" key="2">
+        <div className="space-y-4">
+          <div className="flex items-center gap-4">
+            <Input
+              placeholder="Add a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              className="w-full border rounded-lg"
+            />
+            <Button
+              type="primary"
+              onClick={handleAddComment}
+              className="bg-purple-800 text-white"
+            >
+              Submit
+            </Button>
+          </div>
+          <div className="mt-4">
+            {comments.length ? (
+              comments.map((comment) => (
+                <div
+                  key={comment._id}
+                  className="p-4 border rounded-lg mb-2 bg-gray-100"
+                >
+                  <div className="flex justify-between">
+                    <div>
+                      <p className="text-gray-800">{comment.text}</p>
+                      <p className="text-gray-600 text-sm">
+                        {comment.addedAt
+                          ? new Date(comment.addedAt).toLocaleString()
+                          : "Unknown Date"}
+                      </p>
+                    </div>
+                    <Button
+                      type="text"
+                      icon={<DeleteOutlined />}
+                      onClick={() => handleDeleteComment(comment._id)}
+                    />
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-600">Aucun commentaire pour le moment.</p>
+            )}
+          </div>
+        </div>
+      </TabPane> */}
+      <TabPane tab="Commentaires" key="2">
+  <div className="space-y-4">
+    {/* Comment Input and Submit Button */}
+    <div className="flex flex-col sm:flex-row items-center gap-4">
+      <Input
+        placeholder="Add a comment..."
+        value={newComment}
+        onChange={(e) => setNewComment(e.target.value)}
+        className="w-full border rounded-lg"
+      />
+      <Button
+        type="primary"
+        onClick={handleAddComment}
+        className="bg-purple-800 text-white mt-4 sm:mt-0 sm:ml-4"
+      >
+        Submit
+      </Button>
+    </div>
+
+    {/* Comments List */}
+    <div className="mt-4">
+      {comments.length ? (
+        comments.map((comment) => (
+          <div
+            key={comment._id}
+            className="p-4 border rounded-lg mb-2 bg-gray-100"
+          >
+            <div className="flex justify-between">
+              <div>
+                <p className="text-gray-800">{comment.text}</p>
+                <p className="text-gray-600 text-sm">
+                  {comment.addedAt
+                    ? new Date(comment.addedAt).toLocaleString()
+                    : "Unknown Date"}
+                </p>
+              </div>
+              <Button
+                type="text"
+                icon={<DeleteOutlined />}
+                onClick={() => handleDeleteComment(comment._id)}
+              />
+            </div>
+          </div>
+        ))
+      ) : (
+        <p className="text-gray-600">Aucun commentaire pour le moment.</p>
+      )}
+    </div>
+  </div>
+</TabPane>
+
+
+      <TabPane tab="Contact" key="3">
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold text-gray-800">Ajouter un Lead</h2>
+
+          <Form
+            form={form}
+            onFinish={handleFormSubmit}
+            layout="vertical"
+            className="space-y-4"
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <Form.Item
+                label="Nom et Prénom"
+                name="request_lastname"
+                rules={[{ required: true, message: "Prénom is required" }]}
+              >
+                <Input className="w-full p-2 border rounded-lg" />
+              </Form.Item>
+
+              <Form.Item
+                label="Email"
+                name="request_email"
+                rules={[{ required: true, message: "Email is required" }, {
+                  type: "email", message: "Please enter a valid email"
+                }]}
+              >
+                <Input className="w-full p-2 border rounded-lg" />
+              </Form.Item>
+
+              <Form.Item
+                label="Téléphone"
+                name="request_phone"
+                rules={[{ required: true, message: "Téléphone is required" }]}
+              >
+                <Input className="w-full p-2 border rounded-lg" />
+              </Form.Item>
+
+              <Form.Item
+                label="Status"
+                name="request_who"
+                rules={[{ required: true, message: "Status is required" }]}
+              >
+                <Input className="w-full p-2 border rounded-lg" />
+              </Form.Item>
+
+              <Form.Item
+                label="Contacter"
+                name="initial"
+                rules={[{ required: true, message: "Contacter is required" }]}
+              >
+                <Input className="w-full p-2 border rounded-lg" />
+              </Form.Item>
+
+              <Form.Item
+                label="Besoin"
+                name="information_request"
+                rules={[{ required: true, message: "Besoin is required" }]}
+              >
+                <Input className="w-full p-2 border rounded-lg" />
+              </Form.Item>
+            </div>
+
+            <div className="mt-4">
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="px-4 py-2 bg-purple-800 text-white rounded-lg"
+              >
+                Ajouter Lead
+              </Button>
+            </div>
+          </Form>
+        </div>
+      </TabPane>
+
+      {/* <TabPane tab="Calendar" key="4">
+        <Row gutter={24}>
+
+          <Col xs={24} sm={12}>
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold text-gray-800">Ajouter un Événement</h2>
+              <Form
+                form={form}
+                onFinish={handleFormSubmitCalendar}
+                layout="vertical"
+                className="space-y-4"
+              >
+                <Form.Item label="Date" name="event_date">
+                  <Input readOnly value={selectedDate ? selectedDate.format("YYYY-MM-DD") : ""} />
+                </Form.Item>
+
+                <Form.Item label="Heure" name="event_time" rules={[{ required: true }]}>
+                  <Input placeholder="HH:mm" />
+                </Form.Item>
+
+                <Form.Item label="Objectif" name="objective" rules={[{ required: true }]}>
+                  <Input />
+                </Form.Item>
+
+                <Form.Item label="Commentaire" name="comment">
+                  <Input.TextArea rows={4} />
+                </Form.Item>
+
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="px-4 py-2 bg-purple-800 text-white rounded-lg"
+                >
+                  Ajouter Événement
+                </Button>
+              </Form>
+            </div>
+          </Col>
+
+       
+          <Col xs={24} sm={12}>
+            <Calendar onSelect={onDateSelect} fullscreen />
+          </Col>
+        </Row>
+      </TabPane> */}
+      <TabPane tab="Calendar" key="4">
+  <Row gutter={24}>
+    {/* Left Column for Event Details */}
+    <Col xs={24} sm={12}>
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-gray-800">Ajouter un Événement</h2>
+        <Form
+          form={form}
+          onFinish={handleFormSubmitCalendar}
+          layout="vertical"
+          className="space-y-4"
+        >
+          <Form.Item label="Date" name="event_date">
+            <Input readOnly value={selectedDate ? selectedDate.format("YYYY-MM-DD") : ""} />
+          </Form.Item>
+
+          <Form.Item label="Heure" name="event_time" rules={[{ required: true }]}>
+            <Input placeholder="HH:mm" />
+          </Form.Item>
+
+          <Form.Item label="Objectif" name="objective" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Commentaire" name="comment">
+            <Input.TextArea rows={4} />
+          </Form.Item>
+
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="px-4 py-2 bg-purple-800 text-white rounded-lg"
+          >
+            Ajouter Événement
+          </Button>
+        </Form>
+      </div>
+    </Col>
+
+    {/* Right Column for Calendar */}
+    <Col xs={24} sm={12}>
+      <Calendar onSelect={onDateSelect} fullscreen />
+    </Col>
+  </Row>
+</TabPane>
+
+
+      <TabPane tab="Panier" key="5">
+        <div className="space-y-4">
+          <Panier />
+        </div>
+      </TabPane>
+
+      <TabPane tab="Commande" key="6">
+        <div className="space-y-4">
+          <Command />
+        </div>
+      </TabPane>
+    </Tabs>
+  </div>
+</div>
+
+      {/* <div className="flex justify-between mt-6">
         <button
           onClick={() => navigate("/leads")}
           className="bg-purple-800 hover:bg-purple-900 underline text-white font-semibold py-2 px-4 rounded"
@@ -524,7 +820,22 @@ const LeadDetailsPage = () => {
         >
           Modifier Lead
         </button>
-      </div>
+      </div> */}
+      <div className="flex flex-col sm:flex-row justify-between mt-6 gap-4 sm:gap-6">
+  <button
+    onClick={() => navigate("/leads")}
+    className="bg-purple-800 hover:bg-purple-900 underline text-white font-semibold py-2 px-4 rounded text-sm sm:text-base"
+  >
+    Retour
+  </button>
+  <button
+    onClick={() => setIsModalOpen(true)}
+    className="bg-purple-800 hover:bg-purple-900 text-white font-semibold py-2 px-4 rounded text-sm sm:text-base"
+  >
+    Modifier Lead
+  </button>
+</div>
+
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
