@@ -435,7 +435,7 @@ useEffect(() => {
   
 
   return (
-    <div className="p-4">
+    <div className="md:p-4 p-1 w-full">
       <h1 className="text-xl font-bold mb-4">Affectation des Leads</h1>
       <div className="flex-1 space-y-4 justify-between mb-4">
         <div className="flex md:flex-row md:space-y-0 flex-col space-y-4">

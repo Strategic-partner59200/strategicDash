@@ -334,10 +334,10 @@ const Leads = () => {
 
   return (
     <section>
-      <div className="mb-12 p-4">
-      <div className="flex justify-between items-center p-4 bg-white rounded-t-md shadow-sm">
+      <div className="mb-12 md:p-4 p-1">
+      <div className="md:flex flex-row justify-between  items-center p-4 bg-white rounded-t-md shadow-sm">
         <h2 className="text-lg font-semibold text-gray-700">Leads Filter</h2>
-        <div className="flex flex-wrap gap-2 sm:gap-4">
+        <div className="flex flex-row md:flex-row gap-1 sm:gap-4">
           <Button
             type={activeFilter === "nouveau" ? "primary" : "default"}
             onClick={() => handleFilter("nouveau")}
@@ -374,7 +374,7 @@ const Leads = () => {
 
         <span className="font-thin text-gray-600">résultats par page</span>
       </div>
-      <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 overflow-x-auto">
+      <div className="bg-white rounded-lg shadow-md w-full md:p-6 overflow-x-auto">
         <Table
           columns={[
             ...columns.map((col) => ({
