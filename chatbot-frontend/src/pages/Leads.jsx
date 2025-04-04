@@ -13,6 +13,7 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import { DeleteOutlined } from "@ant-design/icons";
+import Historiques from "../components/Historiques";
 
 const { Option } = Select;
 
@@ -172,7 +173,9 @@ const Leads = () => {
       dataIndex: "request_fullname",
       render: (text, record) => (
         <div className="cursor-pointer" onClick={() => handleLeadClick(record)}>
-            <div>{`${record.request_lastname || ""} ${record.request_name || ""}`}</div>
+          <div>{`${record.request_lastname || ""} ${
+            record.request_name || ""
+          }`}</div>
         </div>
       ),
     },
@@ -186,7 +189,7 @@ const Leads = () => {
           <div className="text-gray-500 text-xs">
             {record.verification_email === "Non"
               ? record.request_add_email
-              : record.request_email }
+              : record.request_email}
           </div>
         </div>
       ),
@@ -324,17 +327,17 @@ const Leads = () => {
       const filtered = chatData.filter((item) => item.type === type);
       console.log("Filtered data22:", filtered);
       setFilteredData(filtered); // Show filtered data
-      
     } else {
       setFilteredData(chatData);
     }
   };
 
   return (
-    <div className=" bg-gray-50 h-full mb-6 rounded-md">
+    <section>
+      <div className="mb-12 p-4">
       <div className="flex justify-between items-center p-4 bg-white rounded-t-md shadow-sm">
-        {/* <h2 className="text-lg font-semibold text-gray-700">Leads Filter</h2>
-        <div className="space-x-2">
+        <h2 className="text-lg font-semibold text-gray-700">Leads Filter</h2>
+        <div className="flex flex-wrap gap-2 sm:gap-4">
           <Button
             type={activeFilter === "nouveau" ? "primary" : "default"}
             onClick={() => handleFilter("nouveau")}
@@ -353,28 +356,7 @@ const Leads = () => {
           >
             Client
           </Button>
-        </div> */}
-        <h2 className="text-lg font-semibold text-gray-700">Leads Filter</h2>
-  <div className="flex flex-wrap gap-2 sm:gap-4">
-    <Button
-      type={activeFilter === "nouveau" ? "primary" : "default"}
-      onClick={() => handleFilter("nouveau")}
-    >
-      Tous
-    </Button>
-    <Button
-      type={activeFilter === "prospect" ? "primary" : "default"}
-      onClick={() => handleFilter("prospect")}
-    >
-      Prospect
-    </Button>
-    <Button
-      type={activeFilter === "client" ? "primary" : "default"}
-      onClick={() => handleFilter("client")}
-    >
-      Client
-    </Button>
-  </div>
+        </div>
       </div>
       <div className="mb-4 p-4 flex items-center rounded-md gap-4">
         <span className="font-thin text-gray-600">Afficher</span>
@@ -392,8 +374,7 @@ const Leads = () => {
 
         <span className="font-thin text-gray-600">résultats par page</span>
       </div>
-
-      {/* <div className="bg-white rounded-lg shadow-md p-4">
+      <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 overflow-x-auto">
         <Table
           columns={[
             ...columns.map((col) => ({
@@ -405,10 +386,8 @@ const Leads = () => {
                     <Input
                       placeholder={`${col.title}`}
                       onChange={(e) => handleColumnSearch(e, col.key)}
-                      className="mt-2"
+                      // className="mt-2 text-sm sm:text-base w-full sm:w-auto"
                       size="medium"
-                      style={{ width: "120%" }}
-                      placeholderStyle={{ fontSize: "2px" }}
                     />
                   )}
                 </div>
@@ -426,52 +405,18 @@ const Leads = () => {
             onChange: (page) => setCurrentPage(page),
           }}
           rowKey={(record) => record._id}
-          // pagination={false}
           bordered
-          className="custom-table"
+          className="custom-table text-xs sm:text-sm"
           rowSelection={rowSelection}
-          tableLayout="fixed"
+          tableLayout="auto"
         />
-      </div> */}
-      <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 overflow-x-auto">
-  <Table
-    columns={[
-      ...columns.map((col) => ({
-        ...col,
-        title: (
-          <div className="flex flex-col items-center">
-            <div className="text-xs">{col.title}</div>
-            {col.key !== "action" && (
-              <Input
-                placeholder={`${col.title}`}
-                onChange={(e) => handleColumnSearch(e, col.key)}
-                className="mt-2 text-sm sm:text-base w-full sm:w-auto"
-                size="medium"
-              />
-            )}
-          </div>
-        ),
-      })),
-    ]}
-    dataSource={filteredData.slice(
-      (currentPage - 1) * pageSize,
-      currentPage * pageSize
-    )}
-    pagination={{
-      current: currentPage,
-      pageSize,
-      total: filteredData.length,
-      onChange: (page) => setCurrentPage(page),
-    }}
-    rowKey={(record) => record._id}
-    bordered
-    className="custom-table text-xs sm:text-sm"
-    rowSelection={rowSelection}
-    tableLayout="auto"
-  />
-</div>
-
+      </div>
+    
     </div>
+    <div className="mt-16 mb-16 p-16 flex items-center justify-center">
+        <Historiques />
+      </div>
+    </section>
   );
 };
 
