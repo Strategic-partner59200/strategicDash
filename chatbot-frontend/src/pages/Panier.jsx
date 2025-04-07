@@ -7,11 +7,14 @@ import {
   PlusCircleOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const Panier = ({ setCartQuantity, refreshTrigger }) => {
   const { id } = useParams();
   const [panierItems, setPanierItems] = useState([]);
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const decodedToken = token ? jwtDecode(token) : null;
 
   useEffect(() => {
     const cartFromStorage =
@@ -24,7 +27,7 @@ const Panier = ({ setCartQuantity, refreshTrigger }) => {
     const fetchCartData = async () => {
       try {
         // Always get fresh data from backend first
-        const response = await axios.get("/panier");
+        const response = await axios.get(`/panier/${id}`); // Fetch cart items for the specific lead ID
         console.log('response', response)
         setPanierItems(response.data);
 
@@ -61,11 +64,15 @@ const Panier = ({ setCartQuantity, refreshTrigger }) => {
   };
 
   const handleQuantityChange = async (productId, newQuantity) => {
+    const userId = decodedToken?.userId || decodedToken?.commercialId; // Get user ID from token
+    const isCommercial = decodedToken?.role === "commercial"; // Check if the user is a commercial
     try {
       // 1. Update backend
       const response = await axios.post("/panier", {
         produitId: productId,
         quantite: newQuantity,
+        leadId: id,
+        admin: !isCommercial ? userId : undefined,
       });
 
       // 2. Update local state

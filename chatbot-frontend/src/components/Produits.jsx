@@ -7,11 +7,14 @@ import {
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 const Produits = ({ onCartChange }) => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [produits, setProduits] = useState([]);
+  const token = localStorage.getItem("token");
+  const decodedToken = token ? jwtDecode(token) : null;
 
   // Fetch produits data on component mount
   useEffect(() => {
@@ -75,7 +78,12 @@ const Produits = ({ onCartChange }) => {
   };
 
   const handleAddToCart = async (product) => {
+   
     try {
+      const userId = decodedToken?.userId || decodedToken?.commercialId; // Get user ID from token
+      const isCommercial = decodedToken?.role === "commercial"; // Check if the user is a commercial
+
+
       if (!product || !product._id) {
         throw new Error("Product is invalid");
       }
@@ -100,6 +108,9 @@ const Produits = ({ onCartChange }) => {
       const response = await axios.post("/panier", {
         produitId: product._id,
         quantite: 1,
+         leadId: id,
+  admin: !isCommercial ? userId : undefined,
+  commercial: isCommercial ? userId : undefined,
       });
 
       // 3. Update all states immediately

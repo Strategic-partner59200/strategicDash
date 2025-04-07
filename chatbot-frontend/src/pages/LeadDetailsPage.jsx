@@ -41,25 +41,65 @@ const LeadDetailsPage = () => {
   };
 
   // Add this effect to load initial quantity PROPERLY
+  // useEffect(() => {
+  //   const loadInitialCart = async () => {
+  //     try {
+  //       // 1. First check localStorage (for quick UI update)
+  //       const localCart = JSON.parse(localStorage.getItem("panierItems")) || [];
+  //       const localQuantity = localCart.reduce(
+  //         (sum, item) => sum + (item.quantite || 0),
+  //         0
+  //       );
+  //       setCartQuantity(localQuantity);
+
+  //       // 2. Then verify with backend (for accurate data)
+  //       const response = await axios.get("/panier");
+  //       const backendQuantity = response.data.reduce(
+  //         (sum, item) => sum + (item.quantite || 0),
+  //         0
+  //       );
+
+  //       // 3. Use whichever is larger (or implement your preferred merge logic)
+  //       if (backendQuantity !== localQuantity) {
+  //         setCartQuantity(backendQuantity);
+  //         localStorage.setItem("panierItems", JSON.stringify(response.data));
+  //         localStorage.setItem("cartQuantity", backendQuantity.toString());
+  //       }
+  //     } catch (error) {
+  //       console.error("Error loading initial cart:", error);
+  //     }
+  //   };
+
+  //   loadInitialCart();
+  // }, []);
   useEffect(() => {
     const loadInitialCart = async () => {
       try {
-        // 1. First check localStorage (for quick UI update)
+        const leadId = id;
+  
+        // 1. Check localStorage and filter by leadId
         const localCart = JSON.parse(localStorage.getItem("panierItems")) || [];
-        const localQuantity = localCart.reduce(
+        const filteredLocalCart = localCart.filter(
+          (item) => item.lead === leadId
+        );
+  
+        const localQuantity = filteredLocalCart.reduce(
           (sum, item) => sum + (item.quantite || 0),
           0
         );
         setCartQuantity(localQuantity);
-
-        // 2. Then verify with backend (for accurate data)
+  
+        // 2. Verify with backend
         const response = await axios.get("/panier");
-        const backendQuantity = response.data.reduce(
+        const backendFiltered = response.data.filter(
+          (item) => item.lead === leadId
+        );
+        const backendQuantity = backendFiltered.reduce(
           (sum, item) => sum + (item.quantite || 0),
           0
         );
-
-        // 3. Use whichever is larger (or implement your preferred merge logic)
+  
+        // 3. Update if different
         if (backendQuantity !== localQuantity) {
           setCartQuantity(backendQuantity);
           localStorage.setItem("panierItems", JSON.stringify(response.data));
@@ -69,23 +109,41 @@ const LeadDetailsPage = () => {
         console.error("Error loading initial cart:", error);
       }
     };
-
+  
     loadInitialCart();
   }, []);
+  
   // In LeadDetailsPage.jsx
+  // useEffect(() => {
+  //   const handleStorageChange = () => {
+  //     const localCart = JSON.parse(localStorage.getItem("panierItems")) || [];
+  //     const newQuantity = localCart.reduce(
+  //       (sum, item) => sum + (item.quantite || 0),
+  //       0
+  //     );
+  //     setCartQuantity(newQuantity);
+  //   };
+
+  //   window.addEventListener("storage", handleStorageChange);
+  //   return () => window.removeEventListener("storage", handleStorageChange);
+  // }, []);
   useEffect(() => {
+    const leadId = id;
+  
     const handleStorageChange = () => {
       const localCart = JSON.parse(localStorage.getItem("panierItems")) || [];
-      const newQuantity = localCart.reduce(
+      const filteredCart = localCart.filter((item) => item.lead === leadId);
+      const newQuantity = filteredCart.reduce(
         (sum, item) => sum + (item.quantite || 0),
         0
       );
       setCartQuantity(newQuantity);
     };
-
+  
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
+  
 
 
 
@@ -695,7 +753,7 @@ const LeadDetailsPage = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <Form.Item
                 label="Nom et Prénom"
-                name="request_lastname"
+                name="prénom"
                 rules={[{ required: true, message: "Prénom is required" }]}
               >
                 <Input className="w-full p-2 border rounded-lg" />
@@ -703,7 +761,7 @@ const LeadDetailsPage = () => {
 
               <Form.Item
                 label="Email"
-                name="request_email"
+                name="email"
                 rules={[{ required: true, message: "Email is required" }, {
                   type: "email", message: "Please enter a valid email"
                 }]}
@@ -713,7 +771,7 @@ const LeadDetailsPage = () => {
 
               <Form.Item
                 label="Téléphone"
-                name="request_phone"
+                name="phone"
                 rules={[{ required: true, message: "Téléphone is required" }]}
               >
                 <Input className="w-full p-2 border rounded-lg" />
@@ -721,7 +779,7 @@ const LeadDetailsPage = () => {
 
               <Form.Item
                 label="Status"
-                name="request_who"
+                name="status"
                 rules={[{ required: true, message: "Status is required" }]}
               >
                 <Input className="w-full p-2 border rounded-lg" />
@@ -729,7 +787,7 @@ const LeadDetailsPage = () => {
 
               <Form.Item
                 label="Contacter"
-                name="initial"
+                name="besoin"
                 rules={[{ required: true, message: "Contacter is required" }]}
               >
                 <Input className="w-full p-2 border rounded-lg" />
@@ -737,7 +795,7 @@ const LeadDetailsPage = () => {
 
               <Form.Item
                 label="Besoin"
-                name="information_request"
+                name="demande"
                 rules={[{ required: true, message: "Besoin is required" }]}
               >
                 <Input className="w-full p-2 border rounded-lg" />

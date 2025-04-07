@@ -224,6 +224,24 @@ const Leads = () => {
       render: (text) => text || "",
     },
     {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+      render: (text) => text || "",
+    },
+    {
+      title: "code postal",
+      dataIndex: "codepostal",
+      key: "codepostal",
+      render: (text) => text || "",
+    },
+    {
+      title: "Ville",
+      dataIndex: "ville",
+      key: "ville",
+      render: (text) => text || "",
+    },
+    {
       title: "Status",
       dataIndex: "status",
       key: "status",
