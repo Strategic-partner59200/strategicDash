@@ -10,37 +10,37 @@ const commentSchema = new mongoose.Schema({
 
 const chatSchema = new mongoose.Schema(
   {
-    request_name: {
+    nom: {
       type: String,
       // required: true,
     },
-    request_email: {
+    email: {
       type: String,
       // required: true,
       match: /.+\@.+\..+/, // Basic email format validation
     },
-    request_add_email: {
+    email1: {
       type: String,
       // required: true,
       match: /.+\@.+\..+/,
     },
-    request_phone: {
+    phone: {
       type: String,
       // required: true,
     },
-    request_lastname: {
+    prénom: {
       type: String,
       default: "",
     },
-    initial: {
+    besoin: {
       type: String,
       default: "",
     },
-    information_request: {
+    demande: {
       type: String,
       default: "",
     },
-    request_who: {
+    status: {
       type: String,
       default: "",
     },

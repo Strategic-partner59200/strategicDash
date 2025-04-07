@@ -114,5 +114,8 @@ router.delete('/panier/:panierId', PanierController.deletePanierById);
 router.get('/panier', PanierController.getAllPanier);
 router.put('/panier/:id', PanierController.updatePanierItem);
 
+// import leads routes
+router.post('/import', DataController.importLeads);
+
 
 module.exports = router;

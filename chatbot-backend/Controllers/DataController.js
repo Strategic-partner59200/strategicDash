@@ -365,6 +365,62 @@ static async searchData(req, res) {
       return res.status(500).json({ message: "Server error" });
     }
   };
+
+  static async importLeads(req, res) {
+    const leads = req.body;
+
+    try {
+        console.log('Importing Leads', leads);
+
+        // Get an array of all phone numbers from the incoming leads
+        const leadPhones = leads.map(lead => lead.phone);
+
+        // 1. Check if any of the phone numbers already exist in the database
+        const existingLeads = await Chat.find({ phone: { $in: leadPhones } });
+
+        // Extract duplicate phone numbers from the database
+        const duplicatePhonesInDb = existingLeads.map(lead => lead.phone);
+        console.log(`Duplicate phones found in database: ${duplicatePhonesInDb.join(', ')}`);
+
+        // 2. Check for duplicate phone numbers within the imported data itself
+        const phoneSet = new Set();
+        const duplicateInImport = [];
+        leads.forEach(lead => {
+            if (phoneSet.has(lead.phone)) {
+                duplicateInImport.push(lead.phone);
+            } else {
+                phoneSet.add(lead.phone);
+            }
+        });
+
+        console.log(`Duplicate phones found in imported data: ${duplicateInImport.join(', ')}`);
+
+        // 3. Combine duplicates from both the database and imported data
+        const allDuplicates = [...duplicatePhonesInDb, ...duplicateInImport];
+        const uniqueLeads = leads.filter(lead => !allDuplicates.includes(lead.phone));
+
+        if (uniqueLeads.length === 0) {
+            return res.status(400).json({
+                message: 'All leads have duplicate phone numbers and were not imported.',
+                duplicatePhones: allDuplicates
+            });
+        }
+
+        const importedLeads = await Promise.all(
+            uniqueLeads.map(async (coach) => {
+                const newLead = new Chat(coach);
+                return await newLead.save();
+            })
+        );
+
+        console.log('Imported leads:', importedLeads);
+        res.status(200).json(importedLeads);
+
+    } catch (error) {
+        console.error('Error importing leads:', error.message);
+        res.status(500).json({ message: 'Error importing leads', error });
+    }
+  }
 }
 
 module.exports = DataController;
