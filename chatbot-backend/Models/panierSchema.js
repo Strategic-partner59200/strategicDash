@@ -42,6 +42,17 @@ const panierSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  admin: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Admin",
+    required: false,
+  },
+  commercial: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Commercial", // Referring to the Commercial model
+    required: false, // If this is optional, you can make it not required
+  },
+  lead: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' }, 
 });
 
 const Panier = mongoose.model('Panier', panierSchema);

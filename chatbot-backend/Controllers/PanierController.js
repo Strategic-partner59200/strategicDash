@@ -4,9 +4,14 @@ const Produit = require("../Models/produitSchema"); // Assuming you have a Produ
 class PanierController {
   static async createPanier(req, res) {
     try {
-      const { produitId, quantite } = req.body;
+      let leadId = req.body.leadId;
+      const { produitId, quantite, admin, commercial } = req.body;
 
-
+      const userId = admin || commercial;
+      if (!userId) {
+        return res.status(400).json({ message: "Admin or Commercial ID must be provided." });
+      }
+  
       // Find the product by ID
       const produit = await Produit.findById(produitId);
       if (!produit) {
@@ -38,6 +43,9 @@ class PanierController {
         // If the product exists, update the quantity and recalculate
         // existingPanierItem.quantite = quantite;
         existingPanierItem.quantite += 1;
+        leadId = existingPanierItem.lead;
+        existingPanierItem.admin = admin ? admin : undefined;
+        existingPanierItem.commercial = commercial ? commercial : undefined;
         existingPanierItem.montantHT = existingPanierItem.quantite * prixVente;
         existingPanierItem.montantTVA =
           (existingPanierItem.montantHT * tva) / 100;
@@ -50,6 +58,9 @@ class PanierController {
 
       // If not, create a new panier item
       const panier = new Panier({
+        lead: leadId,
+        admin: admin ? admin : undefined,
+        commercial: commercial ? commercial : undefined,
         produit: produitId,
         description: produit.description,
         code: produit.code,
@@ -71,9 +82,10 @@ class PanierController {
     }
   }
 
-  static async getAllPanier(req, res) {
+  static async getPanierById(req, res) {
+    const { id } = req.params;
     try {
-      const panierItems = await Panier.find().populate(
+      const panierItems = await Panier.find({ lead: id }).populate(
         "produit",
         "description prixVente tva"
       );
@@ -81,6 +93,19 @@ class PanierController {
     } catch (error) {
       console.error("Error fetching panier:", error);
       res.status(500).json({ message: "Failed to fetch panier" });
+    }
+  }
+
+  static async getAllPanier(req, res) {
+    try {
+      const paniers = await Panier.find().populate(
+        "produit",
+        "description prixVente tva"
+      );
+      res.status(200).json(paniers);
+    } catch (error) {
+      console.error("Error fetching all paniers:", error);
+      res.status(500).json({ message: "Failed to fetch all paniers" });
     }
   }
   static async deletePanierById(req, res) {
