@@ -607,12 +607,12 @@ const LeadDetailsPage = () => {
           {/* Left Column (Informations Leads) */}
           <div className="space-y-4 mt-4">
             <h2 className="text-xl font-semibold text-gray-800">Informations Leads</h2>
-            {[{ label: "Prénom et Nom", value: lead.request_lastname || "-" },
-              { label: "Email", value: lead.request_email || "-" },
-              { label: "Téléphone", value: lead.request_phone || "-" },
-              { label: "Status", value: lead.request_who || "-" },
-              { label: "Contacter", value: lead.initial || "-" },
-              { label: "Besoin", value: lead.information_request || "-" },
+            {[{ label: "Prénom et Nom", value: lead.nom || "-" },
+              { label: "Email", value: lead.email || "-" },
+              { label: "Téléphone", value: lead.phone || "-" },
+              { label: "Status", value: lead.status || "-" },
+              { label: "Contacter", value: lead.besoin || "-" },
+              { label: "Besoin", value: lead.demande || "-" },
               { label: "Status de lead", value: lead.type || "-" }
             ].map(({ label, value }) => (
               <div className="flex items-center gap-2" key={label}>
