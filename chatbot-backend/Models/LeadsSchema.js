@@ -14,6 +14,15 @@ const chatSchema = new mongoose.Schema(
       type: String,
       // required: true,
     },
+    codepostal: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
+    ville: {
+      type: String,
+    },   
     email: {
       type: String,
       // required: true,
