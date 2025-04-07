@@ -15,6 +15,8 @@ import { DeleteOutlined } from "@ant-design/icons";
 import CalendarEvents from "../components/CalendarEvents";
 import Command from "../components/Command";
 import Panier from "./Panier";
+import Devis from "../components/Devis";
+import Produits from "../components/Produits";
 
 const { TabPane } = Tabs;
 
@@ -30,6 +32,61 @@ const LeadDetailsPage = () => {
   const [comments, setComments] = useState([]);
   const token = localStorage.getItem("token");
   const [selectedDate, setSelectedDate] = useState(null);
+  
+  const [cartQuantity, setCartQuantity] = useState(0);
+  const [refreshCart, setRefreshCart] = useState(false);
+  const [refreshCounter, setRefreshCounter] = useState(0);
+  const handleRefreshCommands = () => {
+    setRefreshCounter(prev => prev + 1);
+  };
+
+  // Add this effect to load initial quantity PROPERLY
+  useEffect(() => {
+    const loadInitialCart = async () => {
+      try {
+        // 1. First check localStorage (for quick UI update)
+        const localCart = JSON.parse(localStorage.getItem("panierItems")) || [];
+        const localQuantity = localCart.reduce(
+          (sum, item) => sum + (item.quantite || 0),
+          0
+        );
+        setCartQuantity(localQuantity);
+
+        // 2. Then verify with backend (for accurate data)
+        const response = await axios.get("/panier");
+        const backendQuantity = response.data.reduce(
+          (sum, item) => sum + (item.quantite || 0),
+          0
+        );
+
+        // 3. Use whichever is larger (or implement your preferred merge logic)
+        if (backendQuantity !== localQuantity) {
+          setCartQuantity(backendQuantity);
+          localStorage.setItem("panierItems", JSON.stringify(response.data));
+          localStorage.setItem("cartQuantity", backendQuantity.toString());
+        }
+      } catch (error) {
+        console.error("Error loading initial cart:", error);
+      }
+    };
+
+    loadInitialCart();
+  }, []);
+  // In LeadDetailsPage.jsx
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const localCart = JSON.parse(localStorage.getItem("panierItems")) || [];
+      const newQuantity = localCart.reduce(
+        (sum, item) => sum + (item.quantite || 0),
+        0
+      );
+      setCartQuantity(newQuantity);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
 
 
   const onDateSelect = (date) => {
@@ -789,20 +846,38 @@ const LeadDetailsPage = () => {
       <Calendar onSelect={onDateSelect} fullscreen />
     </Col>
   </Row>
+  <CalendarEvents />
 </TabPane>
 
-
-      <TabPane tab="Panier" key="5">
-        <div className="space-y-4">
-          <Panier />
-        </div>
-      </TabPane>
-
-      <TabPane tab="Commande" key="6">
-        <div className="space-y-4">
-          <Command />
-        </div>
-      </TabPane>
+<TabPane tab="Produits" key="5">
+              <div className="space-y-4">
+                <Produits
+                  onCartChange={(newQuantity) => {
+                    setCartQuantity(newQuantity); // Directly use the passed quantity
+                    setRefreshCart((prev) => !prev); // Also trigger refresh
+                  }}
+                  refreshTrigger={refreshCart}
+                />
+              </div>
+            </TabPane>
+<TabPane tab={`Panier (${cartQuantity})`} key="6">
+              <div className="space-y-4">
+                <Panier
+                  setCartQuantity={setCartQuantity}
+                  refreshTrigger={refreshCart}
+                />
+              </div>
+            </TabPane>
+            <TabPane tab="Devis à valider" key="7">
+              <div className="space-y-4">
+                <Devis onValidate={handleRefreshCommands}/>
+              </div>
+            </TabPane>
+            <TabPane tab="Commande" key="8">
+              <div className="space-y-4">
+                <Command key={refreshCounter} />
+              </div>
+            </TabPane>
     </Tabs>
   </div>
 </div>

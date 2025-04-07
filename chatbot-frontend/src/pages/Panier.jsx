@@ -1,205 +1,292 @@
-// import React, { useState, useEffect } from "react";
-// import axios from "axios";
-// import { Card, Col, Row, message, Button } from "antd";
-// import { useNavigate, useParams } from "react-router-dom";
-
-// const Panier = () => {  // Assuming `id` is passed as a prop or retrieved from the URL
-//   const [program, setProgram] = useState([]);
-//   const [leadId, setLeadId] = useState(null);  // State for storing leadId
-//   const [loading, setLoading] = useState(true);
-//   const navigate = useNavigate();
-//   const {id} = useParams();  
-//   console.log("Lead ID:", id);
-
-//   // Fetch the lead details using the `id` prop
-//   useEffect(() => {
-//     const fetchLead = async () => {
-//       try {
-//         const response = await axios.get(`/lead/${id}`);
-//         setLeadId(response.data.chat);  // Assuming the lead id is stored in `chat._id`
-//         console.log("Lead Details:", response.data.chat);
-//       } catch (error) {
-//         console.error("Error fetching lead details:", error);
-//       }
-//     };
-
-//     fetchLead();
-//   }, [id]);  // Dependency on `id`
-
-//   // Fetch programs
-//   useEffect(() => {
-//     const fetchPrograms = async () => {
-//       try {
-//         const response = await axios.get("/program");
-//         setProgram(response.data);
-//         console.log("Programmes:", response.data);
-//       } catch (error) {
-//         message.error("Failed to fetch programmes.");
-//         console.error(error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchPrograms();
-//   }, []);  // Empty dependency array means this effect runs once on mount
-
-//   if (loading) {
-//     return <div>Loading...</div>;
-//   }
-
-//   // Handle navigation to create command with leadId
-//   const handleNavigate = (programId) => {
-//     if (id) {
-//       navigate(`/create-command/${programId}?leadId=${id}`);
-//     } else {
-//       message.error("Lead ID is missing.");
-//     }
-//   };
-
-//   return (
-//     <div className="p-2 w-full">
-//       <Row gutter={[16, 16]} justify="center">
-//         {program.map((pro) => (
-//           <Col xs={24} sm={12} md={8} lg={8} key={pro._id}>
-//             <Card
-//               hoverable
-//               cover={
-//                 <img
-//                   alt="Programme"
-//                   src={pro.imageUrl}
-//                   className="h-40 w-full object-cover rounded-t-md"
-//                 />
-//               }
-//               className="border border-gray-200 shadow-lg rounded-md"
-//               onClick={() => handleNavigate(pro._id)} // Navigate on card click
-//               style={{
-//                 height: '400px',
-//                 width: '100%',
-//                 display: 'flex',
-//                 flexDirection: 'column',
-//                 justifyContent: 'space-between',
-//               }}
-//             >
-//               <Card.Meta
-//                 title={<span className="font-semibold">{pro.title}</span>}
-//                 description={
-//                   <p className="text-sm text-gray-600">{pro.mainText}</p>
-//                 }
-//               />
-//               <Button
-//                 type="primary"
-//                 htmlType="submit"
-//                 className="px-4 py-2 mt-2 bg-blue-600 text-white rounded-lg"
-//               >
-//                 Ajouter Commande
-//               </Button>
-//             </Card>
-//           </Col>
-//         ))}
-//       </Row>
-//     </div>
-//   );
-// };
-
-// export default Panier;
 import React, { useState, useEffect } from "react";
+import { Table, Button, Space, message, Tooltip } from "antd";
 import axios from "axios";
-import { Card, Col, Row, message, Button } from "antd";
+import {
+  DeleteOutlined,
+  MinusCircleOutlined,
+  PlusCircleOutlined,
+} from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 
-const Panier = () => {
-  const [program, setProgram] = useState([]);
-  const [leadId, setLeadId] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+const Panier = ({ setCartQuantity, refreshTrigger }) => {
   const { id } = useParams();
-  console.log("Lead ID:", id);
+  const [panierItems, setPanierItems] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchLead = async () => {
+    const cartFromStorage =
+      JSON.parse(localStorage.getItem("panierItems")) || [];
+    setPanierItems(cartFromStorage);
+    updateCartQuantity(cartFromStorage);
+  }, [refreshTrigger]);
+
+  useEffect(() => {
+    const fetchCartData = async () => {
       try {
-        const response = await axios.get(`/lead/${id}`);
-        setLeadId(response.data.chat);
-        console.log("Lead Details:", response.data.chat);
+        // Always get fresh data from backend first
+        const response = await axios.get("/panier");
+        console.log('response', response)
+        setPanierItems(response.data);
+
+        // Calculate and update quantity
+        const totalQuantity = response.data.reduce(
+          (acc, item) => acc + item.quantite,
+          0
+        );
+        setCartQuantity(totalQuantity);
+
+        // Sync with localStorage
+        localStorage.setItem("panierItems", JSON.stringify(response.data));
+        localStorage.setItem("cartQuantity", totalQuantity.toString());
       } catch (error) {
-        console.error("Error fetching lead details:", error);
+        // Fallback to localStorage if API fails
+        const localCart = JSON.parse(localStorage.getItem("panierItems")) || [];
+        setPanierItems(localCart);
+        const localQuantity = localCart.reduce(
+          (sum, item) => sum + (item.quantite || 0),
+          0
+        );
+        setCartQuantity(localQuantity);
       }
     };
 
-    fetchLead();
-  }, [id]);
+    fetchCartData();
+  }, [refreshTrigger, setCartQuantity]);
 
-  useEffect(() => {
-    const fetchPrograms = async () => {
-      try {
-        const response = await axios.get("/program");
-        setProgram(response.data);
-        console.log("Programmes:", response.data);
-      } catch (error) {
-        message.error("Failed to fetch programmes.");
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    fetchPrograms();
-  }, []);
+  // Update cart quantity
+  const updateCartQuantity = (items) => {
+    const totalQuantity = items.reduce((acc, item) => acc + item.quantite, 0);
+    setCartQuantity(totalQuantity); // Update the quantity in the parent component
+  };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const handleQuantityChange = async (productId, newQuantity) => {
+    try {
+      // 1. Update backend
+      const response = await axios.post("/panier", {
+        produitId: productId,
+        quantite: newQuantity,
+      });
 
-  const handleNavigate = (programId) => {
-    if (id) {
-      navigate(`/create-command/${programId}?leadId=${id}`);
-    } else {
-      message.error("Lead ID is missing.");
+      // 2. Update local state
+      const updatedItems = panierItems
+        .map((item) =>
+          item.produit._id === productId
+            ? {
+                ...item,
+                quantite: newQuantity,
+                montantHT: item.prixUnitaire * newQuantity,
+                montantTTC: item.prixUnitaire * newQuantity * 1.2,
+              }
+            : item
+        )
+        .filter((item) => item.quantite > 0); // Remove items with zero quantity
+
+      setPanierItems(updatedItems);
+
+      // 3. Calculate new totals
+      const totalQuantity = updatedItems.reduce(
+        (sum, item) => sum + item.quantite,
+        0
+      );
+
+      // 4. Update all states and storage
+      setCartQuantity(totalQuantity);
+      localStorage.setItem("panierItems", JSON.stringify(updatedItems));
+      localStorage.setItem("cartQuantity", totalQuantity.toString());
+
+      // 5. Notify other tabs
+      window.dispatchEvent(new Event("storage"));
+
+      message.success("Quantité mise à jour");
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+      message.error("Failed to update quantity");
+
+      // Optional: Revert to previous state
+      const localCart = JSON.parse(localStorage.getItem("panierItems")) || [];
+      setPanierItems(localCart);
+      setCartQuantity(localCart.reduce((sum, item) => sum + item.quantite, 0));
     }
   };
 
-  return (
-    <div className="p-2 w-full">
-      <Row gutter={[16, 16]} justify="center">
-        {program.map((pro) => (
-          <Col
-            xs={24} sm={12} md={8} lg={6} xl={4} key={pro._id} // Added responsive breakpoints
-          >
-            <Card
-              hoverable
-              cover={
-                <img
-                  alt="Programme"
-                  src={pro.imageUrl}
-                  className="w-full object-cover rounded-t-md"
-                  style={{ height: "200px" }} // Ensuring a consistent image height
-                />
+  const handleRemoveFromCart = async (panierId) => {
+    try {
+      // 1. Delete from backend
+      await axios.delete(`/panier/${panierId}`);
+
+      // 2. Update local state
+      const updatedItems = panierItems.filter((item) => item._id !== panierId);
+      setPanierItems(updatedItems);
+
+      // 3. Calculate new quantity
+      const totalQuantity = updatedItems.reduce(
+        (sum, item) => sum + item.quantite,
+        0
+      );
+
+      // 4. Update all states and storage
+      setCartQuantity(totalQuantity);
+      localStorage.setItem("panierItems", JSON.stringify(updatedItems));
+      localStorage.setItem("cartQuantity", totalQuantity.toString());
+
+      // 5. Notify other tabs
+      window.dispatchEvent(new Event("storage"));
+
+      message.success("Produit supprimé du panier");
+    } catch (error) {
+      console.error("Error removing product:", error);
+      message.error("Failed to remove product.");
+
+      // Optional: Revert to previous state
+      const localCart = JSON.parse(localStorage.getItem("panierItems")) || [];
+      setPanierItems(localCart);
+      setCartQuantity(localCart.reduce((sum, item) => sum + item.quantite, 0));
+    }
+  };
+
+  // Calculate the total amount (HT, TVA, TTC)
+  // const calculateTotals = () => {
+  //   const totalHT = panierItems.reduce((acc, item) => acc + item.montantHT, 0);
+  //   const totalTVA = panierItems.reduce(
+  //     (acc, item) => acc + item.montantTVA,
+  //     0
+  //   );
+  //   const totalTTC = totalHT + totalTVA;
+  //   return { totalHT, totalTVA, totalTTC };
+  // };
+
+  // const { totalHT, totalTVA, totalTTC } = calculateTotals();
+  // Calculate the total amount (HT, TVA, TTC)
+const calculateTotals = () => {
+  const totalHT = panierItems.reduce((acc, item) => acc + item.montantHT, 0);
+  const totalTVA = totalHT * 0.20; // 20% TVA
+  const totalTTC = totalHT + totalTVA;
+  return { totalHT, totalTVA, totalTTC };
+};
+
+const { totalHT, totalTVA, totalTTC } = calculateTotals();
+
+
+  const handlePasserLaCommande = () => {
+    navigate(`/leads/${id}/create-command`);
+  };
+
+  const columns = [
+    {
+      title: "Référence",
+      dataIndex: "code",
+      key: "code",
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Quantité",
+      key: "quantite",
+      render: (_, record) => (
+        <Space>
+          <Button
+            icon={<MinusCircleOutlined />}
+            onClick={async () => {
+              try {
+                const newQuantity = record.quantite - 1;
+                await handleQuantityChange(record.produit._id, newQuantity);
+              } catch (error) {
+                console.error("Decrease quantity error:", error);
               }
-              className="border border-gray-200 shadow-lg rounded-md"
-              onClick={() => handleNavigate(pro._id)}
-              style={{
-                height: '430px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              <Card.Meta
-                title={<span className="font-semibold text-sm sm:text-base">{pro.title}</span>} 
-                description={<p className="text-xs sm:text-sm text-gray-600">{pro.mainText}</p>}
-              />
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="px-2 py-1 sm:px-2 sm:py-1 mt-2 bg-blue-600 text-white rounded-lg text-xs sm:text-sm" // Smaller button size for mobile
-              >
-                Ajouter Commande
-              </Button>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+            }}
+            disabled={record.quantite <= 1}
+          />
+          {record.quantite}
+          <Button
+            icon={<PlusCircleOutlined />}
+            onClick={async () => {
+              try {
+                const newQuantity = record.quantite + 1;
+                await handleQuantityChange(record.produit._id, newQuantity);
+              } catch (error) {
+                console.error("Increase quantity error:", error);
+              }
+            }}
+          />
+        </Space>
+      ),
+    },
+    {
+      title: "Prix Unitaire",
+      dataIndex: "prixUnitaire",
+      key: "prixUnitaire",
+    },
+    {
+      title: "Montant HT",
+      dataIndex: "montantHT",
+      key: "montantHT",
+    },
+    {
+      title: "TVA",
+      dataIndex: "montantTVA",
+      key: "montantTVA",
+    },
+    {
+      title: "Montant TTC",
+      dataIndex: "montantTTC",
+      key: "montantTTC",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Tooltip title="Supprimer">
+          <DeleteOutlined
+            style={{ color: "red", cursor: "pointer" }}
+            onClick={() => handleRemoveFromCart(record._id)} // Remove product from the cart
+          />
+        </Tooltip>
+      ),
+    },
+  ];
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <Table
+        columns={[
+          ...columns.map((col) => ({
+            ...col,
+            title: (
+              <div className="flex flex-col items-center">
+                <div className="text-xs">{col.title}</div>
+              </div>
+            ),
+          })),
+        ]}
+        dataSource={panierItems}
+        pagination={false}
+        // rowKey={(record) => record.produit._id}
+        rowKey={(record) => record._id || record.produit?._id || Math.random()}
+      />
+
+      <div style={{ marginTop: "20px", textAlign: "right" }}>
+        <h3>Total HT: {totalHT.toFixed(2)} €</h3>
+        <h3>Total TVA (20%): {totalTVA.toFixed(2)} €</h3>
+        <h3>Total TTC: {totalTTC.toFixed(2)} €</h3>
+       <div className="mt-4">
+       <Button
+          type="primary"
+          style={{
+            marginLeft: "10px",
+            backgroundColor: "green",
+            borderColor: "green",
+          }}
+          onClick={handlePasserLaCommande}
+        >
+          Passer la commande
+        </Button>
+       </div>
+      </div>
+     
     </div>
   );
 };

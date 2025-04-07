@@ -1,41 +1,52 @@
 const mongoose = require("mongoose");
 
-const commandSchema = new mongoose.Schema(
-  {
-    admin: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Admin", 
-      required: true,
-    },
-    command_type: {
-      type: String,
-      enum: ["devis", "commande"], // Changed "contract" to "commande" to match the form
-      required: true,
-    },
-    details: {
-      type: String,
-      required: true,
-    },
-    date: {
-      type: Date,
-      required: true,
-    },
-    prix: {
-      type: Number,
-      required: true,
-      min: 0, // Ensures that the price must be a positive number
-    },
-    note: {
-      type: String,
-      required: false,
-    },
-    TVA: {
-      type: Number,
-      default: 20, // Fixed TVA value as per your form
-    },
-    lead: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' }, 
+const CommandeSchema = new mongoose.Schema({
+  command_type: { type: String, enum: ["commande", "devis"], required: true },
+  date: { type: Date, required: true },
+  request_lastname: String,
+  request_email: String,
+  request_phone: String,
+  siret: String,
+  codepostal: String,
+  raissociale: String,
+  ville: String,
+  adresse: String,
+  description: String,
+  numCommand: {
+    type: String,
+    required: true,
   },
-  { timestamps: true }
-);
+code: String, 
+marque: String, 
+  TVA: {
+    type: Number,
+  },
+  lead: { type: mongoose.Schema.Types.ObjectId, ref: "Chat" },
+  admin: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Admin",
+    required: false,
+  },
+  totalHT: {
+    type: Number,
+  },
+  
+  totalTTC: {
+    type: Number,
+  },
+  totalTVA: {
+    type: Number,
+  },
+  quantite: {
+    type: Number,
+  },
 
-module.exports = mongoose.model("Command", commandSchema);
+  commercial: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Commercial", // Referring to the Commercial model
+    required: false, // If this is optional, you can make it not required
+  },
+});
+
+
+module.exports = mongoose.model("Commande", CommandeSchema);

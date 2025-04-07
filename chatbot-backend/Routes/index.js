@@ -8,6 +8,8 @@ const AffectationLeadController = require('../Controllers/AffectationLeadControl
 const AdminController = require('../Controllers/AdminController');
 const ManagerController = require('../Controllers/ManagerController');
 const ProgramController = require('../Controllers/ProgramControlle');
+const ProduitController = require('../Controllers/ProduitController');
+const PanierController = require('../Controllers/PanierController');
 const router = Router();
 
 router.get("/", AppController.test);
@@ -93,5 +95,24 @@ router.delete('/event/:id', ProgramController.deleteEvent);
 // Command routes
 router.post('/command', ProgramController.createCommand);
 router.get('/command/:id', ProgramController.getAllCommands);
+router.get('/commands/:id', ProgramController.getCommandById);
+router.put('/command/validate/:id', ProgramController.validateCommand);
+router.delete('/command/:id', ProgramController.deleteCommandById);
+router.put('/command/:id', ProgramController.updateCommandById);
+
+// Produit routes
+router.post('/produit', ProduitController.createProduit);
+router.get('/produits/:id', ProduitController.getAllProduits);
+router.get('/produit/:id', ProduitController.getProduitById);
+router.put('/produit/:id', ProduitController.updateProduitById);
+router.delete('/produit/:id', ProduitController.deleteProduitById);
+
+
+// Panier routes
+router.post('/panier', PanierController.createPanier);
+router.delete('/panier/:panierId', PanierController.deletePanierById);
+router.get('/panier', PanierController.getAllPanier);
+router.put('/panier/:id', PanierController.updatePanierItem);
+
 
 module.exports = router;

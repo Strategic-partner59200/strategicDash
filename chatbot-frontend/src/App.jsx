@@ -23,6 +23,7 @@ import CreatePrograms from "./pages/CreatePrograms";
 import Publicités from "./pages/Publicités";
 import CreatePub from "./pages/CreatePub";
 import CreateCommand from "./pages/CreateCommand";
+import AjouterProduit from "./pages/AjouterProduit";
 
 
 axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
@@ -40,6 +41,8 @@ function App() {
             <Route index element={<Home />} />
             {/* Route for Leads at `/leads` */}
             <Route path="leads" element={<Leads />} />
+            <Route path="leads/:id/ajouter-produit" element={<AjouterProduit />} />
+            <Route path="leads/:id/ajouter-produit/:produitId" element={<AjouterProduit />} />
             <Route path="/programmes" element={<Programmes />} />
             <Route path="/entreprise" element={<Entreprise />} />
             <Route path="/bannières" element={<Banner />} />
@@ -58,7 +61,8 @@ function App() {
             <Route path="/create-publicité/:id" element={<CreatePub />} />
             <Route path="/settings" element={<Setting />} />
             <Route path="/command/:leadId" element={<Commands />} />
-            <Route path="/create-command/:id" element={<CreateCommand />} />
+            <Route path="/leads/:id/create-command" element={<CreateCommand />} />
+            <Route path="/leads/:id/create-command/:commandId" element={<CreateCommand />} />
             <Route path="/lead/:id" element={<LeadDetailsPage />}>
               <Route path="" element={<LeadDetailsPage />} />{" "}
               {/* Default Tab */}
