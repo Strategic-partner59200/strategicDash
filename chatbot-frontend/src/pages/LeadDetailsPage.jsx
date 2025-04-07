@@ -752,9 +752,39 @@ const LeadDetailsPage = () => {
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <Form.Item
-                label="Nom et Prénom"
+                label="Prénom"
                 name="prénom"
-                rules={[{ required: true, message: "Prénom is required" }]}
+                rules={[{ required: true, message: "Prénom est requis" }]}
+              >
+                <Input className="w-full p-2 border rounded-lg" />
+              </Form.Item>
+
+              <Form.Item
+                label="Nom"
+                name="nom"
+                rules={[{ required: true, message: "Nom est requis" }]}
+              >
+                <Input className="w-full p-2 border rounded-lg" />
+              </Form.Item>
+              <Form.Item
+                label="Adresse"
+                name="address"
+                rules={[{ required: true, message: "L'address est requis." }]}
+              >
+                <Input className="w-full p-2 border rounded-lg" />
+              </Form.Item>
+
+              <Form.Item
+                label="Ville"
+                name="ville"
+                rules={[{ required: true, message: "Ville est requis." }]}
+              >
+                <Input className="w-full p-2 border rounded-lg" />
+              </Form.Item>
+              <Form.Item
+                label="Codepostal"
+                name="codepostal"
+                rules={[{ required: true, message: "Codepostal est requis." }]}
               >
                 <Input className="w-full p-2 border rounded-lg" />
               </Form.Item>
@@ -762,8 +792,8 @@ const LeadDetailsPage = () => {
               <Form.Item
                 label="Email"
                 name="email"
-                rules={[{ required: true, message: "Email is required" }, {
-                  type: "email", message: "Please enter a valid email"
+                rules={[{ required: true, message: "Email est requis." }, {
+                  type: "email", message: "Veuillez entrer une adresse e-mail valide."
                 }]}
               >
                 <Input className="w-full p-2 border rounded-lg" />
@@ -780,7 +810,6 @@ const LeadDetailsPage = () => {
               <Form.Item
                 label="Status"
                 name="status"
-                rules={[{ required: true, message: "Status is required" }]}
               >
                 <Input className="w-full p-2 border rounded-lg" />
               </Form.Item>
@@ -788,7 +817,6 @@ const LeadDetailsPage = () => {
               <Form.Item
                 label="Contacter"
                 name="besoin"
-                rules={[{ required: true, message: "Contacter is required" }]}
               >
                 <Input className="w-full p-2 border rounded-lg" />
               </Form.Item>
@@ -796,7 +824,6 @@ const LeadDetailsPage = () => {
               <Form.Item
                 label="Besoin"
                 name="demande"
-                rules={[{ required: true, message: "Besoin is required" }]}
               >
                 <Input className="w-full p-2 border rounded-lg" />
               </Form.Item>
