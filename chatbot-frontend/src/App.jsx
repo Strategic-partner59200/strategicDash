@@ -24,6 +24,7 @@ import Publicités from "./pages/Publicités";
 import CreatePub from "./pages/CreatePub";
 import CreateCommand from "./pages/CreateCommand";
 import AjouterProduit from "./pages/AjouterProduit";
+import ImportLeads from "./pages/ImportLeads";
 
 
 axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
@@ -63,10 +64,12 @@ function App() {
             <Route path="/command/:leadId" element={<Commands />} />
             <Route path="/leads/:id/create-command" element={<CreateCommand />} />
             <Route path="/leads/:id/create-command/:commandId" element={<CreateCommand />} />
+            <Route path="/import-leads" element={<ImportLeads />} />
             <Route path="/lead/:id" element={<LeadDetailsPage />}>
               <Route path="" element={<LeadDetailsPage />} />{" "}
               {/* Default Tab */}
               <Route path="commentaires" element={<CommentairePage />} />
+              
             </Route>
           </Route>
          

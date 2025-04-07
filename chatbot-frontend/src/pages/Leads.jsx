@@ -173,8 +173,8 @@ const Leads = () => {
       dataIndex: "request_fullname",
       render: (text, record) => (
         <div className="cursor-pointer" onClick={() => handleLeadClick(record)}>
-          <div>{`${record.request_lastname || ""} ${
-            record.request_name || ""
+          <div>{`${record.prénom || ""} ${
+            record.nom || ""
           }`}</div>
         </div>
       ),
@@ -182,14 +182,14 @@ const Leads = () => {
 
     {
       title: "Email",
-      key: "request_email" || "request_add_email",
-      dataIndex: "request_email" || "request_add_email",
+      key: "email" || "email1",
+      dataIndex: "email" || "email1",
       render: (text, record) => (
         <div className="cursor-pointer" onClick={() => handleLeadClick(record)}>
           <div className="text-gray-500 text-xs">
             {record.verification_email === "Non"
-              ? record.request_add_email
-              : record.request_email}
+              ? record.email1
+              : record.email}
           </div>
         </div>
       ),
@@ -219,21 +219,21 @@ const Leads = () => {
     },
     {
       title: "TELEPHONE",
-      dataIndex: "request_phone",
-      key: "request_phone",
+      dataIndex: "phone",
+      key: "phone",
       render: (text) => text || "",
     },
     {
       title: "Status",
-      dataIndex: "request_who",
-      key: "request_who",
-      render: (text, record) => text || record.request_who || "",
+      dataIndex: "status",
+      key: "status",
+      render: (text, record) => text || record.status || "",
     },
     {
       title: "Besoin",
-      dataIndex: "information_request",
-      key: "information_request",
-      render: (text, record) => text || record.information_request || "",
+      dataIndex: "demande",
+      key: "demande",
+      render: (text, record) => text || record.demande || "",
     },
     {
       title: "STATUS LEAD",
@@ -252,10 +252,10 @@ const Leads = () => {
     },
     {
       title: "Contacter",
-      dataIndex: "initial",
-      key: "initial",
+      dataIndex: "besoin",
+      key: "besoin",
       render: (text, record) => (
-        <div className="text-gray-500 text-xs">{record.initial || ""}</div>
+        <div className="text-gray-500 text-xs">{record.besoin || ""}</div>
       ),
     },
 
@@ -336,7 +336,7 @@ const Leads = () => {
     <section>
       <div className="mb-12 md:p-4 p-1">
       <div className="md:flex flex-row justify-between  items-center p-4 bg-white rounded-t-md shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-700">Leads Filter</h2>
+        <h2 className="text-lg font-semibold text-gray-700">Leads Chatbot</h2>
         <div className="flex flex-row md:flex-row gap-1 sm:gap-4">
           <Button
             type={activeFilter === "nouveau" ? "primary" : "default"}

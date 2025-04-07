@@ -14,6 +14,7 @@ import {
   faFileContract,
   faChartBar,
   faCog,
+  faFileImport
 } from "@fortawesome/free-solid-svg-icons";
 import { UserOutlined } from "@ant-design/icons";
 import { Layout, Menu, Divider, Avatar } from "antd";
@@ -74,6 +75,17 @@ const SideBar = () => {
         />
       ),
       label: "Contacts",
+      role: ["Admin", "Manager"],
+    },
+    {
+      key: "/import-leads",
+      icon: (
+        <FontAwesomeIcon
+          icon={faFileImport}
+          style={{ fontSize: "24px",marginRight: "10px" }}
+        />
+      ),
+      label: "Importer Leads",
       role: ["Admin", "Manager"],
     },
     {
