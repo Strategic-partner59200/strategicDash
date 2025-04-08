@@ -1005,31 +1005,31 @@ const LeadDetailsPage = () => {
             </h2>
             <div className="flex flex-col space-y-6 justify-center">
               {/* Form Fields */}
-              <div className="flex gap-4">
-                {/* <div className="flex flex-col gap-2 w-full">
+              <div className="flex gap-4">  
+                <div className="flex flex-col gap-2 w-full">
+                  <label className="text-lg font-medium text-gray-700">
+                    Prénom
+                  </label>
+                  <input
+                    type="text"
+                    name="prénom"
+                    value={formData.prénom || ""}
+                    onChange={handleInputChange}
+                    className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="Enter Lead prenom"
+                  />
+                </div>
+                <div className="flex flex-col gap-2 w-full">
                   <label className="text-lg font-medium text-gray-700">
                     Nom
                   </label>
                   <input
                     type="text"
-                    name="request_name"
-                    value={formData.request_name || ""}
+                    name="nom"
+                    value={formData.nom || ""}
                     onChange={handleInputChange}
                     className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
-                    placeholder="Enter Lead's Name"
-                  />
-                </div> */}
-                <div className="flex flex-col gap-2 w-full">
-                  <label className="text-lg font-medium text-gray-700">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    name="request_email"
-                    value={formData.request_email || ""}
-                    onChange={handleInputChange}
-                    className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
-                    placeholder="Enter Lead's Email"
+                    placeholder="Enter Lead prenom"
                   />
                 </div>
               </div>
@@ -1041,8 +1041,8 @@ const LeadDetailsPage = () => {
                   </label>
                   <input
                     type="tel"
-                    name="request_phone"
-                    value={formData.request_phone || ""}
+                    name="phone"
+                    value={formData.phone || ""}
                     onChange={handleInputChange}
                     className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
                     placeholder="Enter Lead's Phone"
@@ -1050,17 +1050,18 @@ const LeadDetailsPage = () => {
                 </div>
                 <div className="flex flex-col gap-2 w-full">
                   <label className="text-lg font-medium text-gray-700">
-                    Prénom et Nom
+                    Email
                   </label>
                   <input
-                    type="text"
-                    name="request_lastname"
-                    value={formData.request_lastname || ""}
+                    type="email"
+                    name="email"
+                    value={formData.email || ""}
                     onChange={handleInputChange}
                     className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
-                    placeholder="Enter Lead prenom"
+                    placeholder="Enter Lead's Email"
                   />
                 </div>
+                
               </div>
 
               <div className="flex gap-4">
@@ -1070,8 +1071,8 @@ const LeadDetailsPage = () => {
                   </label>
                   <input
                     type="text"
-                    name="initial"
-                    value={formData.initial || "-"}
+                    name="besoin"
+                    value={formData.besoin || "-"}
                     onChange={handleInputChange}
                     className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
                     placeholder="Enter raison de contact"
@@ -1083,8 +1084,8 @@ const LeadDetailsPage = () => {
                   </label>
                   <input
                     type="text"
-                    name="information_request"
-                    value={formData.information_request || ""}
+                    name="demande"
+                    value={formData.demande || ""}
                     onChange={handleInputChange}
                     className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
                     placeholder="Enter Lead's besoin"
@@ -1098,15 +1099,55 @@ const LeadDetailsPage = () => {
                   </label>
                   <input
                     type="text"
-                    name="request_who"
-                    value={formData.request_who || ""}
+                    name="status"
+                    value={formData.status || ""}
                     onChange={handleInputChange}
                     className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
                     placeholder="Enter Campus Name"
                   />
                 </div>
+                <div className="flex flex-col gap-2 w-full">
+                  <label className="text-lg font-medium text-gray-700">
+                    Ville
+                  </label>
+                  <input
+                    type="text"
+                    name="ville"
+                    value={formData.ville || ""}
+                    onChange={handleInputChange}
+                    className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="Enter Lead prenom"
+                  />
+                </div>
               </div>
-
+              <div className="flex gap-4">
+                <div className="flex flex-col gap-2 w-full">
+                  <label className="text-lg font-medium text-gray-700">
+                    Code Postal
+                  </label>
+                  <input
+                    type="text"
+                    name="codepostal"
+                    value={formData.codepostal || ""}
+                    onChange={handleInputChange}
+                    className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="Enter Campus Name"
+                  />
+                </div>
+                <div className="flex flex-col gap-2 w-full">
+                  <label className="text-lg font-medium text-gray-700">
+                    Address
+                  </label>
+                  <input
+                    type="text"
+                    name="address"
+                    value={formData.address || ""}
+                    onChange={handleInputChange}
+                    className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="Enter Lead prenom"
+                  />
+                </div>
+              </div>
               {/* Action Buttons */}
               <div className="flex justify-between space-x-4 mt-8">
                 <button
