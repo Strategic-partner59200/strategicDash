@@ -71,11 +71,11 @@ const Banner = () => {
           icon={<PlusOutlined />}
           onClick={handleCreateNewBanner}
         >
-          Create nouveau Banner
+          Create nouveau ads
         </Button>
       </div>
 
-      <h1 className="text-2xl font-bold mb-4">Bannières</h1>
+      <h1 className="text-2xl font-bold mb-4">ADS</h1>
       <div className="p-2">
         <Row gutter={[16, 16]}>
           {banners.map((banner) => (

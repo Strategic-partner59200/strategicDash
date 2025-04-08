@@ -144,8 +144,8 @@ const SideBar = () => {
       role: "Admin",
       children: [
         {
-          key: "/bannières",
-          label: "Bannières",
+          key: "/ads",
+          label: "ADS",
 
           icon: (
             <FontAwesomeIcon

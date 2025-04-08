@@ -46,7 +46,7 @@ function App() {
             <Route path="leads/:id/ajouter-produit/:produitId" element={<AjouterProduit />} />
             <Route path="/programmes" element={<Programmes />} />
             <Route path="/entreprise" element={<Entreprise />} />
-            <Route path="/bannières" element={<Banner />} />
+            <Route path="/ads" element={<Banner />} />
             <Route path="/create-bannières" element={<CreateBannières />} />
             <Route path="/create-bannières/:id" element={<CreateBannières />} />
             <Route path="/create-programmes" element={<CreatePrograms />} />
