@@ -301,7 +301,7 @@ useEffect(() => {
       dataIndex: "request_fullname",
       render: (text, record) => (
         <div className="cursor-pointer" onClick={() => handleLeadClick(record)}>
-          <div>{`${record.request_lastname || "-"} ${record.request_name || "-"}`}</div>
+          <div>{`${record.prénom || "-"} ${record.nom || "-"}`}</div>
         </div>
       ),
     },
@@ -317,12 +317,30 @@ useEffect(() => {
         >
          <div className="text-gray-500 text-xs">
             {record.verification_email === "Non"
-              ? record.request_add_email || "-"
-              : record.request_email || "-"}
+              ? record.email1 || "-"
+              : record.email || "-"}
           </div>
          
         </div>
       ),
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+      render: (text) => text || "",
+    },
+    {
+      title: "code postal",
+      dataIndex: "codepostal",
+      key: "codepostal",
+      render: (text) => text || "",
+    },
+    {
+      title: "Ville",
+      dataIndex: "ville",
+      key: "ville",
+      render: (text) => text || "",
     },
     {
       title: "DATE",
@@ -349,22 +367,22 @@ useEffect(() => {
     },
     {
       title: "TELEPHONE",
-      dataIndex: "request_phone",
-      key: "request_phone",
+      dataIndex: "phone",
+      key: "phone",
       render: (text) => text || "-",
     },
     {
       title: "Status",
       dataIndex: "request_who",
       key: "request_who",
-      render: (text, record) => text || record.request_who || "-",
+      render: (text, record) => text || record.status || "-",
     },
     {
       title: "Besoin",
       dataIndex: "information_request",
       key: "information_request",
       render: (text, record) =>
-        text || record.information_request || "-",
+        text || record.demande || "-",
     },
     {
       title: "Contacter",
@@ -372,7 +390,7 @@ useEffect(() => {
       key: "initial",
       render: (text, record) => (
         <div className="text-gray-500 text-xs">
-          {record.initial ||
+          {record.besoin ||
             "-"},
         </div>
       ),
