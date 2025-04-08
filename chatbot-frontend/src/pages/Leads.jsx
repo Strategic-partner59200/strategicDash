@@ -28,7 +28,7 @@ const Leads = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-  const [activeFilter, setActiveFilter] = useState("all");
+  const [activeFilter, setActiveFilter] = useState("nouveau");
 
   const handlePageChange = (value) => {
     setCurrentPage(value);
@@ -56,18 +56,57 @@ const Leads = () => {
     getUserData();
   }, []);
 
+  // const handleStatusLeadChange = async (statusLead, record) => {
+  //   try {
+  //     const validStatuses = ["nouveau", "prospect", "client"];
+  //     if (statusLead === "all") {
+  //       statusLead = "nouveau"; // Treat 'all' as 'nouveau'
+  //     }
+  //     if (!validStatuses.includes(statusLead)) {
+  //       return res.status(400).json({ error: "Invalid status value" });
+  //     }
+  //     const response = await axios.put(`/updateStatusLead/${record._id}`, {
+  //       statusLead, // Ensure you're passing the statusLead in the body
+  //     });
+  //     console.log("Updated status:", response.data);
+  //   } catch (error) {
+  //     console.error("Error updating status:", error);
+  //   }
+  // };
+  // const handleDelete = async (id) => {
+  //   try {
+  //     const response = await axios.delete(`/lead/${id}`);
+
+  //     console.log("Chat deleted successfully:", response.data);
+  //     setChatData(chatData.filter((lead) => lead._id !== id));
+  //     message.success("Chat deleted successfully");
+  //   } catch (error) {
+  //     console.error("Error deleting coach:", error);
+  //     message.error("Failed to delete coach");
+  //   }
+  // };
   const handleStatusLeadChange = async (statusLead, record) => {
     try {
       const validStatuses = ["nouveau", "prospect", "client"];
       if (statusLead === "all") {
-        statusLead = "nouveau"; // Treat 'all' as 'nouveau'
+        statusLead = "nouveau";
       }
       if (!validStatuses.includes(statusLead)) {
         return res.status(400).json({ error: "Invalid status value" });
       }
+      
       const response = await axios.put(`/updateStatusLead/${record._id}`, {
-        statusLead, // Ensure you're passing the statusLead in the body
+        statusLead,
       });
+      
+      // Update both states
+      setChatData(prev => prev.map(item => 
+        item._id === record._id ? {...item, type: statusLead} : item
+      ));
+      setFilteredData(prev => prev.map(item => 
+        item._id === record._id ? {...item, type: statusLead} : item
+      ));
+      
       console.log("Updated status:", response.data);
     } catch (error) {
       console.error("Error updating status:", error);
@@ -76,9 +115,12 @@ const Leads = () => {
   const handleDelete = async (id) => {
     try {
       const response = await axios.delete(`/lead/${id}`);
-
       console.log("Chat deleted successfully:", response.data);
-      setChatData(chatData.filter((lead) => lead._id !== id));
+      
+      // Update both states
+      setChatData(prev => prev.filter((lead) => lead._id !== id));
+      setFilteredData(prev => prev.filter((lead) => lead._id !== id));
+      
       message.success("Chat deleted successfully");
     } catch (error) {
       console.error("Error deleting coach:", error);
@@ -86,27 +128,7 @@ const Leads = () => {
     }
   };
 
-  // const handleColumnSearch = async (e, columnKey) => {
-  //   const value = e.target.value.toLowerCase();
-  //   setSearchQuery(value);
-
-  //   try {
-  //     if (value.trim() === '') {
-  //       setFilteredData(chatData);
-  //       return;
-  //     }
-  //     const response = await axios.get("/search", {
-  //       params: {
-  //         query: value,
-  //         columnKey: columnKey,
-  //       },
-  //     });
-  //     setFilteredData(response.data);
-  //   } catch (error) {
-  //     console.error("Error in search:", error);
-  //     message.error("Error while searching.");
-  //   }
-  // };
+ 
 
   const handleColumnSearch = async (e, columnKey) => {
     const value = e.target.value.toLowerCase().trim();
@@ -253,16 +275,31 @@ const Leads = () => {
       key: "demande",
       render: (text, record) => text || record.demande || "",
     },
+    // {
+    //   title: "STATUS LEAD",
+    //   key: "statusLead",
+    //   render: (text, record) => (
+    //     <Select
+    //       defaultValue={record.type}
+    //       style={{ width: 80 }}
+    //       onChange={(value) => handleStatusLeadChange(value, record)}
+    //     >
+    //       <Option value="all">Nouveau</Option>
+    //       <Option value="prospect">Prospect</Option>
+    //       <Option value="client">Client</Option>
+    //     </Select>
+    //   ),
+    // },
     {
       title: "STATUS LEAD",
       key: "statusLead",
       render: (text, record) => (
         <Select
-          defaultValue={record.type}
+          value={record.type || "nouveau"} // Use record.type as value
           style={{ width: 80 }}
           onChange={(value) => handleStatusLeadChange(value, record)}
         >
-          <Option value="all">Nouveau</Option>
+          <Option value="nouveau">Nouveau</Option>
           <Option value="prospect">Prospect</Option>
           <Option value="client">Client</Option>
         </Select>
@@ -339,16 +376,35 @@ const Leads = () => {
     },
     selectedRowKeys: selectedLeads,
   };
+  // const handleFilter = (type) => {
+  //   setActiveFilter(type); // Update the active filter state
+  //   if (type === "client" || type === "prospect") {
+  //     const filtered = chatData.filter((item) => item.type === type);
+  //     console.log("Filtered data22:", filtered);
+  //     setFilteredData(filtered); // Show filtered data
+  //   } else {
+  //     setFilteredData(chatData);
+  //   }
+  // };
   const handleFilter = (type) => {
-    setActiveFilter(type); // Update the active filter state
-    if (type === "client" || type === "prospect") {
-      const filtered = chatData.filter((item) => item.type === type);
-      console.log("Filtered data22:", filtered);
-      setFilteredData(filtered); // Show filtered data
-    } else {
+    setActiveFilter(type);
+    
+    if (type === "all") {
       setFilteredData(chatData);
+    } else {
+      const filtered = chatData.filter((item) => item.type === type);
+      setFilteredData(filtered);
     }
   };
+  useEffect(() => {
+    // When chatData changes, reapply the current filter
+    if (activeFilter === "all") {
+      setFilteredData(chatData);
+    } else {
+      const filtered = chatData.filter((item) => item.type === activeFilter);
+      setFilteredData(filtered);
+    }
+  }, [chatData]);
 
   return (
     <section>
