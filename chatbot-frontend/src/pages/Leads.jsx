@@ -832,7 +832,7 @@ const Leads = () => {
       render: (text, record) => (
         <Space size="middle">
           <Popconfirm
-            title="Are you sure you want to delete this coach?"
+            title="Êtes-vous sûr de vouloir supprimer ce prospect ?"
             onConfirm={() => handleDelete(record._id)}
             okText="Yes"
             cancelText="No"
