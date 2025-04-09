@@ -49,60 +49,64 @@ const Historiques = () => {
           },
         }
       );
-
+  
       if (!response.ok) {
         throw new Error(
           `Failed to fetch details for conversation ID ${conversationId}`
         );
       }
-
+  
       const data = await response.json();
-
-      // Get `system__time_utc` and validate it
-      const systemTimeUtc =
-        data.conversation_initiation_client_data?.dynamic_variables
-          ?.system__time_utc;
+      console.log("Full conversation data:", data); // Debug log
+  
+      // Get system time and recipient number
+      const dynamicVars = data.conversation_initiation_client_data?.dynamic_variables || {};
+      const systemTimeUtc = dynamicVars.system__time_utc;
+      const recipientNumber = dynamicVars.recipient_number || "N/A";
+      
+  
       if (!systemTimeUtc || isNaN(new Date(systemTimeUtc).getTime())) {
         console.error(
           `Invalid system__time_utc for conversation ${conversationId}`
         );
         return;
       }
-
-      // Get today's date for comparison
-      const today = new Date().toISOString().split("T")[0]; // Format 'YYYY-MM-DD'
-
-      // Compare `system__time_utc` to today's date
+  
+      // Date comparison logic
+      const today = new Date().toISOString().split("T")[0];
       const createdAt = new Date(systemTimeUtc).toISOString().split("T")[0];
-
+  
       if (createdAt !== today) {
         console.log(
           `Conversation ${conversationId} is not from today, skipping download.`
         );
-        return; // Skip this conversation if it's not from today
+        return;
       }
-
-      const transcript = data.transcript;
-
-      // Collect user messages only
+  
+      const transcript = data.transcript || [];
       const userMessages = transcript
         .filter((entry) => entry.role === "user")
         .map((entry) => entry.message);
-
-      if (userMessages.length === 0) return;
-
-      // Build row data
-      const rowData = { conversation_id: conversationId };
+  
+      // Build row data with recipient number
+      const rowData = { 
+        conversation_id: conversationId, 
+        Téléphone_client: recipientNumber  // This must match the header
+      };
+  
+      // Add user messages
       userMessages.forEach((message, index) => {
         rowData[`response_${index + 1}`] = message;
       });
-
-      // Fill missing responses
-      for (let i = userMessages.length + 1; i <= headers.length - 1; i++) {
+  
+      // Fill empty responses
+      for (let i = userMessages.length + 1; i <= headers.length - 2; i++) {
         rowData[`response_${i}`] = "";
       }
-
+  
       csvData.push(rowData);
+      console.log("Added row data:", rowData); // Debug log
+  
     } catch (err) {
       console.error(
         `Error fetching details for conversation ${conversationId}:`,
@@ -110,7 +114,6 @@ const Historiques = () => {
       );
     }
   };
-
   const fetchAndGenerateFile = async () => {
     if (!conversations.length) {
       setError("No conversations found.");
@@ -121,6 +124,7 @@ const Historiques = () => {
     const csvData = [];
     const headers = [
       "conversation_id",
+      "Téléphone_client",
       "response_1",
       "response_2",
       "response_3",
@@ -156,7 +160,7 @@ const Historiques = () => {
 
     if (!hasTodayConversations) {
       alert("No conversations found for today.");
-      setIsDownloading(false);
+      setIsDownload(false);
       return;
     }
 
@@ -169,6 +173,7 @@ const Historiques = () => {
 
     ws["!cols"] = [
       { wch: 40 },
+      { wch: 20 },
       { wch: 60 },
       { wch: 60 },
       { wch: 60 },
@@ -209,17 +214,84 @@ const Historiques = () => {
     setIsDownload(false);
   };
 
-  // Fetch Conversation Details and Generate CSV or XLSX
+
+
+
+
+  const fetchConversationsDetails = async (
+    conversationId,
+    csvData,
+    headers
+  ) => {
+    try {
+      const response = await fetch(
+        `https://api.elevenlabs.io/v1/convai/conversations/${conversationId}`,
+        {
+          method: "GET",
+          headers: {
+            "xi-api-key": import.meta.env.VITE_XI_API_KEY,
+          },
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch details for conversation ID ${conversationId}`
+        );
+      }
+  
+      const data = await response.json();
+      const transcript = data.transcript || [];
+  
+      // Get recipient number from dynamic variables
+      const recipientNumber = data.conversation_initiation_client_data?.dynamic_variables?.recipient_number || "N/A";
+      console.log("Recipient Number:", recipientNumber); // Debug log
+  
+      // Prepare data row for this conversation with recipient number
+      const rowData = { 
+        conversation_id: conversationId,
+        Téléphone_client: recipientNumber // Add recipient number to the row
+      };
+  
+      // Organize the data for CSV - filter out only user responses
+      const userMessages = transcript
+        .filter((entry) => entry.role === "user")
+        .map((entry) => entry.message);
+  
+      // Add user messages (if any exist)
+      userMessages.forEach((message, index) => {
+        const columnName = `response_${index + 1}`;
+        rowData[columnName] = message;
+      });
+  
+      // Fill in all remaining response columns with empty values
+      const responseColumns = headers.filter(h => h.startsWith('response_')).length;
+      for (let i = userMessages.length; i < responseColumns; i++) {
+        rowData[`response_${i + 1}`] = "";
+      }
+  
+      csvData.push(rowData);
+      console.log("Added conversation data:", rowData); // Debug log
+  
+    } catch (err) {
+      console.error(
+        `Error fetching details for conversation ${conversationId}:`,
+        err
+      );
+    }
+  };
+  
   const fetchAndGenerateFiles = async () => {
     if (!conversations.length) {
       setError("No conversations found.");
       return;
     }
     setIsDownloading(true);
-
+  
     const csvData = [];
     const headers = [
       "conversation_id",
+      "Téléphone_client",
       "response_1",
       "response_2",
       "response_3",
@@ -240,9 +312,8 @@ const Historiques = () => {
       "response_18",
       "response_19",
       "response_20",
-    ]; // Modify as needed for more responses
-
-    // Fetch details for each conversation and structure the data
+    ];
+  
     for (const conversation of conversations) {
       await fetchConversationsDetails(
         conversation.conversation_id,
@@ -250,19 +321,20 @@ const Historiques = () => {
         headers
       );
     }
-
+  
     // Create CSV from data using PapaParse
     const csv = Papa.unparse({
       fields: headers,
       data: csvData,
     });
-
+  
     // Create an Excel file using XLSX.js
     const ws = XLSX.utils.json_to_sheet(csvData, { header: headers });
-
-    // Set custom column widths for the Excel file
+  
+    // Set custom column widths
     ws["!cols"] = [
       { wch: 40 },
+      { wch: 20 },
       { wch: 60 },
       { wch: 60 },
       { wch: 60 },
@@ -284,13 +356,13 @@ const Historiques = () => {
       { wch: 60 },
       { wch: 60 },
     ];
+    
     ws["!rows"] = csvData.map(() => ({ hpt: 30 }));
-
+  
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Conversations");
-
-    // Prompt user to download the file (either CSV or Excel)
-    const fileType = "xlsx"; // You can change this to 'csv' if you want to download CSV
+  
+    const fileType = "xlsx";
     if (fileType === "xlsx") {
       XLSX.writeFile(wb, "conversation_data.xlsx");
     } else {
@@ -300,71 +372,11 @@ const Historiques = () => {
       link.download = "conversation_data.csv";
       link.click();
     }
-
+  
     setIsDownloading(false);
   };
 
-  const fetchConversationsDetails = async (
-    conversationId,
-    csvData,
-    headers
-  ) => {
-    try {
-      const response = await fetch(
-        `https://api.elevenlabs.io/v1/convai/conversations/${conversationId}`,
-        {
-          method: "GET",
-          headers: {
-            "xi-api-key": import.meta.env.VITE_XI_API_KEY, // Replace with your xi-api-key
-          },
-        }
-      );
 
-      if (!response.ok) {
-        throw new Error(
-          `Failed to fetch details for conversation ID ${conversationId}`
-        );
-      }
-
-      const data = await response.json();
-      const transcript = data.transcript;
-
-      // Organize the data for CSV - filter out only user responses
-      const userMessages = [];
-
-      transcript.forEach((entry) => {
-        if (entry.role === "user") {
-          // Only collect messages from 'user' role
-          userMessages.push(entry.message); // Add user message to the array
-        }
-      });
-
-      // If no user messages are found, skip this conversation
-      if (userMessages.length === 0) {
-        return; // Skip adding this conversation to the CSV
-      }
-
-      // Prepare data row for this conversation
-      const rowData = { conversation_id: conversationId };
-      userMessages.forEach((message, index) => {
-        const columnName = `response_${index + 1}`;
-        rowData[columnName] = message; // Assign the message to the respective column
-      });
-
-      // Fill in the missing columns with empty values if responses are fewer than the header
-      for (let i = userMessages.length + 1; i <= headers.length - 1; i++) {
-        const columnName = `response_${i}`;
-        rowData[columnName] = ""; // Fill with empty string for missing responses
-      }
-
-      csvData.push(rowData); // Push the conversation data to the CSV
-    } catch (err) {
-      console.error(
-        `Error fetching details for conversation ${conversationId}:`,
-        err
-      );
-    }
-  };
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -400,7 +412,6 @@ const Historiques = () => {
           >
             {isDownload ? "Chargement..." : "Télécharger CSV / Jour"}
           </button>
-
           <button
             onClick={fetchAndGenerateFiles}
             disabled={isDownloading || loading || !conversations.length}
