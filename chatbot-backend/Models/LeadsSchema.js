@@ -53,7 +53,7 @@ const chatSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    type: { type: String, default: "nouveau" },
+    type: { type: String, default: "prospect" },
     verification_phone: { type: String, default: "" },
     verification_email: { type: String, default: "" },
     commentaires: [commentSchema],
