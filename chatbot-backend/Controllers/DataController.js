@@ -1,4 +1,5 @@
 const Chat = require("../Models/LeadsSchema");
+const mongoose = require("mongoose");
 
 class DataController {
   
@@ -366,61 +367,147 @@ static async searchData(req, res) {
     }
   };
 
+  // static async importLeads(req, res) {
+  //   const leads = req.body;
+
+  //   try {
+  //       console.log('Importing Leads', leads);
+
+  //       // Get an array of all phone numbers from the incoming leads
+  //       const leadPhones = leads.map(lead => lead.phone);
+
+  //       // 1. Check if any of the phone numbers already exist in the database
+  //       const existingLeads = await Chat.find({ phone: { $in: leadPhones } });
+
+  //       // Extract duplicate phone numbers from the database
+  //       const duplicatePhonesInDb = existingLeads.map(lead => lead.phone);
+  //       console.log(`Duplicate phones found in database: ${duplicatePhonesInDb.join(', ')}`);
+
+  //       // 2. Check for duplicate phone numbers within the imported data itself
+  //       const phoneSet = new Set();
+  //       const duplicateInImport = [];
+  //       leads.forEach(lead => {
+  //           if (phoneSet.has(lead.phone)) {
+  //               duplicateInImport.push(lead.phone);
+  //           } else {
+  //               phoneSet.add(lead.phone);
+  //           }
+  //       });
+
+  //       console.log(`Duplicate phones found in imported data: ${duplicateInImport.join(', ')}`);
+
+  //       // 3. Combine duplicates from both the database and imported data
+  //       const allDuplicates = [...duplicatePhonesInDb, ...duplicateInImport];
+  //       const uniqueLeads = leads.filter(lead => !allDuplicates.includes(lead.phone));
+
+  //       if (uniqueLeads.length === 0) {
+  //           return res.status(400).json({
+  //               message: 'All leads have duplicate phone numbers and were not imported.',
+  //               duplicatePhones: allDuplicates
+  //           });
+  //       }
+
+  //       const importedLeads = await Promise.all(
+  //           uniqueLeads.map(async (coach) => {
+  //               const newLead = new Chat(coach);
+  //               return await newLead.save();
+  //           })
+  //       );
+
+  //       console.log('Imported leads:', importedLeads);
+  //       res.status(200).json(importedLeads);
+
+  //   } catch (error) {
+  //       console.error('Error importing leads:', error.message);
+  //       res.status(500).json({ message: 'Error importing leads', error });
+  //   }
+  // }
   static async importLeads(req, res) {
     const leads = req.body;
 
+    if (!Array.isArray(leads) || leads.length === 0) {
+        return res.status(400).json({ message: 'No leads provided for import' });
+    }
+
     try {
-        console.log('Importing Leads', leads);
+        // Step 1: Validate all leads have required fields
+        const invalidLeads = leads.filter(lead => !lead.phone);
+        if (invalidLeads.length > 0) {
+            return res.status(400).json({
+                message: `${invalidLeads.length} leads are missing phone numbers`,
+                invalidLeads
+            });
+        }
 
-        // Get an array of all phone numbers from the incoming leads
-        const leadPhones = leads.map(lead => lead.phone);
-
-        // 1. Check if any of the phone numbers already exist in the database
-        const existingLeads = await Chat.find({ phone: { $in: leadPhones } });
-
-        // Extract duplicate phone numbers from the database
-        const duplicatePhonesInDb = existingLeads.map(lead => lead.phone);
-        console.log(`Duplicate phones found in database: ${duplicatePhonesInDb.join(', ')}`);
-
-        // 2. Check for duplicate phone numbers within the imported data itself
+        // Step 2: Check for duplicates in the import batch
         const phoneSet = new Set();
-        const duplicateInImport = [];
+        const duplicatePhonesInImport = [];
+        
         leads.forEach(lead => {
             if (phoneSet.has(lead.phone)) {
-                duplicateInImport.push(lead.phone);
+                duplicatePhonesInImport.push(lead.phone);
             } else {
                 phoneSet.add(lead.phone);
             }
         });
 
-        console.log(`Duplicate phones found in imported data: ${duplicateInImport.join(', ')}`);
-
-        // 3. Combine duplicates from both the database and imported data
-        const allDuplicates = [...duplicatePhonesInDb, ...duplicateInImport];
-        const uniqueLeads = leads.filter(lead => !allDuplicates.includes(lead.phone));
-
-        if (uniqueLeads.length === 0) {
+        if (duplicatePhonesInImport.length > 0) {
             return res.status(400).json({
-                message: 'All leads have duplicate phone numbers and were not imported.',
-                duplicatePhones: allDuplicates
+                message: 'Duplicate phone numbers found in import file',
+                duplicatePhones: [...new Set(duplicatePhonesInImport)] // Unique duplicates
             });
         }
 
-        const importedLeads = await Promise.all(
-            uniqueLeads.map(async (coach) => {
-                const newLead = new Chat(coach);
-                return await newLead.save();
-            })
-        );
+        // Step 3: Check for existing phones in database
+        const existingPhones = await Chat.find({ 
+            phone: { $in: leads.map(l => l.phone) } 
+        }).select('phone -_id').lean();
 
-        console.log('Imported leads:', importedLeads);
-        res.status(200).json(importedLeads);
+        if (existingPhones.length > 0) {
+            const existingPhoneNumbers = existingPhones.map(l => l.phone);
+            return res.status(400).json({
+                message: 'Some phone numbers already exist in database',
+                duplicatePhones: existingPhoneNumbers
+            });
+        }
+
+        // Step 4: Import with transaction for atomicity
+        const session = await mongoose.startSession();
+        session.startTransaction();
+
+        try {
+            const importedLeads = await Chat.insertMany(leads, { session });
+            await session.commitTransaction();
+            
+            return res.status(200).json({
+                message: 'Leads imported successfully',
+                count: importedLeads.length,
+                leads: importedLeads
+            });
+        } catch (insertError) {
+            await session.abortTransaction();
+            throw insertError;
+        } finally {
+            session.endSession();
+        }
 
     } catch (error) {
         console.error('Error importing leads:', error.message);
-        res.status(500).json({ message: 'Error importing leads', error });
+        
+        if (error.code === 11000) { // MongoDB duplicate key error
+            const duplicateKey = error.keyValue?.phone || 'unknown';
+            return res.status(400).json({
+                message: `Duplicate phone number found: ${duplicateKey}`,
+                error: 'DUPLICATE_KEY'
+            });
+        }
+        
+        return res.status(500).json({ 
+            message: 'Error importing leads',
+            error: error.message 
+        });
     }
-  }
+}
 }
 
 module.exports = DataController;
