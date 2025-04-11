@@ -79,7 +79,7 @@ const CalendarEvents = () => {
       render: (text, record) => (
         <Space size="middle">
           <Popconfirm
-            title="Are you sure you want to delete this coach?"
+            title="Êtes-vous sûr de vouloir supprimer le lead ?"
             onConfirm={() => handleDelete(record._id)}
             okText="Yes"
             cancelText="No"

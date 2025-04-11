@@ -25,6 +25,7 @@ import CreatePub from "./pages/CreatePub";
 import CreateCommand from "./pages/CreateCommand";
 import AjouterProduit from "./pages/AjouterProduit";
 import ImportLeads from "./pages/ImportLeads";
+import MyCalendar from "./pages/Calendar";
 
 
 axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
@@ -48,6 +49,7 @@ function App() {
             <Route path="/entreprise" element={<Entreprise />} />
             <Route path="/ads" element={<Banner />} />
             <Route path="/create-bannières" element={<CreateBannières />} />
+            <Route path="/CalendarCommerciale" element={ <MyCalendar />} />
             <Route path="/create-bannières/:id" element={<CreateBannières />} />
             <Route path="/create-programmes" element={<CreatePrograms />} />
             <Route path="/create-programmes/:id" element={<CreatePrograms />} />

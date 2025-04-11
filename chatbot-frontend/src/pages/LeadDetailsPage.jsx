@@ -9,6 +9,7 @@ import {
   Calendar,
   Row,
   Col,
+  Select,
 } from "antd";
 import { jwtDecode } from "jwt-decode";
 import { DeleteOutlined } from "@ant-design/icons";
@@ -178,11 +179,13 @@ const LeadDetailsPage = () => {
 
     // Use userId as adminId (based on the decoded token)
     const adminId = decodedToken.userId; // Use userId here
+    const commercialId = decodedToken.commercialId; // Use commercialId here
 
     const eventData = {
       ...values, // This includes event_date, event_time, objective, and comment
       admin: adminId, // Add the userId as the admin field
       leadId: id, // Add the leadId to the event
+      commercial: commercialId
     };
 
     try {
@@ -907,9 +910,19 @@ const LeadDetailsPage = () => {
             <Input placeholder="HH:mm" />
           </Form.Item>
 
-          <Form.Item label="Objectif" name="objective" rules={[{ required: true }]}>
+          {/* <Form.Item label="Objectif" name="objective" rules={[{ required: true }]}>
             <Input />
-          </Form.Item>
+          </Form.Item> */}
+          <Form.Item label="Objectif" name="objective" rules={[{ required: true }]}>
+  <Select placeholder="Choisissez un objectif">
+    <Option value="Prendre RDV">Prendre RDV</Option>
+    <Option value="RDV 1 Audit">RDV 1 Audit</Option>
+    <Option value="RDV 2 Closing">RDV 2 Closing</Option>
+    <Option value="Presentation">Presentation</Option>
+    <Option value="Négocier Devis">Négocier Devis</Option>
+    <Option value="À Valider Contrat">À Valider Contrat</Option>
+  </Select>
+</Form.Item>
 
           <Form.Item label="Commentaire" name="comment">
             <Input.TextArea rows={4} />
