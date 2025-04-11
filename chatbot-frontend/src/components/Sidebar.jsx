@@ -120,17 +120,17 @@ const SideBar = () => {
       role: ["Admin", "Commercial"],
     },
   
-    {
-      key: "/command",
-      icon: (
-        <FontAwesomeIcon
-          icon={faFileContract}
-          style={{ fontSize: "23px", marginRight: "10px" }}
-        />
-      ),
-      label: "Comandes",
-      role: "Commercial",
-    },
+    // {
+    //   key: "/command",
+    //   icon: (
+    //     <FontAwesomeIcon
+    //       icon={faFileContract}
+    //       style={{ fontSize: "23px", marginRight: "10px" }}
+    //     />
+    //   ),
+    //   label: "Comandes",
+    //   role: "Commercial",
+    // },
     {
       key: "/programmes",
       icon: (
