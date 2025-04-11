@@ -192,6 +192,19 @@ class ProgramController {
   }
  }
 
+  static async getAllsCommands (req, res) {
+    const { id } = req.params;
+  try {
+    const commands = await Command.find({
+      $or: [{ admin: id }, { commercial: id }],
+    }).sort({ event_date: -1 });
+    res.status(200).json(commands);
+  } catch (error) {
+    console.error("Error fetching commands:", error);
+    res.status(500).json({ message: "Error fetching commands", error });
+  }
+  }
+
  static async getCommandById (req, res) {
   const { id } = req.params;
 

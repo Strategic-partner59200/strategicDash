@@ -95,6 +95,7 @@ router.delete('/event/:id', ProgramController.deleteEvent);
 // Command routes
 router.post('/command', ProgramController.createCommand);
 router.get('/command/:id', ProgramController.getAllCommands);
+router.get('/command', ProgramController.getAllsCommands);
 router.get('/commands/:id', ProgramController.getCommandById);
 router.put('/command/validate/:id', ProgramController.validateCommand);
 router.delete('/command/:id', ProgramController.deleteCommandById);
