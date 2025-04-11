@@ -26,13 +26,13 @@ import CreateCommand from "./pages/CreateCommand";
 import AjouterProduit from "./pages/AjouterProduit";
 import ImportLeads from "./pages/ImportLeads";
 import MyCalendar from "./pages/Calendar";
-
+import TéléchargerDevis from "./pages/TéléchargerDevis";
+import AllCommands from "./pages/TéléchargerContract";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 axios.defaults.withCredentials = true;
 
 function App() {
-  
   return (
     <ToggleProvider>
       <ToggleProvider></ToggleProvider>
@@ -43,17 +43,26 @@ function App() {
             <Route index element={<Home />} />
             {/* Route for Leads at `/leads` */}
             <Route path="leads" element={<Leads />} />
-            <Route path="leads/:id/ajouter-produit" element={<AjouterProduit />} />
-            <Route path="leads/:id/ajouter-produit/:produitId" element={<AjouterProduit />} />
+            <Route
+              path="leads/:id/ajouter-produit"
+              element={<AjouterProduit />}
+            />
+            <Route
+              path="leads/:id/ajouter-produit/:produitId"
+              element={<AjouterProduit />}
+            />
             <Route path="/programmes" element={<Programmes />} />
             <Route path="/entreprise" element={<Entreprise />} />
             <Route path="/ads" element={<Banner />} />
             <Route path="/create-bannières" element={<CreateBannières />} />
-            <Route path="/CalendarCommerciale" element={ <MyCalendar />} />
+            <Route path="/CalendarCommerciale" element={<MyCalendar />} />
+            <Route path="/Devis" element={<TéléchargerDevis />} />
+            <Route path="/Comandes" element={<AllCommands />} />
+
             <Route path="/create-bannières/:id" element={<CreateBannières />} />
             <Route path="/create-programmes" element={<CreatePrograms />} />
             <Route path="/create-programmes/:id" element={<CreatePrograms />} />
-          
+
             {/* <Route path="/lead/:id" element={<LeadDetailsPage />}/> */}
             <Route path="/affect-leads" element={<AffectuerLead />} />
             <Route path="/settings" element={<CommerciauxPage />} />
@@ -64,17 +73,22 @@ function App() {
             <Route path="/create-publicité/:id" element={<CreatePub />} />
             <Route path="/settings" element={<Setting />} />
             <Route path="/command/:leadId" element={<Commands />} />
-            <Route path="/leads/:id/create-command" element={<CreateCommand />} />
-            <Route path="/leads/:id/create-command/:commandId" element={<CreateCommand />} />
+            <Route
+              path="/leads/:id/create-command"
+              element={<CreateCommand />}
+            />
+            <Route
+              path="/leads/:id/create-command/:commandId"
+              element={<CreateCommand />}
+            />
             <Route path="/import-leads" element={<ImportLeads />} />
             <Route path="/lead/:id" element={<LeadDetailsPage />}>
               <Route path="" element={<LeadDetailsPage />} />{" "}
               {/* Default Tab */}
               <Route path="commentaires" element={<CommentairePage />} />
-              
             </Route>
           </Route>
-         
+
           {/* Separate routes for authentication */}
           <Route path="/SignIn" element={<SignIn />} />
           <Route path="/SignUp" element={<SignUp />} />

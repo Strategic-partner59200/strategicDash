@@ -16,6 +16,7 @@ import {
   faCog,
   faFileImport,
   faCalendarAlt,
+  
 } from "@fortawesome/free-solid-svg-icons";
 import { UserOutlined } from "@ant-design/icons";
 import { Layout, Menu, Divider, Avatar } from "antd";
@@ -106,6 +107,19 @@ const SideBar = () => {
       label: 'Calendar',
       role: ['Commercial', 'Admin'],
     },
+    {
+      key: "/Devis",
+      icon: <FontAwesomeIcon icon={faFileContract} style={{ fontSize: "23px", marginRight: "10px" }}/>,
+      label: "Devis",
+      role: ["Admin", "Commercial"],
+    },
+    {
+      key: "/Comandes",
+      icon: <FontAwesomeIcon icon={faFileContract} style={{ fontSize: "23px", marginRight: "10px" }}/>,
+      label: "Commandes",
+      role: ["Admin", "Commercial"],
+    },
+  
     {
       key: "/command",
       icon: (

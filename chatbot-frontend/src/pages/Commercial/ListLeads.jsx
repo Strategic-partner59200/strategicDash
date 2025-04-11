@@ -7,6 +7,7 @@ import {
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import "tailwindcss/tailwind.css";
+import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
 
@@ -19,6 +20,8 @@ const ListLeads = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const navigate = useNavigate();
+
 
   const handlePageChange = (value) => {
     setCurrentPage(value);
@@ -88,6 +91,9 @@ const ListLeads = () => {
     }
   };
 
+  const handleLeadClick = (chatData) => {
+    navigate(`/lead/${chatData._id}`);
+  };
   const handleStatusLeadChange = async (statusLead, record) => {
     try {
       const validStatuses = ['nouveau', 'prospect', 'client'];
@@ -112,31 +118,15 @@ const ListLeads = () => {
   if (error)
     return <Alert message="Error" description={error} type="error" showIcon />;
   const columns = [
-    {
-      title: "Prénom",
+     {
+      title: "Prénom et Nom", // Changed title to "Prenom and Nom"
       key: "request_lastname",
-      dataIndex: "request_lastname",
+      dataIndex: "request_fullname",
       render: (text, record) => (
-        <div
-          className="cursor-pointer"
-          onClick={() => handleCoachClick(record)}
-        >
-          <div>{record.request_lastname || "-"}</div>
-         
-        </div>
-      ),
-    },
-    {
-      title: "Nom",
-      key: "request_name",
-      dataIndex: "request_name",
-      render: (text, record) => (
-        <div
-          className="cursor-pointer"
-          onClick={() => handleCoachClick(record)}
-        >
-          <div>{record.request_name || "-"}</div>
-         
+        <div className="cursor-pointer" onClick={() => handleLeadClick(record)}>
+          <div>{`${record.prénom || ""} ${
+            record.nom || ""
+          }`}</div>
         </div>
       ),
     },
@@ -152,8 +142,8 @@ const ListLeads = () => {
         >
          <div className="text-gray-500 text-xs">
             {record.verification_email === "Non"
-              ? record.request_add_email || "-"
-              : record.request_email || "-"}
+              ? record.email1 || "-"
+              : record.email || "-"}
           </div>
          
         </div>
@@ -184,22 +174,22 @@ const ListLeads = () => {
     },
     {
       title: "TELEPHONE",
-      dataIndex: "request_phone",
-      key: "request_phone",
+      dataIndex: "phone",
+      key: "phone",
       render: (text) => text || "-",
     },
     {
       title: "Status",
       dataIndex: "course_details",
       key: "course_details",
-      render: (text, record) => text || record.request_who || "-",
+      render: (text, record) => text || record.status || "-",
     },
     {
       title: "Besoin",
       dataIndex: "student",
       key: "student",
       render: (text, record) =>
-        text || record.information_request || "-",
+        text || record.demande || "-",
     },
     {
       title: "STATUS LEAD",
@@ -210,7 +200,6 @@ const ListLeads = () => {
           style={{ width: 80 }}
           onChange={(value) => handleStatusLeadChange(value, record)}
         >
-          <Option value="all">Nouveau</Option>
           <Option value="prospect">Prospect</Option>
           <Option value="client">Client</Option>
         </Select>
@@ -222,7 +211,7 @@ const ListLeads = () => {
       key: "choose_course",
       render: (text, record) => (
         <div className="text-gray-500 text-xs">
-          {record.initial ||
+          {record.besoin ||
             "-"}
           ,
         </div>
