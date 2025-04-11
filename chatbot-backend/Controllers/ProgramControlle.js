@@ -75,11 +75,13 @@ class ProgramController {
     try {
       const adminId = req.body.admin; 
       const leadId = req.body.leadId;
+      const commercialId = req.body.commercial;
 
       const { event_date, event_time, objective, comment } = req.body;
   
       const newEvent = new Event({
         admin: adminId,
+        commercial: commercialId,
         event_date,
         event_time,
         objective,
@@ -98,7 +100,10 @@ class ProgramController {
     const { id } = req.params; // Get leadId from query parameter
   
     try {
-      const events = await Event.find({ lead: id }).sort({ event_date: -1 });;
+      // const events = await Event.find({ lead: id }).sort({ event_date: -1 });;
+      const events = await Event.find({
+        $or: [{ admin: id }, { commercial: id }, { lead: id }],
+      }).sort({ event_date: -1 });
       res.status(200).json(events);
     } catch (error) {
       console.error("Error fetching events:", error);

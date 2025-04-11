@@ -5,7 +5,12 @@ const eventSchema = new mongoose.Schema({
     admin: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Admin", 
-        required: true,
+        // required: true,
+      },
+      commercial: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Commercial",
+        // required: true,
       },
   event_date: { type: String, required: true }, // Store the date in YYYY-MM-DD format
   event_time: { type: String, required: true }, // Store the time as HH:mm
