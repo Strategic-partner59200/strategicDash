@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const CommandeSchema = new mongoose.Schema({
+  command: {
+    type: String,
+    required: true,
+    default: 'devis' // Default value if not provided
+  },
   command_type: { type: String, enum: ["commande", "devis"], required: true },
   date: { type: Date, required: true },
   request_lastname: String,

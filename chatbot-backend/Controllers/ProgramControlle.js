@@ -129,6 +129,7 @@ class ProgramController {
     const commercialId = req.body.commercial;
     const { 
       command_type,
+      command,
       description,
       prixUnitaire,
       quantite,
@@ -151,6 +152,7 @@ class ProgramController {
 
     const newCommand = new Command({ admin: adminId, lead: leadId, commercial:commercialId,
         command_type, 
+        command,
         date,
         description,
         prixUnitaire,
