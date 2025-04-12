@@ -137,16 +137,16 @@ class ProgramController {
       totalTTC,
       date,
       request_lastname,
-       request_email,
-       request_phone,
+      //  request_email,
+      //  request_phone,
        siret,
-       codepostal,
+      //  codepostal,
        raissociale,
-       ville,
-       adresse,
+      //  ville,
+      //  adresse,
        numCommand,
         code,
-        marque
+        // marque
         } = req.body;
 
     const newCommand = new Command({ admin: adminId, lead: leadId, commercial:commercialId,
@@ -159,16 +159,16 @@ class ProgramController {
         totalTVA,
         totalTTC,
         request_lastname,
-        request_email,
-        request_phone,
+        // request_email,
+        // request_phone,
         siret,
-        codepostal,
+        // codepostal,
         raissociale,
-        ville,
-        adresse,
+        // ville,
+        // adresse,
         numCommand,
         code,
-        marque
+        // marque
       });
     await newCommand.save();
 

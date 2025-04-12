@@ -9,7 +9,7 @@ class ProduitController {
       console.log('Request Body:', req.body);
       const leadId = req.body.leadId;
   
-      const { admin, commercial, code, marque, modele, description, coutAchat, prixVente, fraisGestion } = req.body;
+      const { admin, commercial,  prixVente, code, description } = req.body;
   
       const userId = admin || commercial;
   
@@ -22,12 +22,8 @@ class ProduitController {
         commercial: commercial ? commercial : undefined,
         lead: leadId,
         code,
-        marque,
-        modele,  // Ensure this field is being passed
         description,
-        coutAchat,
         prixVente,
-        fraisGestion,
       });
   
       await newProduit.save();
