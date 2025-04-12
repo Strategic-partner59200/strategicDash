@@ -166,7 +166,7 @@ const SideBar = () => {
       children: [
         {
           key: "/ads",
-          label: "ADS",
+          label: "Statistiques Ads",
 
           icon: (
             <FontAwesomeIcon
