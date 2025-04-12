@@ -294,15 +294,15 @@ const AllCommands = () => {
     setStats(totals);
   };
 
-  const handleEdit = (id, e) => {
+  const handleEdit = (e) => {
     e.stopPropagation();
-    window.location.href = `/command/edit/${id}`;
+    window.location.href = `/lead/${record.lead}`;
   };
 
-  const handleDownload = (id, e) => {
-    e.stopPropagation();
-    message.info(`Downloading command ${id}`);
-  };
+  // const handleDownload = (id, e) => {
+  //   e.stopPropagation();
+  //   message.info(`Downloading command ${id}`);
+  // };
 
   const handleDelete = (id, e) => {
     e.stopPropagation();
@@ -336,7 +336,7 @@ const AllCommands = () => {
 
   const columns = [
     {
-      title: 'Command #',
+      title: 'Command',
       dataIndex: 'numCommand',
       key: 'numCommand',
       render: (text) => safeRender(text),
@@ -380,11 +380,10 @@ const AllCommands = () => {
     {
       title: 'Status',
       key: 'status',
-      render: (_, record) => {
-        const isUpcoming = moment(record.date).isAfter(moment());
+      render: () => {
         return (
-          <Tag color={isUpcoming ? 'blue' : 'green'}>
-            {isUpcoming ? 'Pending' : 'Completed'}
+          <Tag color="green">
+            Completed
           </Tag>
         );
       }
@@ -398,10 +397,10 @@ const AllCommands = () => {
             icon={<EditOutlined />} 
             onClick={(e) => handleEdit(record._id, e)}
           />
-          <Button 
+          {/* <Button 
             icon={<FilePdfOutlined />} 
             onClick={(e) => handleDownload(record._id, e)}
-          />
+          /> */}
           <Button 
             danger 
             icon={<DeleteOutlined />} 
@@ -433,12 +432,12 @@ const AllCommands = () => {
           <h2 className="text-lg font-semibold">
             {userRole === 'commercial' ? 'My Commands' : 'All Commands'}
           </h2>
-          <Button 
+          {/* <Button 
             type="primary" 
             onClick={() => window.location.href = '/command/new'}
           >
             Create New Command
-          </Button>
+          </Button> */}
         </div>
 
         <Table

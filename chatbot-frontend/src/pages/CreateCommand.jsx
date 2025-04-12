@@ -379,9 +379,13 @@ const CreateCommand = () => {
   const [panierItems, setPanierItems] = useState([]);
   const navigate = useNavigate();
 
+  // const generateRandomNumber = (prefix) => {
+  //   const randomNum = Math.floor(100000 + Math.random() * 900000); // generates 6 random digits
+  //   return `${prefix}${randomNum}`;
+  // };
   const generateRandomNumber = (prefix) => {
-    const randomNum = Math.floor(100000 + Math.random() * 900000); // generates 6 random digits
-    return `${prefix}${randomNum}`;
+    const randomNum = Math.floor(100 + Math.random() * 900); // generates 3 random digits
+    return `${prefix}2025${randomNum}`;
   };
 
   const handleCommandTypeChange = (value) => {
@@ -589,18 +593,18 @@ const CreateCommand = () => {
               <Input placeholder="Prénom du client" />
             </Form.Item>
           </Col>
-                <Col span={12}>
+          <Col span={12}>
             <Form.Item
-              label="Adresse"
-              name="adresse"
-              rules={[{ required: false, message: "L'adresse est requis" }]}
+              label="Raison sociale"
+              name="raissociale"
+              rules={[{ required: false, message: "Raissociale est requis" }]}
             >
-              <Input placeholder="Adresse" />
+              <Input placeholder="Raison sociale" />
             </Form.Item>
           </Col>
          
         </Row>
-
+{/* 
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
@@ -620,7 +624,7 @@ const CreateCommand = () => {
               <Input placeholder="Téléphone du client" />
             </Form.Item>
           </Col>
-        </Row>
+        </Row> */}
     
         <Row gutter={16}>
         <Col span={12}>
@@ -638,7 +642,7 @@ const CreateCommand = () => {
             </Form.Item>
           </Col>
         </Row>
-        <Row gutter={16}>
+        {/* <Row gutter={16}>
           <Col span={12}>
             <Form.Item
               label="Code Postal"
@@ -648,17 +652,9 @@ const CreateCommand = () => {
               <Input placeholder="Code Postal" />
             </Form.Item>
           </Col>
-          <Col span={12}>
-            <Form.Item
-              label="Raissociale"
-              name="raissociale"
-              rules={[{ required: false, message: "Raissociale est requis" }]}
-            >
-              <Input placeholder="Raissociale" />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={16}>
+       
+        </Row> */}
+        {/* <Row gutter={16}>
           <Col span={12}>
             <Form.Item
               label="Ville"
@@ -669,7 +665,7 @@ const CreateCommand = () => {
             </Form.Item>
           </Col>
         
-        </Row>
+        </Row> */}
 
         <Row gutter={16}>
           <Col span={12}>
@@ -680,14 +676,14 @@ const CreateCommand = () => {
         </Row>
       </Form>
       
-      <div className="mt-6">
+      {/* <div className="mt-6">
         <Table
           columns={[...columns.map((col) => ({ ...col, title: <div className="flex flex-col items-center"><div className="text-xs">{col.title}</div></div> }))]}
           dataSource={panierItems}
           pagination={false}
           rowKey={(record) => record._id || record.produit?._id || Math.random()}
         />
-      </div>
+      </div> */}
     </div>
   );
 };

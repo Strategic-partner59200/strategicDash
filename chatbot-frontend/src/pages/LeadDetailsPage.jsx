@@ -1,16 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import {
-  Tabs,
-  Button,
-  Input,
-  Form,
-  Calendar,
-  Row,
-  Col,
-  Select,
-} from "antd";
+import { Tabs, Button, Input, Form, Calendar, Row, Col, Select } from "antd";
 import { jwtDecode } from "jwt-decode";
 import { DeleteOutlined } from "@ant-design/icons";
 import CalendarEvents from "../components/CalendarEvents";
@@ -33,12 +24,14 @@ const LeadDetailsPage = () => {
   const [comments, setComments] = useState([]);
   const token = localStorage.getItem("token");
   const [selectedDate, setSelectedDate] = useState(null);
-  
+
   const [cartQuantity, setCartQuantity] = useState(0);
   const [refreshCart, setRefreshCart] = useState(false);
   const [refreshCounter, setRefreshCounter] = useState(0);
+  const [activeTabKey, setActiveTabKey] = useState("7"); // Default to "Devis à valider"
+
   const handleRefreshCommands = () => {
-    setRefreshCounter(prev => prev + 1);
+    setRefreshCounter((prev) => prev + 1);
   };
 
   // Add this effect to load initial quantity PROPERLY
@@ -77,19 +70,19 @@ const LeadDetailsPage = () => {
     const loadInitialCart = async () => {
       try {
         const leadId = id;
-  
+
         // 1. Check localStorage and filter by leadId
         const localCart = JSON.parse(localStorage.getItem("panierItems")) || [];
         const filteredLocalCart = localCart.filter(
           (item) => item.lead === leadId
         );
-  
+
         const localQuantity = filteredLocalCart.reduce(
           (sum, item) => sum + (item.quantite || 0),
           0
         );
         setCartQuantity(localQuantity);
-  
+
         // 2. Verify with backend
         const response = await axios.get("/panier");
         const backendFiltered = response.data.filter(
@@ -99,7 +92,7 @@ const LeadDetailsPage = () => {
           (sum, item) => sum + (item.quantite || 0),
           0
         );
-  
+
         // 3. Update if different
         if (backendQuantity !== localQuantity) {
           setCartQuantity(backendQuantity);
@@ -110,10 +103,10 @@ const LeadDetailsPage = () => {
         console.error("Error loading initial cart:", error);
       }
     };
-  
+
     loadInitialCart();
   }, []);
-  
+
   // In LeadDetailsPage.jsx
   // useEffect(() => {
   //   const handleStorageChange = () => {
@@ -130,7 +123,7 @@ const LeadDetailsPage = () => {
   // }, []);
   useEffect(() => {
     const leadId = id;
-  
+
     const handleStorageChange = () => {
       const localCart = JSON.parse(localStorage.getItem("panierItems")) || [];
       const filteredCart = localCart.filter((item) => item.lead === leadId);
@@ -140,13 +133,10 @@ const LeadDetailsPage = () => {
       );
       setCartQuantity(newQuantity);
     };
-  
+
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
-  
-
-
 
   const onDateSelect = (date) => {
     setSelectedDate(date);
@@ -167,8 +157,6 @@ const LeadDetailsPage = () => {
     }
   };
 
-
-
   const handleFormSubmitCalendar = async (values) => {
     const token = localStorage.getItem("token");
     const decodedToken = token ? jwtDecode(token) : null;
@@ -185,7 +173,7 @@ const LeadDetailsPage = () => {
       ...values, // This includes event_date, event_time, objective, and comment
       admin: adminId, // Add the userId as the admin field
       leadId: id, // Add the leadId to the event
-      commercial: commercialId
+      commercial: commercialId,
     };
 
     try {
@@ -331,23 +319,29 @@ const LeadDetailsPage = () => {
         </div>
       </div>
 
-      {/* Two Boxes Side by Side */}
-      {/* <div className="flex justify-between space-x-4">
-        <div className="flex-1 bg-white shadow-md rounded-lg p-6">
-          <Tabs activeKey={activeTab} onChange={handleTabChange}>
+     
+      <div className="flex justify-between space-x-4">
+        <div className="flex-1 bg-white shadow-md rounded-lg lg:p-6 p-4 w-full max-w-xs sm:max-w-md md:max-w-2xl lg:max-w-full">
+          <Tabs activeKey={activeTab} onChange={handleTabChange}
+          onTabClick={(key) => {
+            if (key === "7") { // "Devis à valider" tab
+              setRefreshCounter(prev => prev + 1);
+            }
+          }}>
             <TabPane tab="Informations" key="1">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Left Column (Informations Leads) */}
                 <div className="space-y-4 mt-4">
                   <h2 className="text-xl font-semibold text-gray-800">
                     Informations Leads
                   </h2>
                   {[
-                    { label: "Prénom et Nom", value: lead.request_lastname || "-" },
-                    { label: "Email", value: lead.request_email || "-" },
-                    { label: "Téléphone", value: lead.request_phone || "-" },
-                    { label: "Status", value: lead.request_who || "-" },
-                    { label: "Contacter", value: lead.initial || "-" },
-                    { label: "Besoin", value: lead.information_request || "-" },
+                    { label: "Prénom et Nom", value: lead.nom || "-" },
+                    { label: "Email", value: lead.email || "-" },
+                    { label: "Téléphone", value: lead.phone || "-" },
+                    { label: "Status", value: lead.status || "-" },
+                    { label: "Contacter", value: lead.besoin || "-" },
+                    { label: "Besoin", value: lead.demande || "-" },
                     { label: "Status de lead", value: lead.type || "-" },
                   ].map(({ label, value }) => (
                     <div className="flex items-center gap-2" key={label}>
@@ -357,6 +351,7 @@ const LeadDetailsPage = () => {
                   ))}
                 </div>
 
+                {/* Right Column (Informations Commercial) */}
                 <div className="space-y-4 mt-4">
                   <h2 className="text-xl font-semibold text-gray-800">
                     Informations Commercial
@@ -382,7 +377,8 @@ const LeadDetailsPage = () => {
 
             <TabPane tab="Commentaires" key="2">
               <div className="space-y-4">
-                <div className="flex items-center gap-4">
+                {/* Comment Input and Submit Button */}
+                <div className="flex flex-col sm:flex-row items-center gap-4">
                   <Input
                     placeholder="Add a comment..."
                     value={newComment}
@@ -392,11 +388,13 @@ const LeadDetailsPage = () => {
                   <Button
                     type="primary"
                     onClick={handleAddComment}
-                    className="bg-purple-800 text-white"
+                    className="bg-purple-800 text-white mt-4 sm:mt-0 sm:ml-4"
                   >
                     Submit
                   </Button>
                 </div>
+
+                {/* Comments List */}
                 <div className="mt-4">
                   {comments.length ? (
                     comments.map((comment) => (
@@ -407,7 +405,6 @@ const LeadDetailsPage = () => {
                         <div className="flex justify-between">
                           <div>
                             <p className="text-gray-800">{comment.text}</p>
-  
                             <p className="text-gray-600 text-sm">
                               {comment.addedAt
                                 ? new Date(comment.addedAt).toLocaleString()
@@ -430,23 +427,57 @@ const LeadDetailsPage = () => {
                 </div>
               </div>
             </TabPane>
+
             <TabPane tab="Contact" key="3">
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold text-gray-800">
                   Ajouter un Lead
                 </h2>
+
                 <Form
                   form={form}
                   onFinish={handleFormSubmit}
                   layout="vertical"
                   className="space-y-4"
                 >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <Form.Item
-                      label="Nom et Prénom"
-                      name="request_lastname"
+                      label="Prénom"
+                      name="prénom"
+                      rules={[{ required: true, message: "Prénom est requis" }]}
+                    >
+                      <Input className="w-full p-2 border rounded-lg" />
+                    </Form.Item>
+
+                    <Form.Item
+                      label="Nom"
+                      name="nom"
+                      rules={[{ required: true, message: "Nom est requis" }]}
+                    >
+                      <Input className="w-full p-2 border rounded-lg" />
+                    </Form.Item>
+                    <Form.Item
+                      label="Adresse"
+                      name="address"
                       rules={[
-                        { required: true, message: "Prénom is required" },
+                        { required: true, message: "L'address est requis." },
+                      ]}
+                    >
+                      <Input className="w-full p-2 border rounded-lg" />
+                    </Form.Item>
+
+                    <Form.Item
+                      label="Ville"
+                      name="ville"
+                      rules={[{ required: true, message: "Ville est requis." }]}
+                    >
+                      <Input className="w-full p-2 border rounded-lg" />
+                    </Form.Item>
+                    <Form.Item
+                      label="Codepostal"
+                      name="codepostal"
+                      rules={[
+                        { required: true, message: "Codepostal est requis." },
                       ]}
                     >
                       <Input className="w-full p-2 border rounded-lg" />
@@ -454,12 +485,12 @@ const LeadDetailsPage = () => {
 
                     <Form.Item
                       label="Email"
-                      name="request_email"
+                      name="email"
                       rules={[
-                        { required: true, message: "Email is required" },
+                        { required: true, message: "Email est requis." },
                         {
                           type: "email",
-                          message: "Please enter a valid email",
+                          message: "Veuillez entrer une adresse e-mail valide.",
                         },
                       ]}
                     >
@@ -468,7 +499,7 @@ const LeadDetailsPage = () => {
 
                     <Form.Item
                       label="Téléphone"
-                      name="request_phone"
+                      name="phone"
                       rules={[
                         { required: true, message: "Téléphone is required" },
                       ]}
@@ -476,36 +507,19 @@ const LeadDetailsPage = () => {
                       <Input className="w-full p-2 border rounded-lg" />
                     </Form.Item>
 
-                    <Form.Item
-                      label="Status"
-                      name="request_who"
-                      rules={[
-                        { required: true, message: "Status is required" },
-                      ]}
-                    >
+                    <Form.Item label="Status" name="status">
                       <Input className="w-full p-2 border rounded-lg" />
                     </Form.Item>
 
-                    <Form.Item
-                      label="Contacter"
-                      name="initial"
-                      rules={[
-                        { required: true, message: "Contacter is required" },
-                      ]}
-                    >
+                    <Form.Item label="Contacter" name="besoin">
                       <Input className="w-full p-2 border rounded-lg" />
                     </Form.Item>
 
-                    <Form.Item
-                      label="Besoin"
-                      name="information_request"
-                      rules={[
-                        { required: true, message: "Besoin is required" },
-                      ]}
-                    >
+                    <Form.Item label="Besoin" name="demande">
                       <Input className="w-full p-2 border rounded-lg" />
                     </Form.Item>
                   </div>
+
                   <div className="mt-4">
                     <Button
                       type="primary"
@@ -518,334 +532,8 @@ const LeadDetailsPage = () => {
                 </Form>
               </div>
             </TabPane>
-            <TabPane tab="Calendar" key="4">
-              <Row gutter={24}>
-                <Col span={12}>
-                  <div className="space-y-4">
-                    <h2 className="text-xl font-semibold text-gray-800">
-                      Ajouter un Événement
-                    </h2>
-                    <Form
-                      form={form}
-                      onFinish={handleFormSubmitCalendar}
-                      layout="vertical"
-                      className="space-y-4"
-                    >
-                      <Form.Item
-                        label="Date"
-                        name="event_date"
-                        initialValue={
-                          selectedDate
-                            ? selectedDate.format("YYYY-MM-DD")
-                            : null
-                        }
-                      >
-                        <Input
-                          readOnly
-                          value={
-                            selectedDate
-                              ? selectedDate.format("YYYY-MM-DD")
-                              : ""
-                          }
-                        />
-                      </Form.Item>
 
-                      <Form.Item
-                        label="Heure"
-                        name="event_time"
-                        rules={[
-                          { required: true, message: "Heure is required" },
-                        ]}
-                      >
-                        <Input placeholder="HH:mm" />
-                      </Form.Item>
-
-                      <Form.Item
-                        label="Objectif"
-                        name="objective"
-                        rules={[
-                          { required: true, message: "Objectif is required" },
-                        ]}
-                      >
-                        <Input />
-                      </Form.Item>
-
-                      <Form.Item label="Commentaire" name="comment">
-                        <Input.TextArea rows={4} />
-                      </Form.Item>
-                      <Button
-                        type="primary"
-                        htmlType="submit"
-                        className="px-4 py-2 bg-purple-800 text-white rounded-lg"
-                      >
-                        Ajouter Événement
-                      </Button>
-                    </Form>
-                  </div>
-                </Col>
-                <Col span={12}>
-                  <Calendar onSelect={onDateSelect} fullscreen={true} />
-                </Col>
-              </Row>{" "}
-              <CalendarEvents />
-            </TabPane>
-            <TabPane tab="Panier" key="5">
-            <div className="space-y-4">
-                  <Panier />   
-            </div>
-            </TabPane>
-            <TabPane tab="Commande" key="6">
-            <div className="space-y-4">
-                  <Command />   
-            </div>
-            </TabPane>
-          </Tabs>
-        </div>
-      </div> */}
-      <div className="flex justify-between space-x-4">
-      <div className="flex-1 bg-white shadow-md rounded-lg lg:p-6 p-4 w-full max-w-xs sm:max-w-md md:max-w-2xl lg:max-w-full">
-    <Tabs activeKey={activeTab} onChange={handleTabChange}>
-      <TabPane tab="Informations" key="1">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Left Column (Informations Leads) */}
-          <div className="space-y-4 mt-4">
-            <h2 className="text-xl font-semibold text-gray-800">Informations Leads</h2>
-            {[{ label: "Prénom et Nom", value: lead.nom || "-" },
-              { label: "Email", value: lead.email || "-" },
-              { label: "Téléphone", value: lead.phone || "-" },
-              { label: "Status", value: lead.status || "-" },
-              { label: "Contacter", value: lead.besoin || "-" },
-              { label: "Besoin", value: lead.demande || "-" },
-              { label: "Status de lead", value: lead.type || "-" }
-            ].map(({ label, value }) => (
-              <div className="flex items-center gap-2" key={label}>
-                <p className="text-gray-600 font-semibold">{label}:</p>
-                <p className="text-gray-800 font-semibold">{value}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Right Column (Informations Commercial) */}
-          <div className="space-y-4 mt-4">
-            <h2 className="text-xl font-semibold text-gray-800">Informations Commercial</h2>
-            {[{
-              label: "Commercial prénom",
-              value: lead.commercial?.prenom || "-",
-            }, {
-              label: "Commercial nom",
-              value: lead.commercial?.nom || "-",
-            }].map(({ label, value }) => (
-              <div className="flex items-center gap-2" key={label}>
-                <p className="text-gray-600 font-semibold">{label}:</p>
-                <p className="text-gray-800 font-semibold">{value}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </TabPane>
-
-      {/* <TabPane tab="Commentaires" key="2">
-        <div className="space-y-4">
-          <div className="flex items-center gap-4">
-            <Input
-              placeholder="Add a comment..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              className="w-full border rounded-lg"
-            />
-            <Button
-              type="primary"
-              onClick={handleAddComment}
-              className="bg-purple-800 text-white"
-            >
-              Submit
-            </Button>
-          </div>
-          <div className="mt-4">
-            {comments.length ? (
-              comments.map((comment) => (
-                <div
-                  key={comment._id}
-                  className="p-4 border rounded-lg mb-2 bg-gray-100"
-                >
-                  <div className="flex justify-between">
-                    <div>
-                      <p className="text-gray-800">{comment.text}</p>
-                      <p className="text-gray-600 text-sm">
-                        {comment.addedAt
-                          ? new Date(comment.addedAt).toLocaleString()
-                          : "Unknown Date"}
-                      </p>
-                    </div>
-                    <Button
-                      type="text"
-                      icon={<DeleteOutlined />}
-                      onClick={() => handleDeleteComment(comment._id)}
-                    />
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-600">Aucun commentaire pour le moment.</p>
-            )}
-          </div>
-        </div>
-      </TabPane> */}
-      <TabPane tab="Commentaires" key="2">
-  <div className="space-y-4">
-    {/* Comment Input and Submit Button */}
-    <div className="flex flex-col sm:flex-row items-center gap-4">
-      <Input
-        placeholder="Add a comment..."
-        value={newComment}
-        onChange={(e) => setNewComment(e.target.value)}
-        className="w-full border rounded-lg"
-      />
-      <Button
-        type="primary"
-        onClick={handleAddComment}
-        className="bg-purple-800 text-white mt-4 sm:mt-0 sm:ml-4"
-      >
-        Submit
-      </Button>
-    </div>
-
-    {/* Comments List */}
-    <div className="mt-4">
-      {comments.length ? (
-        comments.map((comment) => (
-          <div
-            key={comment._id}
-            className="p-4 border rounded-lg mb-2 bg-gray-100"
-          >
-            <div className="flex justify-between">
-              <div>
-                <p className="text-gray-800">{comment.text}</p>
-                <p className="text-gray-600 text-sm">
-                  {comment.addedAt
-                    ? new Date(comment.addedAt).toLocaleString()
-                    : "Unknown Date"}
-                </p>
-              </div>
-              <Button
-                type="text"
-                icon={<DeleteOutlined />}
-                onClick={() => handleDeleteComment(comment._id)}
-              />
-            </div>
-          </div>
-        ))
-      ) : (
-        <p className="text-gray-600">Aucun commentaire pour le moment.</p>
-      )}
-    </div>
-  </div>
-</TabPane>
-
-
-      <TabPane tab="Contact" key="3">
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-800">Ajouter un Lead</h2>
-
-          <Form
-            form={form}
-            onFinish={handleFormSubmit}
-            layout="vertical"
-            className="space-y-4"
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <Form.Item
-                label="Prénom"
-                name="prénom"
-                rules={[{ required: true, message: "Prénom est requis" }]}
-              >
-                <Input className="w-full p-2 border rounded-lg" />
-              </Form.Item>
-
-              <Form.Item
-                label="Nom"
-                name="nom"
-                rules={[{ required: true, message: "Nom est requis" }]}
-              >
-                <Input className="w-full p-2 border rounded-lg" />
-              </Form.Item>
-              <Form.Item
-                label="Adresse"
-                name="address"
-                rules={[{ required: true, message: "L'address est requis." }]}
-              >
-                <Input className="w-full p-2 border rounded-lg" />
-              </Form.Item>
-
-              <Form.Item
-                label="Ville"
-                name="ville"
-                rules={[{ required: true, message: "Ville est requis." }]}
-              >
-                <Input className="w-full p-2 border rounded-lg" />
-              </Form.Item>
-              <Form.Item
-                label="Codepostal"
-                name="codepostal"
-                rules={[{ required: true, message: "Codepostal est requis." }]}
-              >
-                <Input className="w-full p-2 border rounded-lg" />
-              </Form.Item>
-
-              <Form.Item
-                label="Email"
-                name="email"
-                rules={[{ required: true, message: "Email est requis." }, {
-                  type: "email", message: "Veuillez entrer une adresse e-mail valide."
-                }]}
-              >
-                <Input className="w-full p-2 border rounded-lg" />
-              </Form.Item>
-
-              <Form.Item
-                label="Téléphone"
-                name="phone"
-                rules={[{ required: true, message: "Téléphone is required" }]}
-              >
-                <Input className="w-full p-2 border rounded-lg" />
-              </Form.Item>
-
-              <Form.Item
-                label="Status"
-                name="status"
-              >
-                <Input className="w-full p-2 border rounded-lg" />
-              </Form.Item>
-
-              <Form.Item
-                label="Contacter"
-                name="besoin"
-              >
-                <Input className="w-full p-2 border rounded-lg" />
-              </Form.Item>
-
-              <Form.Item
-                label="Besoin"
-                name="demande"
-              >
-                <Input className="w-full p-2 border rounded-lg" />
-              </Form.Item>
-            </div>
-
-            <div className="mt-4">
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="px-4 py-2 bg-purple-800 text-white rounded-lg"
-              >
-                Ajouter Lead
-              </Button>
-            </div>
-          </Form>
-        </div>
-      </TabPane>
-
-      {/* <TabPane tab="Calendar" key="4">
+            {/* <TabPane tab="Calendar" key="4">
         <Row gutter={24}>
 
           <Col xs={24} sm={12}>
@@ -890,64 +578,83 @@ const LeadDetailsPage = () => {
           </Col>
         </Row>
       </TabPane> */}
-      <TabPane tab="Calendar" key="4">
-  <Row gutter={24}>
-    {/* Left Column for Event Details */}
-    <Col xs={24} sm={12}>
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-800">Ajouter un Événement</h2>
-        <Form
-          form={form}
-          onFinish={handleFormSubmitCalendar}
-          layout="vertical"
-          className="space-y-4"
-        >
-          <Form.Item label="Date" name="event_date">
-            <Input readOnly value={selectedDate ? selectedDate.format("YYYY-MM-DD") : ""} />
-          </Form.Item>
+            <TabPane tab="Calendar" key="4">
+              <Row gutter={24}>
+                {/* Left Column for Event Details */}
+                <Col xs={24} sm={12}>
+                  <div className="space-y-4">
+                    <h2 className="text-xl font-semibold text-gray-800">
+                      Ajouter un Événement
+                    </h2>
+                    <Form
+                      form={form}
+                      onFinish={handleFormSubmitCalendar}
+                      layout="vertical"
+                      className="space-y-4"
+                    >
+                      <Form.Item label="Date" name="event_date">
+                        <Input
+                          readOnly
+                          value={
+                            selectedDate
+                              ? selectedDate.format("YYYY-MM-DD")
+                              : ""
+                          }
+                        />
+                      </Form.Item>
 
-          <Form.Item label="Heure" name="event_time" rules={[{ required: true }]}>
-            <Input placeholder="HH:mm" />
-          </Form.Item>
+                      <Form.Item
+                        label="Heure"
+                        name="event_time"
+                        rules={[{ required: true }]}
+                      >
+                        <Input placeholder="HH:mm" />
+                      </Form.Item>
 
-          {/* <Form.Item label="Objectif" name="objective" rules={[{ required: true }]}>
+                      {/* <Form.Item label="Objectif" name="objective" rules={[{ required: true }]}>
             <Input />
           </Form.Item> */}
-          <Form.Item label="Objectif" name="objective" rules={[{ required: true }]}>
-  <Select placeholder="Choisissez un objectif">
-    <Option value="Prendre RDV">Prendre RDV</Option>
-    <Option value="RDV 1 Audit">RDV 1 Audit</Option>
-    <Option value="RDV 2 Closing">RDV 2 Closing</Option>
-    <Option value="Presentation">Presentation</Option>
-    <Option value="Négocier Devis">Négocier Devis</Option>
-    <Option value="À Valider Contrat">À Valider Contrat</Option>
-  </Select>
-</Form.Item>
+                      <Form.Item
+                        label="Objectif"
+                        name="objective"
+                        rules={[{ required: true }]}
+                      >
+                        <Select placeholder="Choisissez un objectif">
+                          <Option value="Prendre RDV">Prendre RDV</Option>
+                          <Option value="RDV 1 Audit">RDV 1 Audit</Option>
+                          <Option value="RDV 2 Closing">RDV 2 Closing</Option>
+                          <Option value="Presentation">Presentation</Option>
+                          <Option value="Négocier Devis">Négocier Devis</Option>
+                          <Option value="À Valider Contrat">
+                            À Valider Contrat
+                          </Option>
+                        </Select>
+                      </Form.Item>
 
-          <Form.Item label="Commentaire" name="comment">
-            <Input.TextArea rows={4} />
-          </Form.Item>
+                      <Form.Item label="Commentaire" name="comment">
+                        <Input.TextArea rows={4} />
+                      </Form.Item>
 
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="px-4 py-2 bg-purple-800 text-white rounded-lg"
-          >
-            Ajouter Événement
-          </Button>
-        </Form>
-      </div>
-    </Col>
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                        className="px-4 py-2 bg-purple-800 text-white rounded-lg"
+                      >
+                        Ajouter Événement
+                      </Button>
+                    </Form>
+                  </div>
+                </Col>
 
-    {/* Right Column for Calendar */}
-    <Col xs={24} sm={12}>
-      <Calendar onSelect={onDateSelect} fullscreen />
-    </Col>
-  </Row>
-  <CalendarEvents />
-</TabPane>
+                {/* Right Column for Calendar */}
+                <Col xs={24} sm={12}>
+                  <Calendar onSelect={onDateSelect} fullscreen />
+                </Col>
+              </Row>
+              <CalendarEvents />
+            </TabPane>
 
-<TabPane tab="Produits" key="5">
+            <TabPane tab="Produits" key="5">
               <div className="space-y-4">
                 <Produits
                   onCartChange={(newQuantity) => {
@@ -958,7 +665,7 @@ const LeadDetailsPage = () => {
                 />
               </div>
             </TabPane>
-<TabPane tab={`Panier (${cartQuantity})`} key="6">
+            <TabPane tab={`Panier (${cartQuantity})`} key="6">
               <div className="space-y-4">
                 <Panier
                   setCartQuantity={setCartQuantity}
@@ -966,9 +673,13 @@ const LeadDetailsPage = () => {
                 />
               </div>
             </TabPane>
-            <TabPane tab="Devis à valider" key="7">
+            <TabPane tab="Devis à valider" key="7" forceRender>
               <div className="space-y-4">
-                <Devis onValidate={handleRefreshCommands}/>
+                <Devis
+                  onValidate={handleRefreshCommands}
+                  key={refreshCounter}
+                  shouldRefresh={activeTabKey === "7"}
+                />
               </div>
             </TabPane>
             <TabPane tab="Commande" key="8">
@@ -976,9 +687,9 @@ const LeadDetailsPage = () => {
                 <Command key={refreshCounter} />
               </div>
             </TabPane>
-    </Tabs>
-  </div>
-</div>
+          </Tabs>
+        </div>
+      </div>
 
       {/* <div className="flex justify-between mt-6">
         <button
@@ -995,20 +706,19 @@ const LeadDetailsPage = () => {
         </button>
       </div> */}
       <div className="flex flex-col sm:flex-row justify-between mt-6 gap-4 sm:gap-6">
-  <button
-    onClick={() => navigate("/leads")}
-    className="bg-purple-800 hover:bg-purple-900 underline text-white font-semibold py-2 px-4 rounded text-sm sm:text-base"
-  >
-    Retour
-  </button>
-  <button
-    onClick={() => setIsModalOpen(true)}
-    className="bg-purple-800 hover:bg-purple-900 text-white font-semibold py-2 px-4 rounded text-sm sm:text-base"
-  >
-    Modifier Lead
-  </button>
-</div>
-
+        <button
+          onClick={() => navigate("/leads")}
+          className="bg-purple-800 hover:bg-purple-900 underline text-white font-semibold py-2 px-4 rounded text-sm sm:text-base"
+        >
+          Retour
+        </button>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-purple-800 hover:bg-purple-900 text-white font-semibold py-2 px-4 rounded text-sm sm:text-base"
+        >
+          Modifier Lead
+        </button>
+      </div>
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -1018,7 +728,7 @@ const LeadDetailsPage = () => {
             </h2>
             <div className="flex flex-col space-y-6 justify-center">
               {/* Form Fields */}
-              <div className="flex gap-4">  
+              <div className="flex gap-4">
                 <div className="flex flex-col gap-2 w-full">
                   <label className="text-lg font-medium text-gray-700">
                     Prénom
@@ -1074,7 +784,6 @@ const LeadDetailsPage = () => {
                     placeholder="Enter Lead's Email"
                   />
                 </div>
-                
               </div>
 
               <div className="flex gap-4">

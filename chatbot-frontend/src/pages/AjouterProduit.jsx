@@ -22,7 +22,24 @@ const AjouterProduit = () => {
   const [error, setError] = useState(null);
   const token = localStorage.getItem("token");
   const decodedToken = token ? jwtDecode(token) : null;
+  const [program, setProgram] = useState([]); // State to hold program data
+  
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const response = await axios.get("/program");
+        setProgram(response.data);
+        console.log("Programmes:", response.data);
+      } catch (error) {
+        message.error("Failed to fetch programmes.");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchBanners();
+  }, []);
   // Fetch product data if productId exists
   useEffect(() => {
     if (productId) {
@@ -42,8 +59,19 @@ const AjouterProduit = () => {
       fetchProductData();
     }
   }, [productId]);
+  useEffect(() => {
+    if (!productId && program.length > 0) {
+      const selectedProgram = program[0]; // Or whichever you want to use
+      setProductData((prev) => ({
+        ...prev,
+        code: selectedProgram.title || "",
+        description: selectedProgram.mainText || "",
+      }));
+    }
+  }, [program, productId]);
+  
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, title, mainText) => {
     e.preventDefault();
 
     const formData = new FormData(e.target);
@@ -52,7 +80,8 @@ const AjouterProduit = () => {
     const userId = decodedToken?.userId || decodedToken?.commercialId; // Get user ID from token
 
     // Include the user ID (admin or commercial) in the form data
-    const productData = { ...values, admin: userId, leadId: id };
+    const productData = { ...values,  title,
+      mainText, admin: userId, leadId: id };
 
     try {
       setLoading(true);
@@ -79,128 +108,161 @@ const AjouterProduit = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">
-        Ajouter un Produit
-      </h2>
-      {error && <div className="text-red-500 mb-4">{error}</div>} {/* Error message display */}
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white border border-gray-200 rounded-lg shadow-md p-6 space-y-6"
-      >
-        {/* Form fields */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label htmlFor="code" className="block text-sm font-medium text-gray-700">
-              Réference
-            </label>
-            <input
-              type="text"
-              id="code"
-              name="code"
-              value={productData.code} // Bind the input value to state
-              onChange={(e) => setProductData({ ...productData, code: e.target.value })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            />
-          </div>
+    // <div className="container mx-auto px-4 py-8">
+    //   <h2 className="text-2xl font-bold text-gray-800 mb-6">
+    //     Ajouter un Produit
+    //   </h2>
+    //   {error && <div className="text-red-500 mb-4">{error}</div>} {/* Error message display */}
+    //   <form
+    //     onSubmit={handleSubmit}
+    //     className="bg-white border border-gray-200 rounded-lg shadow-md p-6 space-y-6"
+    //   >
+    //     {/* Form fields */}
+    //     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    //       <div>
+    //         <img src={program[0]?.imageUrl} alt="Product" className="w-full h-48 object-cover rounded-md mb-4" />
+    //       </div>
+    //       <div>
+    //         <label htmlFor="code" className="block text-sm font-medium text-gray-700">
+    //           Title
+    //         </label>
+    //         <input
+    //           type="text"
+    //           id="code"
+    //           name="code"
+    //           value={productData.code || program.title} // Bind the input value to state
+    //           onChange={(e) => setProductData({ ...productData, code: e.target.value })}
+    //           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+    //         />
+    //       </div>
+    //       <div>
+    //         <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+    //           Description
+    //         </label>
+    //         <textarea
+    //           id="description"
+    //           name="description"
+    //           value={productData.description || program.mainText} // Bind the input value to state
+    //           onChange={(e) => setProductData({ ...productData, description: e.target.value })}
+    //           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+    //         />
+    //       </div>
 
-          <div>
-            <label htmlFor="marque" className="block text-sm font-medium text-gray-700">
-              Marque
-            </label>
-            <input
-              type="text"
-              id="marque"
-              name="marque"
-              value={productData.marque} // Bind the input value to state
-              onChange={(e) => setProductData({ ...productData, marque: e.target.value })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            />
-          </div>
+    //       <div>
+    //         <label htmlFor="prixVente" className="block text-sm font-medium text-gray-700">
+    //           Prix de Vente
+    //         </label>
+    //         <input
+    //           type="number"
+    //           id="prixVente"
+    //           name="prixVente"
+    //           value={productData.prixVente} // Bind the input value to state
+    //           onChange={(e) => setProductData({ ...productData, prixVente: e.target.value })}
+    //           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+    //         />
+    //       </div>
+    //     </div>
 
-          <div>
-            <label htmlFor="modele" className="block text-sm font-medium text-gray-700">
-              Modèle
-            </label>
-            <input
-              type="text"
-              id="modele"
-              name="modele"
-              value={productData.modele} // Bind the input value to state
-              onChange={(e) => setProductData({ ...productData, modele: e.target.value })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-              Description
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              value={productData.description} // Bind the input value to state
-              onChange={(e) => setProductData({ ...productData, description: e.target.value })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="coutAchat" className="block text-sm font-medium text-gray-700">
-              Coût d'Achat
-            </label>
-            <input
-              type="number"
-              id="coutAchat"
-              name="coutAchat"
-              value={productData.coutAchat} // Bind the input value to state
-              onChange={(e) => setProductData({ ...productData, coutAchat: e.target.value })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="prixVente" className="block text-sm font-medium text-gray-700">
-              Prix de Vente
-            </label>
-            <input
-              type="number"
-              id="prixVente"
-              name="prixVente"
-              value={productData.prixVente} // Bind the input value to state
-              onChange={(e) => setProductData({ ...productData, prixVente: e.target.value })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="fraisGestion" className="block text-sm font-medium text-gray-700">
-              Frais de Gestion
-            </label>
-            <input
-              type="number"
-              id="fraisGestion"
-              name="fraisGestion"
-              value={productData.fraisGestion} // Bind the input value to state
-              onChange={(e) => setProductData({ ...productData, fraisGestion: e.target.value })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            />
-          </div>
-        </div>
-
-        <div className="text-right">
-          <button
-            type="submit"
-            disabled={loading}
-            className={`inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white ${
-              loading ? "bg-gray-500" : "bg-blue-600 hover:bg-blue-700"
-            }`}
+    //     <div className="text-right">
+    //       <button
+    //         type="submit"
+    //         disabled={loading}
+    //         className={`inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white ${
+    //           loading ? "bg-gray-500" : "bg-blue-600 hover:bg-blue-700"
+    //         }`}
+    //       >
+    //         {loading ? "Ajout en cours..." : "Ajouter"}
+    //       </button>
+    //     </div>
+    //   </form>
+    // </div>
+      <div className="container mx-auto px-4 py-8">
+        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+          Ajouter un Produit
+        </h2>
+    
+        {error && (
+          <div className="text-red-500 mb-4 text-center font-medium">{error}</div>
+        )}
+    
+        {program.map((item, index) => (
+          <form
+            key={index}
+            onSubmit={handleSubmit}
+            className="bg-white border border-gray-200 rounded-lg shadow-md p-6 mb-10"
           >
-            {loading ? "Ajout en cours..." : "Ajouter"}
-          </button>
-        </div>
-      </form>
-    </div>
+            {/* Product Image */}
+            <div className="mb-6">
+              <img
+                src={item.imageUrl}
+                alt={`Produit ${index}`}
+                className="w-full h-60 object-cover rounded-md"
+              />
+            </div>
+    
+            {/* Title */}
+            <div className="mb-4">
+              <label htmlFor="code" className="block text-sm font-semibold text-gray-700 mb-1">
+                Title
+              </label>
+              <input
+                type="text"
+                id="code"
+                name="code"
+                value={productData.code || item.title}
+                onChange={(e) => setProductData({ ...productData, code: e.target.value })}
+                className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+    
+            {/* Main Text */}
+          
+    
+            {/* Description */}
+            <div className="mb-4">
+              <label htmlFor="description" className="block text-sm font-semibold text-gray-700 mb-1">
+                Description
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                rows="4"
+                value={productData.description || item.mainText}
+                onChange={(e) => setProductData({ ...productData, description: e.target.value })}
+                className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+    
+            {/* Prix de Vente */}
+            <div className="mb-6">
+              <label htmlFor="prixVente" className="block text-sm font-semibold text-gray-700 mb-1">
+                Prix de Vente
+              </label>
+              <input
+                type="number"
+                id="prixVente"
+                name="prixVente"
+                value={productData.prixVente}
+                onChange={(e) => setProductData({ ...productData, prixVente: e.target.value })}
+                className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+    
+            {/* Submit Button */}
+            <div className="text-center">
+              <button
+                type="submit"
+                disabled={loading}
+                className={`inline-block w-full py-3 text-white font-medium rounded-md transition ${
+                  loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+                }`}
+              >
+                {loading ? "Ajout en cours..." : "Ajouter"}
+              </button>
+            </div>
+          </form>
+        ))}
+      </div>    
   );
 };
 

@@ -143,14 +143,9 @@ const Produits = ({ onCartChange }) => {
 
   const columns = [
     {
-      title: "Référence",
+      title: "Title",
       dataIndex: "code",
       key: "code",
-    },
-    {
-      title: "Marque",
-      dataIndex: "marque",
-      key: "marque",
     },
     {
       title: "Description",
@@ -170,18 +165,18 @@ const Produits = ({ onCartChange }) => {
         />
       ),
     },
-    {
-      title: "Prix Achat",
-      dataIndex: "coutAchat", // Correct field name from the backend
-      key: "coutAchat",
-    },
-    {
-      title: "Marge",
-      key: "marge",
-      render: (_, record) => (
-        <span>{(record.marge || -record.coutAchat).toFixed(2)} €</span> // Calculate margin dynamically with default negative margin
-      ),
-    },
+    // {
+    //   title: "Prix Achat",
+    //   dataIndex: "coutAchat", // Correct field name from the backend
+    //   key: "coutAchat",
+    // },
+    // {
+    //   title: "Marge",
+    //   key: "marge",
+    //   render: (_, record) => (
+    //     <span>{(record.marge || -record.coutAchat).toFixed(2)} €</span> // Calculate margin dynamically with default negative margin
+    //   ),
+    // },
     {
       title: "Action",
       key: "action",
