@@ -4,33 +4,15 @@ const produitSchema = new mongoose.Schema({
   code: {
     type: String,
     required: true,
-    trim: true,
-  },
-  marque: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  modele: {
-    type: String,
-    required: true,
-    trim: true,
   },
   description: {
     type: String,
     required: true,
   },
-  coutAchat: {
-    type: Number,
-    required: true,
-  },
+
   prixVente: {
     type: Number,
     required: true,
-  },
-  fraisGestion: {
-    type: Number,
-    default: 0,
   },
   tva: {
     type: Number,
