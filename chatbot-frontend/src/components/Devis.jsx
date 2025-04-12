@@ -37,8 +37,7 @@ const Devis = ({ onValidate, shouldRefresh }) => {
       const response = await axios.get(`/command/${id}`);
       const filteredCommands = response.data.filter(
         (command) =>
-          command.command_type === "devis" ||
-          (command.command_type === "commande" && command.lead.toString() === id)
+          command.command === "devis" && command.lead.toString() === id
       );
       setCommands(filteredCommands);
     } catch (error) {
@@ -145,8 +144,8 @@ const Devis = ({ onValidate, shouldRefresh }) => {
     },
     {
       title: "Devis / Commande",
-      dataIndex: "command_type",
-      key: "command_type",
+      dataIndex: "command",
+      key: "command",
     },
     {
       title: "Description",
