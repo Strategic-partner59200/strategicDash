@@ -766,7 +766,7 @@ const LeadDetailsPage = () => {
                   <input
                     type="text"
                     name="besoin"
-                    value={formData.besoin || "-"}
+                    value={formData.besoin || ""}
                     onChange={handleInputChange}
                     className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
                     placeholder="Enter raison de contact"
@@ -807,11 +807,11 @@ const LeadDetailsPage = () => {
                   </label>
                   <input
                     type="text"
-                    name="demande"
+                    name="nom_societé"
                     value={formData.nom_societé || ""}
                     onChange={handleInputChange}
                     className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
-                    placeholder="Enter Lead's besoin"
+                    placeholder="Enter Nom société"
                   />
                 </div>
               </div>

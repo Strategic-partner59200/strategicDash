@@ -691,8 +691,8 @@ const Leads = () => {
     // },
     {
       title: "Prénom et Nom", // Changed title to "Prenom and Nom"
-      key: "request_lastname",
-      dataIndex: "request_fullname",
+      key: "nom",
+      dataIndex: "nom",
       render: (text, record) => (
         <div className="cursor-pointer" onClick={() => handleLeadClick(record)}>
           <div>{record.nom || ""}</div>
