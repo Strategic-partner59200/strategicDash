@@ -38,6 +38,10 @@ const chatSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    nom_societé: {
+      type: String,
+      default: "",
+    },
     prénom: {
       type: String,
       default: "",
