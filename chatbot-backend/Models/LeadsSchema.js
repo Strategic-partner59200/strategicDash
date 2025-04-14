@@ -36,7 +36,7 @@ const chatSchema = new mongoose.Schema(
     phone: {
       type: String,
       required: true,
-      sparse: true,
+      unique: true,
     },
     prénom: {
       type: String,
