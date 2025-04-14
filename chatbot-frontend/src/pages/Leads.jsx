@@ -695,9 +695,7 @@ const Leads = () => {
       dataIndex: "request_fullname",
       render: (text, record) => (
         <div className="cursor-pointer" onClick={() => handleLeadClick(record)}>
-          <div>{`${record.prénom || ""} ${
-            record.nom || ""
-          }`}</div>
+          <div>{record.nom || ""}</div>
         </div>
       ),
     },
@@ -770,10 +768,10 @@ const Leads = () => {
       render: (text, record) => text || record.status || "",
     },
     {
-      title: "Besoin",
+      title: "Nom société",
       dataIndex: "demande",
       key: "demande",
-      render: (text, record) => text || record.demande || "",
+      render: (text, record) => text || record.nom_societé || "",
     },
     // {
     //   title: "STATUS LEAD",
@@ -806,7 +804,7 @@ const Leads = () => {
       ),
     },
     {
-      title: "Contacter",
+      title: "Besoin",
       dataIndex: "besoin",
       key: "besoin",
       render: (text, record) => (

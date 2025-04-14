@@ -339,9 +339,9 @@ const LeadDetailsPage = () => {
                     { label: "Prénom et Nom", value: lead.nom || "-" },
                     { label: "Email", value: lead.email || "-" },
                     { label: "Téléphone", value: lead.phone || "-" },
-                    { label: "Status", value: lead.status || "-" },
+                    { label: "Niche", value: lead.status || "-" },
                     { label: "Contacter", value: lead.besoin || "-" },
-                    { label: "Besoin", value: lead.demande || "-" },
+                    { label: "Nom société", value: lead.nom_societé || "-" },
                     { label: "Status de lead", value: lead.type || "-" },
                   ].map(({ label, value }) => (
                     <div className="flex items-center gap-2" key={label}>
@@ -729,22 +729,10 @@ const LeadDetailsPage = () => {
             <div className="flex flex-col space-y-6 justify-center">
               {/* Form Fields */}
               <div className="flex gap-4">
+             
                 <div className="flex flex-col gap-2 w-full">
                   <label className="text-lg font-medium text-gray-700">
-                    Prénom
-                  </label>
-                  <input
-                    type="text"
-                    name="prénom"
-                    value={formData.prénom || ""}
-                    onChange={handleInputChange}
-                    className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
-                    placeholder="Enter Lead prenom"
-                  />
-                </div>
-                <div className="flex flex-col gap-2 w-full">
-                  <label className="text-lg font-medium text-gray-700">
-                    Nom
+                    Prénom et Nom
                   </label>
                   <input
                     type="text"
@@ -755,9 +743,6 @@ const LeadDetailsPage = () => {
                     placeholder="Enter Lead prenom"
                   />
                 </div>
-              </div>
-
-              <div className="flex gap-4">
                 <div className="flex flex-col gap-2 w-full">
                   <label className="text-lg font-medium text-gray-700">
                     Téléphone
@@ -769,6 +754,22 @@ const LeadDetailsPage = () => {
                     onChange={handleInputChange}
                     className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
                     placeholder="Enter Lead's Phone"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+              <div className="flex flex-col gap-2 w-full">
+                  <label className="text-lg font-medium text-gray-700">
+                    Besoin
+                  </label>
+                  <input
+                    type="text"
+                    name="besoin"
+                    value={formData.besoin || "-"}
+                    onChange={handleInputChange}
+                    className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="Enter raison de contact"
                   />
                 </div>
                 <div className="flex flex-col gap-2 w-full">
@@ -787,37 +788,9 @@ const LeadDetailsPage = () => {
               </div>
 
               <div className="flex gap-4">
-                <div className="flex flex-col gap-2 w-full">
+              <div className="flex flex-col gap-2 w-full">
                   <label className="text-lg font-medium text-gray-700">
-                    Contacter
-                  </label>
-                  <input
-                    type="text"
-                    name="besoin"
-                    value={formData.besoin || "-"}
-                    onChange={handleInputChange}
-                    className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
-                    placeholder="Enter raison de contact"
-                  />
-                </div>
-                <div className="flex flex-col gap-2 w-full">
-                  <label className="text-lg font-medium text-gray-700">
-                    Besoin
-                  </label>
-                  <input
-                    type="text"
-                    name="demande"
-                    value={formData.demande || ""}
-                    onChange={handleInputChange}
-                    className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
-                    placeholder="Enter Lead's besoin"
-                  />
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <div className="flex flex-col gap-2 w-full">
-                  <label className="text-lg font-medium text-gray-700">
-                    Status
+                    Niche
                   </label>
                   <input
                     type="text"
@@ -825,7 +798,35 @@ const LeadDetailsPage = () => {
                     value={formData.status || ""}
                     onChange={handleInputChange}
                     className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
-                    placeholder="Enter Campus Name"
+                    placeholder="Enter Niche"
+                  />
+                </div>
+                <div className="flex flex-col gap-2 w-full">
+                  <label className="text-lg font-medium text-gray-700">
+                  Nom société
+                  </label>
+                  <input
+                    type="text"
+                    name="demande"
+                    value={formData.nom_societé || ""}
+                    onChange={handleInputChange}
+                    className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="Enter Lead's besoin"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-4">
+              <div className="flex flex-col gap-2 w-full">
+                  <label className="text-lg font-medium text-gray-700">
+                    Code Postal
+                  </label>
+                  <input
+                    type="text"
+                    name="codepostal"
+                    value={formData.codepostal || ""}
+                    onChange={handleInputChange}
+                    className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="Enter code postal"
                   />
                 </div>
                 <div className="flex flex-col gap-2 w-full">
@@ -838,24 +839,12 @@ const LeadDetailsPage = () => {
                     value={formData.ville || ""}
                     onChange={handleInputChange}
                     className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
-                    placeholder="Enter Lead prenom"
+                    placeholder="Enter la ville"
                   />
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="flex flex-col gap-2 w-full">
-                  <label className="text-lg font-medium text-gray-700">
-                    Code Postal
-                  </label>
-                  <input
-                    type="text"
-                    name="codepostal"
-                    value={formData.codepostal || ""}
-                    onChange={handleInputChange}
-                    className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
-                    placeholder="Enter Campus Name"
-                  />
-                </div>
+              
                 <div className="flex flex-col gap-2 w-full">
                   <label className="text-lg font-medium text-gray-700">
                     Address
@@ -866,7 +855,7 @@ const LeadDetailsPage = () => {
                     value={formData.address || ""}
                     onChange={handleInputChange}
                     className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
-                    placeholder="Enter Lead prenom"
+                    placeholder="Enter l'address"
                   />
                 </div>
               </div>
