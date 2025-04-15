@@ -8,7 +8,7 @@ const CommandeSchema = new mongoose.Schema({
   },
   command_type: { type: String, enum: ["commande", "devis"], required: true },
   date: { type: Date, required: true },
-  request_lastname: String,
+  nom: String,
   // request_email: String,
   // request_phone: String,
   siret: String,

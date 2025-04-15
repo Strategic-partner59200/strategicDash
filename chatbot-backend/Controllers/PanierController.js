@@ -64,7 +64,7 @@ class PanierController {
         produit: produitId,
         description: produit.description,
         code: produit.code,
-        marque: produit.marque,
+        // marque: produit.marque,
         quantite: quantite,
         prixUnitaire: prixVente,
         tva: tva,

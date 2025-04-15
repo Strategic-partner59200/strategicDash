@@ -137,7 +137,7 @@ class ProgramController {
       totalTVA,
       totalTTC,
       date,
-      request_lastname,
+      nom,
       //  request_email,
       //  request_phone,
        siret,
@@ -160,7 +160,7 @@ class ProgramController {
         totalHT,
         totalTVA,
         totalTTC,
-        request_lastname,
+        nom,
         // request_email,
         // request_phone,
         siret,
@@ -172,6 +172,7 @@ class ProgramController {
         code,
         // marque
       });
+      console.log("newCommand", newCommand)
     await newCommand.save();
 
     res.status(201).json(newCommand);
