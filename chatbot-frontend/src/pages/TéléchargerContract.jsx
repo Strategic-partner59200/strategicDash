@@ -149,7 +149,7 @@ const AllCommands = () => {
     },
     {
       title: 'Client',
-      dataIndex: 'request_lastname',
+      dataIndex: 'nom',
       key: 'client',
       render: (text) => safeRender(text),
       ellipsis: true

@@ -35,6 +35,7 @@ const Devis = ({ onValidate, shouldRefresh }) => {
   const fetchCommands = async () => {
     try {
       const response = await axios.get(`/command/${id}`);
+      console.log("Fetched Commands:", response.data);
       const filteredCommands = response.data.filter(
         (command) =>
           command.command === "devis" && command.lead.toString() === id
@@ -141,6 +142,11 @@ const Devis = ({ onValidate, shouldRefresh }) => {
       title: "Code",
       dataIndex: "code",
       key: "code",
+      render: (text) => {
+        // Take only the first part before the first comma
+        const cleanText = text.split(',')[0];
+        return cleanText;
+      }
     },
     {
       title: "Devis / Commande",
@@ -151,6 +157,7 @@ const Devis = ({ onValidate, shouldRefresh }) => {
       title: "Description",
       dataIndex: "description",
       key: "description",
+      render: (text) => text.split(',')[0]
     },
 
     {

@@ -112,6 +112,7 @@ const Produits = ({ onCartChange }) => {
   admin: !isCommercial ? userId : undefined,
   commercial: isCommercial ? userId : undefined,
       });
+      console.log("Response from backend:", response.data);
 
       // 3. Update all states immediately
       const updatedCart = [...currentCart, response.data];

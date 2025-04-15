@@ -61,9 +61,14 @@ const Command = ({ refreshTrigger }) => {
 
   const columns = [
     {
-      title: 'Reférence',
-      dataIndex: 'code',
-      key: 'code',
+      title: "Code",
+      dataIndex: "code",
+      key: "code",
+      render: (text) => {
+        // Take only the first part before the first comma
+        const cleanText = text.split(',')[0];
+        return cleanText;
+      }
     },
     {
       title: 'Type de Commande',
@@ -71,10 +76,13 @@ const Command = ({ refreshTrigger }) => {
       key: 'command_type',
     },
     {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      render: (text) => text.split(',')[0]
     },
+   
+   
     {
       title: 'Prix HT',
       dataIndex: 'totalHT',

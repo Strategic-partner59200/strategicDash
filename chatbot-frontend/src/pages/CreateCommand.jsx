@@ -406,14 +406,14 @@ const CreateCommand = () => {
           form.setFieldsValue({
             command_type: commandData.command_type,
             date: dayjs(commandData.date),
-            request_lastname: commandData.request_lastname,
-            request_email: commandData.request_email,
-            request_phone: commandData.request_phone,
+            nom: commandData.nom,
+            // request_email: commandData.request_email,
+            // request_phone: commandData.request_phone,
             siret: commandData.siret,
-            codepostal: commandData.codepostal,
+            // codepostal: commandData.codepostal,
             raissociale: commandData.raissociale,
-            ville: commandData.ville,
-            adresse: commandData.adresse,
+            // ville: commandData.ville,
+            // adresse: commandData.adresse,
             numCommand: commandData.numCommand,
           });
 
@@ -435,14 +435,15 @@ const CreateCommand = () => {
       try {
         const response = await axios.get(`/lead/${id}`);
         const foundLead = response.data.chat;
+        console.log("foundLead", foundLead);
         setLeads(foundLead);
         if (foundLead) {
           form.setFieldsValue({
-            request_name: foundLead.request_name,
-            request_lastname: foundLead.request_lastname,
-            request_email: foundLead.request_email,
-            request_phone: foundLead.request_phone,
-            request_who: foundLead.request_who,
+            nom: foundLead.nom,
+            siret: foundLead.siret,
+            // request_email: foundLead.request_email,
+            // request_phone: foundLead.request_phone,
+            // request_who: foundLead.request_who,
           });
         }
       } catch (error) {
@@ -482,7 +483,8 @@ const CreateCommand = () => {
         await axios.put(`/command/${commandId}`, formData);
         message.success("Commande mise à jour avec succès !");
       } else {
-        await axios.post("/command", formData);
+        const re = await axios.post("/command", formData);
+        console.log("re", re);
         message.success("Commande ajoutée avec succès !");
       }
 
@@ -587,7 +589,7 @@ const CreateCommand = () => {
                 <Col span={12}>
             <Form.Item
               label="Prénom et Nom"
-              name="request_lastname"
+              name="nom"
               rules={[{ required: false, message: "Le prénom est requis" }]}
             >
               <Input placeholder="Prénom du client" />
