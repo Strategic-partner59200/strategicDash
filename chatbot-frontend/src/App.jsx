@@ -74,7 +74,7 @@ function App() {
             <Route path="/settings" element={<Setting />} />
             <Route path="/command/:leadId" element={<Commands />} />
             <Route
-              path="/leads/:id/create-command"
+              path="/leads/:id/create-command/:panierId"
               element={<CreateCommand />}
             />
             <Route

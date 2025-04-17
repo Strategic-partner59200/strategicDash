@@ -4,6 +4,9 @@ import { EditOutlined, DeleteOutlined, ExclamationCircleOutlined, FilePdfOutline
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import moment from "moment";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+import logo from "../assets/logo.jpeg";
 
 const { confirm } = Modal;
 
@@ -11,7 +14,7 @@ const AllDevis = () => {
   const [allCommands, setAllCommands] = useState([]);
   const [filteredCommands, setFilteredCommands] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({ totalHT: 0, totalTTC: 0, totalCommands: 0 });
+  const [stats, setStats] = useState({ montantHT: 0, montantTTC: 0, totalCommands: 0 });
   const token = localStorage.getItem("token");
   const decodedUser = token ? jwtDecode(token) : null;
   const userLoged = decodedUser?.userId;
@@ -86,10 +89,10 @@ const AllDevis = () => {
 
   const updateStatistics = (commands) => {
     const totals = commands.reduce((acc, cmd) => ({
-      totalHT: acc.totalHT + (cmd.totalHT || 0),
-      totalTTC: acc.totalTTC + (cmd.totalTTC || 0),
+      montantHT: acc.montantHT + (cmd.montantHT || 0),
+      montantTTC: acc.montantTTC + (cmd.montantTTC || 0),
       totalCommands: acc.totalCommands + 1
-    }), { totalHT: 0, totalTTC: 0, totalCommands: 0 });
+    }), { montantHT: 0, montantTTC: 0, totalCommands: 0 });
 
     setStats(totals);
   };
@@ -129,6 +132,234 @@ const AllDevis = () => {
     return value !== undefined && value !== null ? value : fallback;
   };
 
+  const handleDownload = (commandId, e) => {
+    e.stopPropagation();
+
+    const command = allCommands.find((cmd) => cmd._id === commandId);
+    if (!command) {
+      message.error("Commande non trouvée");
+      return;
+    }
+
+    const doc = new jsPDF();
+
+    // === Add logo ===
+    const logoWidth = 40;
+    const logoHeight = 20;
+    doc.addImage(logo, "JPEG", 10, 15, logoWidth, logoHeight);
+
+    // === Company info just below logo ===
+    const infoStartY = 10 + logoHeight + 8; // e.g., 40
+    doc.setFontSize(10);
+    doc.setTextColor(40, 40, 40);
+    doc.text("Strategic Partner", 15, infoStartY);
+    doc.text("99c boulevard Constantin Descat", 15, infoStartY + 6);
+    doc.text("9200 Tourcoing, France", 15, infoStartY + 12);
+    doc.text("Tél: +33 6 10 08 33 86", 15, infoStartY + 20);
+    doc.text("Email: strategic.partnerfrance@gmail.com", 15, infoStartY + 24);
+    doc.setTextColor(0, 102, 204);
+    doc.setFont(undefined, "bold");
+    doc.text(`Devis n°: ${command.numCommand}`, 15, infoStartY + 50);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont(undefined, "normal");
+    doc.setFontSize(8);
+    doc.text(`Valable 10 jours`, 15, infoStartY + 55);
+    doc.text(
+      `En date du: ${moment(command.date).format("DD/MM/YYYY")}`,
+      120,
+      infoStartY + 50
+    );
+
+    const infoBoxWidth = 80;
+    const infoBoxX = 120; // Starting X position
+
+    // Set text color that contrasts with the background
+    doc.setTextColor(40, 40, 40); // Dark gray text
+    const maxAddressWidth = 80; // Maximum width in points (about 80mm)
+
+    // Split the address into multiple lines if needed
+    const addressLines = doc.splitTextToSize(
+      command.address || "Non spécifié",
+      maxAddressWidth
+    );
+
+    const lineHeight = 7; // Height per line in points
+
+    const infoBoxHeights = 28 + (addressLines.length - 1) * lineHeight;
+    doc.setFillColor(229, 231, 235);
+    doc.setTextColor(40, 40, 40);
+    doc.rect(infoBoxX, infoStartY, infoBoxWidth, infoBoxHeights, "F");
+    // Add text on top of the background
+    doc.setFontSize(8);
+    doc.text(
+      `MONSIEUR: ${command.nom || "Non spécifié"}`,
+      infoBoxX + 5,
+      infoStartY + 8
+    );
+    // doc.text(`${command.address || "Non spécifié"}`, infoBoxX + 5, infoStartY + 16);
+    addressLines.forEach((line, index) => {
+      doc.text(line, infoBoxX + 5, infoStartY + 16 + index * lineHeight);
+    });
+    doc.text(
+      `${command.siret || "Non spécifié"}`,
+      infoBoxX + 5,
+      infoStartY + 16 + addressLines.length * lineHeight
+    );
+    // doc.text(`SIRET: ${command.siret || "Non spécifié"}`, infoBoxX + 5, infoBoxX + 24);
+
+    // === Table headers ===
+    const tableStartY = infoStartY + 70;
+    doc.setFillColor(0, 102, 204);
+    doc.setTextColor(255, 255, 255);
+    doc.setDrawColor(209, 213, 219);
+    doc.rect(15, tableStartY, 190, 10, "F");
+
+    doc.text("N°", 20, tableStartY + 6);
+    doc.text("Désignation", 35, tableStartY + 6);
+    doc.text("Qté", 125, tableStartY + 6);
+    doc.text("PU HT", 145, tableStartY + 6);
+    doc.text("TVA", 165, tableStartY + 6);
+    doc.text("Total HT", 200, tableStartY + 6, { align: "right" });
+
+    // === Table row ===
+    const cleanDescription = command.description.split(",")[0].trim();
+    const splitDescription = doc.splitTextToSize(cleanDescription, 90);
+    const rowHeight = Math.max(10, splitDescription.length * 10);
+    const rowY = tableStartY + 10;
+
+    doc.setFillColor(255, 255, 255);
+    doc.setTextColor(40, 40, 40);
+
+    // Borders
+    doc.rect(15, rowY, 15, rowHeight); // N°
+    doc.rect(30, rowY, 90, rowHeight); // Désignation
+    doc.rect(120, rowY, 20, rowHeight); // Qté
+    doc.rect(140, rowY, 20, rowHeight); // PU HT
+    doc.rect(160, rowY, 20, rowHeight); // TVA
+    doc.rect(180, rowY, 25, rowHeight); // Total HT
+
+    // Content
+    doc.text("1", 20, rowY + 12);
+    doc.text(splitDescription, 32, rowY + 12);
+    doc.text(command.quantite.toString() + " u", 125, rowY + 12);
+    doc.text(
+      `${(command.totalHT / command.quantite).toFixed(2)} €`,
+      142,
+      rowY + 12
+    );
+    doc.text("(20%)", 165, rowY + 12);
+    doc.text(`${command.totalHT.toFixed(2)} €`, 200, rowY + 12, {
+      align: "right",
+    });
+
+    // doc.text(
+    //   "Paiement par virement bancaire ou par carte bleue.",
+    //   15,
+    //   rowY + rowHeight + 15
+    // );
+    doc.setFont(undefined, "bold");
+    doc.text(
+      "Le client",
+      30,
+      rowY + rowHeight + 50
+    );
+    const infoBoxWidths = 80;
+    const infoBoxXs = 30; 
+    const infoStartYs = 190
+    const infoBoxHeightss = 28;
+
+    doc.setFillColor(229, 231, 235);
+    doc.setTextColor(40, 40, 40);
+    doc.setFontSize(8);
+    doc.rect(infoBoxXs, infoStartYs, infoBoxWidths, infoBoxHeightss, "F");
+    // Add text on top of the background
+    doc.text(
+      "Mention manuscrite et datée :",
+      infoBoxXs + 5,
+      infoStartYs + 8
+    );
+
+    doc.text(
+      "« Bon pour accord. »",
+      infoBoxXs + 5,
+      infoStartYs + 12
+    );
+
+    const pageWidth = doc.internal.pageSize.getWidth(); // Get full width of the page
+    const paymentY = rowY + rowHeight + 15;
+    const totalsColWidth = 60;
+    const totalsRowHeight = 8;
+
+    // Align table to the far right
+    const totalsX = pageWidth - totalsColWidth - 5;
+
+    // Payment info (left side)
+    doc.setTextColor(40, 40, 40);
+    doc.text(
+      "Paiement par virement bancaire ou par carte bleue.",
+      15,
+      paymentY
+    );
+    doc.setDrawColor(209, 213, 219); // black line
+    doc.setLineWidth(0.2);
+    doc.line(totalsX, paymentY - 3, totalsX + totalsColWidth, paymentY - 3);
+    // Totals table data
+    const totalsData = [
+      { label: "Total HT", value: `${command.totalHT.toFixed(2)} €` },
+      { label: "TVA à 20%", value: `${command.totalTVA.toFixed(2)} €` },
+      {
+        label: "Total TTC",
+        value: `${command.totalTTC.toFixed(2)} €`,
+        bold: true,
+        bgColor: [229, 231, 235], // gray-200
+      },
+    ];
+
+    // Draw table background and border
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(209, 213, 219);
+    doc.setLineWidth(0.2);
+
+
+    // Add rows
+    totalsData.forEach((row, index) => {
+      const rowY = paymentY + index * totalsRowHeight;
+
+      // Background
+      if (row.bgColor) {
+        doc.setFillColor(...row.bgColor);
+        doc.rect(totalsX, rowY - 1, totalsColWidth, totalsRowHeight, "F");
+      }
+
+      // Text
+      if (row.bold) {
+        doc.setFont(undefined, "normal");
+      } else {
+        doc.setFont(undefined, "normal");
+      }
+
+      // Label and value
+      doc.setTextColor(40, 40, 40);
+      doc.text(row.label, totalsX + 4, rowY + 5);
+      doc.text(row.value, totalsX + totalsColWidth - 4, rowY + 5, {
+        align: "right",
+      });
+
+      // Divider line between rows
+      if (index < totalsData.length - 1) {
+        doc.line(
+          totalsX,
+          rowY + totalsRowHeight,
+          totalsX + totalsColWidth,
+          rowY + totalsRowHeight
+        );
+      }
+    });
+
+    // === Save ===
+    doc.save(`Facture_${command.numCommand}.pdf`);
+  };
+
   const columns = [
     {
       title: 'Devis',
@@ -160,29 +391,29 @@ const AllDevis = () => {
     },
     {
       title: 'Total HT',
-      dataIndex: 'totalHT',
-      key: 'totalHT',
+      dataIndex: 'montantHT',
+      key: 'montantHT',
       render: (text) => `${safeRender(text, '0')} €`,
       sorter: (a, b) => (a.totalHT || 0) - (b.totalHT || 0)
     },
     {
       title: 'Total TTC',
-      dataIndex: 'totalTTC',
-      key: 'totalTTC',
+      dataIndex: 'montantTTC',
+      key: 'montantTTC',
       render: (text) => `${safeRender(text, '0')} €`,
       sorter: (a, b) => (a.totalTTC || 0) - (b.totalTTC || 0)
     },
-    {
-      title: 'Status',
-      key: 'status',
-      render: () => {
-        return (
-          <Tag color="green">
-            Completed
-          </Tag>
-        );
-      }
-    },
+    // {
+    //   title: 'Status',
+    //   key: 'status',
+    //   render: () => {
+    //     return (
+    //       <Tag color="green">
+    //         Completed
+    //       </Tag>
+    //     );
+    //   }
+    // },
     {
       title: 'Actions',
       key: 'actions',
@@ -192,10 +423,10 @@ const AllDevis = () => {
             icon={<EditOutlined />} 
             onClick={(e) => handleEdit(record._id, e)}
           />
-          {/* <Button 
+          <Button 
             icon={<FilePdfOutlined />} 
             onClick={(e) => handleDownload(record._id, e)}
-          /> */}
+          />
           <Button 
             danger 
             icon={<DeleteOutlined />} 
@@ -215,10 +446,10 @@ const AllDevis = () => {
           <Statistic title="Total Devis" value={stats.totalCommands} />
         </Card>
         <Card>
-          <Statistic title="Total HT" value={stats.totalHT} suffix="€" />
+          <Statistic title="Total HT" value={stats.montantHT} suffix="€" />
         </Card>
         <Card>
-          <Statistic title="Total TTC" value={stats.totalTTC} suffix="€" />
+          <Statistic title="Total TTC" value={stats.montantTTC} suffix="€" />
         </Card>
       </div>
 

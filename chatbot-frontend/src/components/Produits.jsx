@@ -66,16 +66,7 @@ const Produits = ({ onCartChange }) => {
     navigate(`/leads/${id}/ajouter-produit`);
   };
 
-  // Handle change in prixVente and update marge
-  const handlePrixVenteChange = (value, productId) => {
-    setProduits((prevProduits) =>
-      prevProduits.map((product) =>
-        product._id === productId
-          ? { ...product, prixVente: value, marge: value - product.coutAchat }
-          : product
-      )
-    );
-  };
+
 
   const handleAddToCart = async (product) => {
    
@@ -142,6 +133,8 @@ const Produits = ({ onCartChange }) => {
     }
   };
 
+  
+
   const columns = [
     {
       title: "Title",
@@ -157,14 +150,14 @@ const Produits = ({ onCartChange }) => {
       title: "Prix Vente",
       dataIndex: "prixVente", // Correct field name from the backend
       key: "prixVente",
-      render: (text, record) => (
-        <Input
-          value={text}
-          onChange={(e) => handlePrixVenteChange(e.target.value, record._id)}
-          style={{ width: 100 }}
-          type="number"
-        />
-      ),
+      // render: (text, record) => (
+      //   <Input
+      //     value={text}
+      //     onChange={(e) => handlePrixVenteChange(e.target.value, record._id)}
+      //     style={{ width: 100 }}
+      //     type="number"
+      //   />
+      // ),
     },
     // {
     //   title: "Prix Achat",

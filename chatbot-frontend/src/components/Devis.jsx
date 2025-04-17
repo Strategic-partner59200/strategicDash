@@ -142,11 +142,11 @@ const Devis = ({ onValidate, shouldRefresh }) => {
       title: "Code",
       dataIndex: "code",
       key: "code",
-      render: (text) => {
-        // Take only the first part before the first comma
-        const cleanText = text.split(',')[0];
-        return cleanText;
-      }
+      // render: (text) => {
+      //   // Take only the first part before the first comma
+      //   const cleanText = text.split(',')[0];
+      //   return cleanText;
+      // }
     },
     {
       title: "Devis / Commande",
@@ -157,26 +157,26 @@ const Devis = ({ onValidate, shouldRefresh }) => {
       title: "Description",
       dataIndex: "description",
       key: "description",
-      render: (text) => text.split(',')[0]
+      // render: (text) => text.split(',')[0]
     },
 
     {
-      title: "Prix HT",
-      dataIndex: "totalHT",
-      key: "totalHT",
-      render: (text) => `${text} €`, // Formatting the price
+      title: "Prix HT (€)",
+      dataIndex: "montantHT",
+      key: "montantHT",
+      render: (text) => `${text}`, // Formatting the price
     },
     {
-      title: "TVA (20%)",
-      dataIndex: "totalTVA",
-      key: "totalTVA",
-      render: (text) => `${text} €`, // Formatting the TVA
+      title: "TVA (20%) (€)",
+      dataIndex: "montantTVA",
+      key: "montantTVA",
+      render: (text) => `${text}`, // Formatting the TVA
     },
     {
-      title: "Prix TTC",
-      dataIndex: "totalTTC",
-      key: "totalTTC",
-      render: (text) => `${text} €`, // Formatting the price
+      title: "Prix TTC (€)",
+      dataIndex: "montantTTC",
+      key: "montantTTC",
+      render: (text) => `${text}`, // Formatting the price
     },
     {
       title: "Date de Création",

@@ -84,22 +84,22 @@ const Command = ({ refreshTrigger }) => {
    
    
     {
-      title: 'Prix HT',
-      dataIndex: 'totalHT',
-      key: 'totalHT',
-      render: (text) => `${text} €`,
+      title: "Prix HT",
+      dataIndex: "montantHT",
+      key: "montantHT",
+      render: (text) => `${text} €`, // Formatting the price
     },
     {
-      title: 'TVA (20%)',
-      dataIndex: 'totalTVA',
-      key: 'totalTVA',
-      render: (text) => `${text} €`,
+      title: "TVA (20%)",
+      dataIndex: "montantTVA",
+      key: "montantTVA",
+      render: (text) => `${text} €`, // Formatting the TVA
     },
     {
-      title: 'Prix TTC',
-      dataIndex: 'totalTTC',
-      key: 'totalTTC',
-      render: (text) => `${text} €`,
+      title: "Prix TTC",
+      dataIndex: "montantTTC",
+      key: "montantTTC",
+      render: (text) => `${text} €`, // Formatting the price
     },
     {
       title: 'Date de Création',

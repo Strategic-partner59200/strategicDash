@@ -28,7 +28,7 @@ const Panier = ({ setCartQuantity, refreshTrigger }) => {
       try {
         // Always get fresh data from backend first
         const response = await axios.get(`/panier/${id}`); // Fetch cart items for the specific lead ID
-        console.log('response', response)
+        console.log("response", response);
         setPanierItems(response.data);
 
         // Calculate and update quantity
@@ -56,68 +56,69 @@ const Panier = ({ setCartQuantity, refreshTrigger }) => {
     fetchCartData();
   }, [refreshTrigger, setCartQuantity]);
 
-
   // Update cart quantity
   const updateCartQuantity = (items) => {
     const totalQuantity = items.reduce((acc, item) => acc + item.quantite, 0);
     setCartQuantity(totalQuantity); // Update the quantity in the parent component
   };
 
-  const handleQuantityChange = async (productId, newQuantity) => {
-    const userId = decodedToken?.userId || decodedToken?.commercialId; // Get user ID from token
-    const isCommercial = decodedToken?.role === "commercial"; // Check if the user is a commercial
-    try {
-      // 1. Update backend
-      const response = await axios.post("/panier", {
-        produitId: productId,
-        quantite: newQuantity,
-        leadId: id,
-        admin: !isCommercial ? userId : undefined,
-      });
+  // const handleQuantityChange = async (productId, newQuantity) => {
+  //   const userId = decodedToken?.userId || decodedToken?.commercialId; // Get user ID from token
+  //   const isCommercial = decodedToken?.role === "commercial"; // Check if the user is a commercial
+  //   try {
+  //     // 1. Update backend
+  //     const response = await axios.post("/panier", {
+  //       produitId: productId,
+  //       quantite: newQuantity,
+  //       leadId: id,
+  //       admin: !isCommercial ? userId : undefined,
+  //     });
 
-      // 2. Update local state
-      const updatedItems = panierItems
-        .map((item) =>
-          item.produit._id === productId
-            ? {
-                ...item,
-                quantite: newQuantity,
-                montantHT: item.prixUnitaire * newQuantity,
-                montantTTC: item.prixUnitaire * newQuantity * 1.2,
-              }
-            : item
-        )
-        .filter((item) => item.quantite > 0); // Remove items with zero quantity
+  //     // 2. Update local state
+  //     const updatedItems = panierItems
+  //       .map((item) =>
+  //         item.produit._id === productId
+  //           ? {
+  //               ...item,
+  //               quantite: newQuantity,
+  //               montantHT: item.prixUnitaire * newQuantity,
+  //               montantTTC: item.prixUnitaire * newQuantity * 1.2,
+  //             }
+  //           : item
+  //       )
+  //       .filter((item) => item.quantite > 0); // Remove items with zero quantity
 
-      setPanierItems(updatedItems);
+  //     setPanierItems(updatedItems);
 
-      // 3. Calculate new totals
-      const totalQuantity = updatedItems.reduce(
-        (sum, item) => sum + item.quantite,
-        0
-      );
+  //     // 3. Calculate new totals
+  //     const totalQuantity = updatedItems.reduce(
+  //       (sum, item) => sum + item.quantite,
+  //       0
+  //     );
 
-      // 4. Update all states and storage
-      setCartQuantity(totalQuantity);
-      localStorage.setItem("panierItems", JSON.stringify(updatedItems));
-      localStorage.setItem("cartQuantity", totalQuantity.toString());
+  //     // 4. Update all states and storage
+  //     setCartQuantity(totalQuantity);
+  //     localStorage.setItem("panierItems", JSON.stringify(updatedItems));
+  //     localStorage.setItem("cartQuantity", totalQuantity.toString());
 
-      // 5. Notify other tabs
-      window.dispatchEvent(new Event("storage"));
+  //     // 5. Notify other tabs
+  //     window.dispatchEvent(new Event("storage"));
 
-      message.success("Quantité mise à jour");
-    } catch (error) {
-      console.error("Error updating quantity:", error);
-      message.error("Failed to update quantity");
+  //     message.success("Quantité mise à jour");
+  //   } catch (error) {
+  //     console.error("Error updating quantity:", error);
+  //     message.error("Failed to update quantity");
 
-      // Optional: Revert to previous state
-      const localCart = JSON.parse(localStorage.getItem("panierItems")) || [];
-      setPanierItems(localCart);
-      setCartQuantity(localCart.reduce((sum, item) => sum + item.quantite, 0));
-    }
-  };
+  //     // Optional: Revert to previous state
+  //     const localCart = JSON.parse(localStorage.getItem("panierItems")) || [];
+  //     setPanierItems(localCart);
+  //     setCartQuantity(localCart.reduce((sum, item) => sum + item.quantite, 0));
+  //   }
+  // };
+  
 
   const handleRemoveFromCart = async (panierId) => {
+    console.log("panierIdsssssss", panierId);
     try {
       // 1. Delete from backend
       await axios.delete(`/panier/${panierId}`);
@@ -152,31 +153,19 @@ const Panier = ({ setCartQuantity, refreshTrigger }) => {
     }
   };
 
-  // Calculate the total amount (HT, TVA, TTC)
-  // const calculateTotals = () => {
-  //   const totalHT = panierItems.reduce((acc, item) => acc + item.montantHT, 0);
-  //   const totalTVA = panierItems.reduce(
-  //     (acc, item) => acc + item.montantTVA,
-  //     0
-  //   );
-  //   const totalTTC = totalHT + totalTVA;
-  //   return { totalHT, totalTVA, totalTTC };
-  // };
+  const calculateTotals = () => {
+    const totalHT = panierItems.reduce((acc, item) => acc + item.montantHT, 0);
+    const totalTVA = totalHT * 0.2; // 20% TVA
+    const totalTTC = totalHT + totalTVA;
+    return { totalHT, totalTVA, totalTTC };
+  };
 
-  // const { totalHT, totalTVA, totalTTC } = calculateTotals();
-  // Calculate the total amount (HT, TVA, TTC)
-const calculateTotals = () => {
-  const totalHT = panierItems.reduce((acc, item) => acc + item.montantHT, 0);
-  const totalTVA = totalHT * 0.20; // 20% TVA
-  const totalTTC = totalHT + totalTVA;
-  return { totalHT, totalTVA, totalTTC };
-};
+  const { totalHT, totalTVA, totalTTC } = calculateTotals();
 
-const { totalHT, totalTVA, totalTTC } = calculateTotals();
-
-
-  const handlePasserLaCommande = () => {
-    navigate(`/leads/${id}/create-command`);
+  const handlePasserLaCommande = (panierId) => {
+    navigate(`/leads/${id}/create-command/${panierId}`,{
+      state: { panierId },
+    });
   };
 
   const columns = [
@@ -192,35 +181,36 @@ const { totalHT, totalTVA, totalTTC } = calculateTotals();
     },
     {
       title: "Quantité",
+      dataIndex: "quantite",
       key: "quantite",
-      render: (_, record) => (
-        <Space>
-          <Button
-            icon={<MinusCircleOutlined />}
-            onClick={async () => {
-              try {
-                const newQuantity = record.quantite - 1;
-                await handleQuantityChange(record.produit._id, newQuantity);
-              } catch (error) {
-                console.error("Decrease quantity error:", error);
-              }
-            }}
-            disabled={record.quantite <= 1}
-          />
-          {record.quantite}
-          <Button
-            icon={<PlusCircleOutlined />}
-            onClick={async () => {
-              try {
-                const newQuantity = record.quantite + 1;
-                await handleQuantityChange(record.produit._id, newQuantity);
-              } catch (error) {
-                console.error("Increase quantity error:", error);
-              }
-            }}
-          />
-        </Space>
-      ),
+      // render: (_, record) => (
+      //   <Space>
+      //     <Button
+      //       icon={<MinusCircleOutlined />}
+      //       onClick={async () => {
+      //         try {
+      //           const newQuantity = record.quantite - 1;
+      //           await handleQuantityChange(record.produit._id, newQuantity);
+      //         } catch (error) {
+      //           console.error("Decrease quantity error:", error);
+      //         }
+      //       }}
+      //       disabled={record.quantite <= 1}
+      //     />
+      //     {record.quantite}
+      //     <Button
+      //       icon={<PlusCircleOutlined />}
+      //       onClick={async () => {
+      //         try {
+      //           const newQuantity = record.quantite + 1;
+      //           await handleQuantityChange(record.produit._id, newQuantity);
+      //         } catch (error) {
+      //           console.error("Increase quantity error:", error);
+      //         }
+      //       }}
+      //     />
+      //   </Space>
+      // ),
     },
     {
       title: "Prix Unitaire",
@@ -279,21 +269,24 @@ const { totalHT, totalTVA, totalTTC } = calculateTotals();
         <h3>Total HT: {totalHT.toFixed(2)} €</h3>
         <h3>Total TVA (20%): {totalTVA.toFixed(2)} €</h3>
         <h3>Total TTC: {totalTTC.toFixed(2)} €</h3>
-       <div className="mt-4">
-       <Button
-          type="primary"
-          style={{
-            marginLeft: "10px",
-            backgroundColor: "green",
-            borderColor: "green",
-          }}
-          onClick={handlePasserLaCommande}
-        >
-          Passer la commande
-        </Button>
-       </div>
+        <div className="mt-4">
+          <Button
+            type="primary"
+            style={{
+              marginLeft: "10px",
+              backgroundColor: "green",
+              borderColor: "green",
+            }}
+            // onClick={() => handlePasserLaCommande(panierItems)}
+            onClick={() =>
+              panierItems.length > 0 &&
+              handlePasserLaCommande(panierItems[0]._id)
+            }
+          >
+            Passer la commande
+          </Button>
+        </div>
       </div>
-     
     </div>
   );
 };
