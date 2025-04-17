@@ -1,5 +1,6 @@
 const Chat = require("../Models/LeadsSchema");
 const mongoose = require("mongoose");
+const nodemailer = require("nodemailer");
 
 class DataController {
   
@@ -508,6 +509,233 @@ static async searchData(req, res) {
         });
     }
 }
+
+static async createEmailing(req, res) {
+  
+  const { email, nom} = req.body;
+
+ const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+  const mailOptions = {
+    from: process.env.EMAIL,
+    to: email,
+    subject: 'Automatisez votre acquisition avec l’IA',
+    html: `
+      <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; max-width: 700px; margin: auto;">
+       <img 
+  src="https://strategicdash.onrender.com/static/logo.jpeg" 
+  alt="Logo" 
+  style="width: 80px; height: auto; display: block; margin-bottom: 20px;" 
+/>
+    
+        <p>Bonjour ${nom},</p>
+    
+        <p>
+          Chez <strong>Strategic Partner</strong>, nous aidons les professionnels à obtenir des <strong>rendez-vous ultra qualifiés</strong> grâce à des <strong>infrastructures d’acquisition automatisées, propulsées par l’IA</strong>.
+        </p>
+    
+        <p>
+          <strong>Fini la prospection manuelle</strong> : notre système travaille pour vous, <strong>24h/24, 7j/7</strong>, pour attirer, qualifier et convertir vos prospects.
+        </p>
+    
+        <ul>
+          <li>Vous gagnez du temps</li>
+          <li>Vous signez plus</li>
+          <li>Vous développez avec une structure prévisible</li>
+        </ul>
+    
+        <p>
+          Nos clients <strong>ne cherchent plus de clients</strong> — ce sont les clients qui viennent à eux.
+        </p>
+    
+        <p>
+          Si vous voulez la même chose, <strong>répondez à ce mail</strong> et on en parle.
+        </p>
+    
+        <p style="margin-top: 40px;">
+          Cordialement,<br />
+          <br />
+          Strategic partner<br />
+          <a href="mailto:strategic.partnerfrance@gmail.com">strategic.partnerfrance@gmail.com</a> - +33 6 10 08 33 86<br />
+          99c boulevard Constantin Descat,<br />59200 Tourcoing, France
+        </p>
+      </div>
+    `,
+  };
+  
+  try {
+    // Send the email
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: "Email sent successfully" });
+  } catch (error) {
+    console.error("Error sending email:", error);
+    res.status(500).json({ message: "Error sending email" });
+  }
 }
+
+static async createEmailingR(req, res) {
+  const { email, nom, heure, jour, lien } = req.body;
+  
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+  const mailOptions = {
+    from: process.env.EMAIL,
+    to: email,
+    subject: 'Confirmation de votre rendez-vous avec Strategic Partner',
+    html: `
+      <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; max-width: 700px; margin: auto;">
+        <img 
+          src="https://strategicdash.onrender.com/static/logo.jpeg" 
+          alt="Strategic Partner Logo" 
+          style="width: 100px; height: auto; display: block; margin: 0 auto 30px auto;" 
+        />
+    
+        <p>Bonjour ${nom},</p>
+    
+        <p>
+          Merci pour votre prise de rendez-vous avec <strong>Strategic Partner</strong> – c’est confirmé !<br />
+          Nous nous retrouverons le <strong>${jour}</strong> à <strong>${heure}</strong> pour faire le point sur votre stratégie d’acquisition 
+          et explorer comment l’IA peut vous apporter plus de clients… automatiquement.
+        </p>
+    
+        <p style="font-weight: bold; margin-top: 30px;">🔎 Au programme :</p>
+        <ul style="padding-left: 20px; margin-top: 10px;">
+          <li>Analyse de votre système actuel</li>
+          <li>Identification des points de friction</li>
+          <li>Présentation de notre infrastructure d’acquisition automatisée</li>
+          <li>Plan d’action concret pour générer des rendez-vous ultra qualifiés</li>
+        </ul>
+    
+        <p style="margin-top: 30px;">
+          👉 <strong>Le lien de notre appel :</strong><br />
+          <a href="${lien}" style="color: #1a73e8; text-decoration: none;">${lien}</a>
+        </p>
+    
+        <p style="margin-top: 30px;">
+          D’ici là, n’hésitez pas à nous répondre si vous avez la moindre question.
+        </p>
+    
+        <p style="margin-top: 40px;">
+          À très vite,<br /><br />
+          ${nom}<br />
+          Fondateur – Strategic Partner
+        </p>
+    
+        <hr style="margin: 40px 0;" />
+    
+        <p style="font-size: 14px; color: #777;">
+          Strategic Partner<br />
+          <a href="mailto:strategic.partnerfrance@gmail.com" style="color: #777; text-decoration: none;">
+            strategic.partnerfrance@gmail.com
+          </a> - +33 6 10 08 33 86<br />
+          99c boulevard Constantin Descat, 59200 Tourcoing, France
+        </p>
+      </div>
+    `
+  };
+  try {
+    // Send the email
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: "Email sent successfully" });
+  } catch (error) {
+    console.error("Error sending email:", error);
+    res.status(500).json({ message: "Error sending email" });
+  }
+    
+}
+static async createEmailingC(req, res) {
+  const { email, nom, offre,
+    montant,
+    date,
+    reference, } = req.body;
+
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL,
+    to: email,
+    subject: 'Confirmation de votre commande – Strategic Partner',
+    html: `
+  <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; max-width: 700px; margin: auto;">
+    <img 
+      src="https://strategicdash.onrender.com/static/logo.jpeg" 
+      alt="Strategic Partner Logo" 
+      style="width: 100px; height: auto; display: block; margin: 0 auto 30px auto;" 
+    />
+
+    <p>Bonjour ${nom},</p>
+
+    <p>
+      Merci pour votre confiance et <strong>bienvenue chez Strategic Partner</strong> !<br />
+      Nous vous confirmons que votre commande a bien été reçue et est maintenant en cours de traitement.
+    </p>
+
+    <p style="font-weight: bold; margin-top: 30px;">🔧 Prochaine étape :</p>
+    <p>
+      Notre équipe va vous contacter sous <strong>24h</strong> pour lancer l'onboarding et commencer 
+      la mise en place de votre <strong>infrastructure d'acquisition automatisée</strong>.
+    </p>
+
+    <p style="font-weight: bold; margin-top: 30px;">📦 Détail de votre commande :</p>
+    <ul style="padding-left: 20px; margin-top: 10px;">
+      <li><strong>Offre :</strong> ${offre}</li>
+      <li><strong>Montant :</strong> ${montant}</li>
+      <li><strong>Date de commande :</strong> ${date}</li>
+      <li><strong>Référence :</strong> ${reference}</li>
+    </ul>
+
+    <p style="margin-top: 30px;">
+      Nous sommes impatients de vous accompagner vers une acquisition plus simple, plus intelligente… 
+      et surtout <strong>plus rentable</strong>.
+    </p>
+
+    <p style="margin-top: 40px;">
+      À très vite,<br /><br />
+      ${nom}<br />
+      Fondateur – Strategic Partner
+    </p>
+
+    <hr style="margin: 40px 0;" />
+
+    <p style="font-size: 14px; color: #777;">
+      Strategic Partner<br />
+      <a href="mailto:strategic.partnerfrance@gmail.com" style="color: #777; text-decoration: none;">
+        strategic.partnerfrance@gmail.com
+      </a> - +33 6 10 08 33 86<br />
+      99c boulevard Constantin Descat, 59200 Tourcoing, France
+    </p>
+  </div>
+`
+  };
+  try {
+    // Send the email
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: "Email sent successfully" });
+  } catch (error) {
+    console.error("Error sending email:", error);
+    res.status(500).json({ message: "Error sending email" });
+  }
+}
+
+}
+  
 
 module.exports = DataController;

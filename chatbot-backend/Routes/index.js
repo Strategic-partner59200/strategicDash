@@ -117,6 +117,12 @@ router.get('/panier/:id', PanierController.getPanierById);
 router.get('/panier', PanierController.getAllPanier);
 router.put('/panier/:id', PanierController.updatePanierItem);
 
+// EMAILING routes
+
+router.post('/emailingP', DataController.createEmailing);
+router.post('/emailingR', DataController.createEmailingR);
+router.post('/emailingC', DataController.createEmailingC);
+
 // import leads routes
 router.post('/import', DataController.importLeads);
 
