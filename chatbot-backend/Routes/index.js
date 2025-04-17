@@ -101,6 +101,10 @@ router.put('/command/validate/:id', ProgramController.validateCommand);
 router.delete('/command/:id', ProgramController.deleteCommandById);
 router.put('/command/:id', ProgramController.updateCommandById);
 router.post("/command/send-devis-email/:id", ProgramController.sendDevisEmail);
+router.post("/command/send-facture-email/:id", ProgramController.sendFactureEmail);
+
+
+
 
 // Produit routes
 router.post('/produit', ProduitController.createProduit);

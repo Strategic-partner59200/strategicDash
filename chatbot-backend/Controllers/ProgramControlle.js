@@ -336,7 +336,55 @@ static async sendDevisEmail(req, res) {
       text: 'Veuillez trouver ci-joint votre devis.',
       attachments: [
         {
-          filename: `devis-${commandNum}.pdf`,
+          filename: `Devis-${commandNum}.pdf`,
+          content: pdfBuffer,
+          contentType: 'application/pdf',
+        },
+      ],
+    };
+
+    // Send email
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: 'Le devis a été envoyé avec succès.' });
+  } catch (error) {
+    console.error('Erreur lors de l’envoi du devis :', error);
+    res.status(500).json({ message: 'Erreur serveur lors de l’envoi du devis.' });
+  }
+}
+
+static async sendFactureEmail(req, res) {
+  try {
+    const { email, pdf, commandNum } = req.body;
+
+   
+
+    if (!email || !pdf) {
+      return res.status(400).json({ message: 'Email and PDF are required.' });
+    }
+
+    // Extract base64 data and convert to Buffer
+    const base64Data = pdf.split(';base64,').pop();
+    const pdfBuffer = Buffer.from(base64Data, 'base64');
+
+    // Configure your email transporter
+    const transporter = nodemailer.createTransport({
+      service: 'gmail', // Or another SMTP provider
+      auth: {
+        user: process.env.EMAIL_USER, // your email
+        pass: process.env.EMAIL_PASS, // your email password or app password
+      },
+    });
+
+    // Email content
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: `Votre Facuture #${commandNum}`,
+      text: 'Veuillez trouver ci-joint votre Facture.',
+      attachments: [
+        {
+          filename: `Facture-${commandNum}.pdf`,
           content: pdfBuffer,
           contentType: 'application/pdf',
         },
