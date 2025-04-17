@@ -3,6 +3,7 @@ const Event = require("../Models/eventSchema");
 const Command = require("../Models/commandSchema");
 const Panier = require("../Models/panierSchema");
 const mongoose = require("mongoose");
+const nodemailer = require("nodemailer");
 
 class ProgramController {
   static async createProgram(req, res) {
@@ -133,7 +134,7 @@ class ProgramController {
     const { 
       command_type,
       command,
-
+      email,
       panierId,
     
       date,
@@ -166,6 +167,7 @@ class ProgramController {
       description: panier.description,
       tva: panier.tva,
         nom,
+        email,
         siret,
         raissociale,
         address,
@@ -303,6 +305,53 @@ const { id } = req.params;
   }
 }
 
+static async sendDevisEmail(req, res) {
+  try {
+    const { email, pdf, commandNum } = req.body;
+
+   
+
+    if (!email || !pdf) {
+      return res.status(400).json({ message: 'Email and PDF are required.' });
+    }
+
+    // Extract base64 data and convert to Buffer
+    const base64Data = pdf.split(';base64,').pop();
+    const pdfBuffer = Buffer.from(base64Data, 'base64');
+
+    // Configure your email transporter
+    const transporter = nodemailer.createTransport({
+      service: 'gmail', // Or another SMTP provider
+      auth: {
+        user: process.env.EMAIL_USER, // your email
+        pass: process.env.EMAIL_PASS, // your email password or app password
+      },
+    });
+
+    // Email content
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: `Votre Devis #${commandNum}`,
+      text: 'Veuillez trouver ci-joint votre devis.',
+      attachments: [
+        {
+          filename: `devis-${commandNum}.pdf`,
+          content: pdfBuffer,
+          contentType: 'application/pdf',
+        },
+      ],
+    };
+
+    // Send email
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: 'Le devis a été envoyé avec succès.' });
+  } catch (error) {
+    console.error('Erreur lors de l’envoi du devis :', error);
+    res.status(500).json({ message: 'Erreur serveur lors de l’envoi du devis.' });
+  }
+}
 
 
 }
