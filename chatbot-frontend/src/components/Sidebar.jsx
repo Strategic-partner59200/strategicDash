@@ -16,6 +16,7 @@ import {
   faCog,
   faFileImport,
   faCalendarAlt,
+  faFilePdf
   
 } from "@fortawesome/free-solid-svg-icons";
 import { UserOutlined } from "@ant-design/icons";
@@ -129,6 +130,12 @@ const SideBar = () => {
           icon: <FontAwesomeIcon icon={faFileContract} style={{ fontSize: "23px", marginRight: "10px" }}/>,
           label: "Commandes",
           role: ["Admin", "Commercial"],
+        },
+        {
+          key: "/Factures",
+          icon: <FontAwesomeIcon icon={faFilePdf} style={{ fontSize: "23px", marginRight: "10px" }}/>,
+          label: "Factures",
+          role: ["Admin"]
         },
       ]},
    

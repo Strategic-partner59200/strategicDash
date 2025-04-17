@@ -28,6 +28,7 @@ import ImportLeads from "./pages/ImportLeads";
 import MyCalendar from "./pages/Calendar";
 import TéléchargerDevis from "./pages/TéléchargerDevis";
 import AllCommands from "./pages/TéléchargerContract";
+import Facture from "./components/Facture";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 axios.defaults.withCredentials = true;
@@ -57,6 +58,7 @@ function App() {
             <Route path="/create-bannières" element={<CreateBannières />} />
             <Route path="/CalendarCommerciale" element={<MyCalendar />} />
             <Route path="/Devis" element={<TéléchargerDevis />} />
+            <Route path='/Factures' element={<Facture/>} />
             <Route path="/Comandes" element={<AllCommands />} />
 
             <Route path="/create-bannières/:id" element={<CreateBannières />} />
