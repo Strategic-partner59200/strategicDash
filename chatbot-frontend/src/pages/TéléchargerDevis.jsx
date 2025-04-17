@@ -243,12 +243,12 @@ const AllDevis = () => {
     doc.text(splitDescription, 32, rowY + 12);
     doc.text(command.quantite.toString() + " u", 125, rowY + 12);
     doc.text(
-      `${(command.totalHT / command.quantite).toFixed(2)} €`,
+      `${(command.montantHT / command.quantite).toFixed(2)} €`,
       142,
       rowY + 12
     );
     doc.text("(20%)", 165, rowY + 12);
-    doc.text(`${command.totalHT.toFixed(2)} €`, 200, rowY + 12, {
+    doc.text(`${command.montantHT.toFixed(2)} €`, 200, rowY + 12, {
       align: "right",
     });
 
@@ -305,11 +305,11 @@ const AllDevis = () => {
     doc.line(totalsX, paymentY - 3, totalsX + totalsColWidth, paymentY - 3);
     // Totals table data
     const totalsData = [
-      { label: "Total HT", value: `${command.totalHT.toFixed(2)} €` },
-      { label: "TVA à 20%", value: `${command.totalTVA.toFixed(2)} €` },
+      { label: "Total HT", value: `${command.montantHT.toFixed(2)} €` },
+      { label: "TVA à 20%", value: `${command.montantTVA.toFixed(2)} €` },
       {
         label: "Total TTC",
-        value: `${command.totalTTC.toFixed(2)} €`,
+        value: `${command.montantTTC.toFixed(2)} €`,
         bold: true,
         bgColor: [229, 231, 235], // gray-200
       },
@@ -357,7 +357,7 @@ const AllDevis = () => {
     });
 
     // === Save ===
-    doc.save(`Facture_${command.numCommand}.pdf`);
+    doc.save(`Devis_${command.numCommand}.pdf`);
   };
 
   const columns = [
