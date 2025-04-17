@@ -9,6 +9,7 @@ import Command from "../components/Command";
 import Panier from "./Panier";
 import Devis from "../components/Devis";
 import Produits from "../components/Produits";
+import Emailing from "../components/Emailing";
 
 const { TabPane } = Tabs;
 
@@ -685,6 +686,11 @@ const LeadDetailsPage = () => {
             <TabPane tab="Commande" key="8">
               <div className="space-y-4">
                 <Command key={refreshCounter} />
+              </div>
+            </TabPane>
+            <TabPane tab="Emailing" key="9">
+              <div className="space-y-4">
+                <Emailing/>
               </div>
             </TabPane>
           </Tabs>

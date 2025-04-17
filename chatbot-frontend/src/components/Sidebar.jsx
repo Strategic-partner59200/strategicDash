@@ -108,17 +108,30 @@ const SideBar = () => {
       role: ['Commercial', 'Admin'],
     },
     {
-      key: "/Devis",
-      icon: <FontAwesomeIcon icon={faFileContract} style={{ fontSize: "23px", marginRight: "10px" }}/>,
-      label: "Devis",
-      role: ["Admin", "Commercial"],
-    },
-    {
-      key: "/Comandes",
-      icon: <FontAwesomeIcon icon={faFileContract} style={{ fontSize: "23px", marginRight: "10px" }}/>,
-      label: "Commandes",
-      role: ["Admin", "Commercial"],
-    },
+      key: "",
+      icon: (
+        <FontAwesomeIcon
+          icon={faChartBar}
+          style={{ fontSize: "23px", marginRight: "10px" }}
+        />
+      ),
+      label: "Suivi des ventes",
+      // role: "Admin",
+      children: [
+        {
+          key: "/Devis",
+          icon: <FontAwesomeIcon icon={faFileContract} style={{ fontSize: "23px", marginRight: "10px" }}/>,
+          label: "Devis",
+          role: ["Admin", "Commercial"],
+        },
+        {
+          key: "/Comandes",
+          icon: <FontAwesomeIcon icon={faFileContract} style={{ fontSize: "23px", marginRight: "10px" }}/>,
+          label: "Commandes",
+          role: ["Admin", "Commercial"],
+        },
+      ]},
+   
   
     // {
     //   key: "/command",
