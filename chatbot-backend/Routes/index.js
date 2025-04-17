@@ -112,6 +112,7 @@ router.delete('/produit/:id', ProduitController.deleteProduitById);
 // Panier routes
 router.post('/panier', PanierController.createPanier);
 router.delete('/panier/:panierId', PanierController.deletePanierById);
+router.get('/pannier/:panierId', PanierController.getPannierById);
 router.get('/panier/:id', PanierController.getPanierById);
 router.get('/panier', PanierController.getAllPanier);
 router.put('/panier/:id', PanierController.updatePanierItem);

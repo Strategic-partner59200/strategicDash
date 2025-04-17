@@ -6,6 +6,7 @@ class PanierController {
     try {
       let leadId = req.body.leadId;
       const { produitId, quantite, admin, commercial } = req.body;
+      console.log("req.bodyzzzzzzzzzzzz", req.body);
 
       const userId = admin || commercial;
       if (!userId) {
@@ -55,6 +56,7 @@ class PanierController {
         await existingPanierItem.save();
         return res.status(200).json(existingPanierItem);
       }
+      console.log("leadIdsssssssss", leadId);
 
       // If not, create a new panier item
       const panier = new Panier({
@@ -72,6 +74,7 @@ class PanierController {
         montantTVA: montantTVA,
         montantTTC: montantTTC,
       });
+      console.log("panier", panier);
 
       // Save the new cart item
       await panier.save();
@@ -80,6 +83,26 @@ class PanierController {
       console.error("Error adding to panier:", error);
       res.status(500).json({ message: "Failed to add product to panier" });
     }
+  }
+
+  static async getPannierById(req, res) {
+    const { panierId } = req.params;
+    console.log("panierId", panierId);
+
+  try {
+    const items = await Panier.findById(panierId); // if you want one panier
+
+    console.log("items", items);
+
+    if (!items || items.length === 0) {
+      return res.status(404).json({ message: 'No items found for this panier.' });
+    }
+
+    res.json(items);
+  } catch (error) {
+    console.error('Error fetching panier items:', error);
+    res.status(500).json({ message: 'Server error while fetching panier items.' });
+  }
   }
 
   static async getPanierById(req, res) {

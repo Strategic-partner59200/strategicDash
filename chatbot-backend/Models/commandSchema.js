@@ -15,7 +15,7 @@ const CommandeSchema = new mongoose.Schema({
   // codepostal: String,
   raissociale: String,
   // ville: String,
-  // adresse: String,
+  address: String,
   description: String,
   numCommand: {
     type: String,
@@ -32,16 +32,22 @@ code: String,
     ref: "Admin",
     required: false,
   },
-  totalHT: {
+  montantHT: {
     type: Number,
   },
+  montantTVA: {
+    type: Number,
+  },
+  montantTTC: {
+    type: Number,
+  },
+
   
-  totalTTC: {
+ 
+  prixUnitaire: {
     type: Number,
   },
-  totalTVA: {
-    type: Number,
-  },
+
   quantite: {
     type: Number,
   },
@@ -50,6 +56,11 @@ code: String,
     type: mongoose.Schema.Types.ObjectId,
     ref: "Commercial", // Referring to the Commercial model
     required: false, // If this is optional, you can make it not required
+  },
+  panier: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Panier', // Reference to the Produit model
+    required: true,
   },
 });
 

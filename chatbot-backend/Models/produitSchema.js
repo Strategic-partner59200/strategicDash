@@ -18,6 +18,10 @@ const produitSchema = new mongoose.Schema({
     type: Number,
     default: 20.00,
   },
+  quantite: {
+    type: Number,
+    default: 1,
+  },
   admin: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Admin",

@@ -1,6 +1,7 @@
 const Program = require("../Models/programSchema");
 const Event = require("../Models/eventSchema");
 const Command = require("../Models/commandSchema");
+const Panier = require("../Models/panierSchema");
 const mongoose = require("mongoose");
 
 class ProgramController {
@@ -127,52 +128,50 @@ class ProgramController {
     const adminId = req.body.admin; 
     const leadId = req.body.leadId;
     const commercialId = req.body.commercial;
+
+  
     const { 
       command_type,
       command,
-      description,
-      prixUnitaire,
-      quantite,
-      totalHT,
-      totalTVA,
-      totalTTC,
+
+      panierId,
+    
       date,
       nom,
-      //  request_email,
-      //  request_phone,
        siret,
-      //  codepostal,
        raissociale,
-      //  ville,
-      //  adresse,
+      address,
        numCommand,
-        code,
-        // marque
+
         } = req.body;
+        console.log("req.bodyyyyyyyyyyyyyyyyy", req.body)
+         
+    const panier = await Panier.findById(panierId);
+    console.log("panier", panier)
+    if (!panier) {
+      return res.status(404).json({ message: "panier non trouvé" });
+    }
 
     const newCommand = new Command({ admin: adminId, lead: leadId, commercial:commercialId,
         command_type, 
         command,
         date,
-        description,
-        prixUnitaire,
-        quantite,
-        totalHT,
-        totalTVA,
-        totalTTC,
+        panier: panierId,
+        quantite: panier.quantite,
+      prixUnitaire: panier.prixUnitaire,
+      montantHT: panier.montantHT,
+      montantTVA: panier.montantTVA,
+      montantTTC: panier.montantTTC,
+      code: panier.code,
+      description: panier.description,
+      tva: panier.tva,
         nom,
-        // request_email,
-        // request_phone,
         siret,
-        // codepostal,
         raissociale,
-        // ville,
-        // adresse,
+        address,
         numCommand,
-        code,
-        // marque
       });
-      console.log("newCommand", newCommand)
+      console.log("newCommands", newCommand)
     await newCommand.save();
 
     res.status(201).json(newCommand);

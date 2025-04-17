@@ -6,7 +6,7 @@ class ProduitController {
   static async createProduit(req, res) {
     try {
       // Log the request body to check incoming data
-      console.log('Request Body:', req.body);
+      console.log('Request Bodyssssssssssss:', req.body);
       const leadId = req.body.leadId;
   
       const { admin, commercial,  prixVente, code, description } = req.body;
@@ -23,8 +23,10 @@ class ProduitController {
         lead: leadId,
         code,
         description,
+        quantite: 1,
         prixVente,
       });
+      console.log("newProduit", newProduit);
   
       await newProduit.save();
       res.status(201).json(newProduit);
@@ -51,11 +53,11 @@ class ProduitController {
     const {
       code,
       marque,
-      modèle,
+  
       description,
       coutAchat,
       prixVente,
-      fraisGestion,
+   
     } = req.body;
 
     try {
@@ -64,11 +66,10 @@ class ProduitController {
         {
           code,
           marque,
-          modèle,
           description,
           coutAchat,
           prixVente,
-          fraisGestion,
+      
         },
         { new: true }
       );
