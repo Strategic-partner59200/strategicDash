@@ -152,6 +152,7 @@ const CreateCommand = () => {
             nom: foundLead.nom,
             siret: foundLead.siret,
             address: foundLead.address,
+            email: foundLead.email,
           });
         }
       } catch (error) {
@@ -316,6 +317,15 @@ const CreateCommand = () => {
               rules={[{ required: false, message: "Ce champ est requis" }]}
             >
               <Input placeholder="Siret" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[{ required: false, message: "Ce champ est requis" }]}
+            >
+              <Input placeholder="Email client" />
             </Form.Item>
           </Col>
         </Row>

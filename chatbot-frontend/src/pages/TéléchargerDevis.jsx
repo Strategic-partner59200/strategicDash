@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { Table, Tag, Space, Button, message, Modal, Card, Statistic } from "antd";
-import { EditOutlined, DeleteOutlined, ExclamationCircleOutlined, FilePdfOutlined } from "@ant-design/icons";
+import {
+  Table,
+  Tag,
+  Space,
+  Button,
+  message,
+  Modal,
+  Card,
+  Statistic,
+} from "antd";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  ExclamationCircleOutlined,
+  FilePdfOutlined,
+  SendOutlined
+} from "@ant-design/icons";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import moment from "moment";
@@ -14,12 +29,15 @@ const AllDevis = () => {
   const [allCommands, setAllCommands] = useState([]);
   const [filteredCommands, setFilteredCommands] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({ montantHT: 0, montantTTC: 0, totalCommands: 0 });
+  const [stats, setStats] = useState({
+    montantHT: 0,
+    montantTTC: 0,
+    totalCommands: 0,
+  });
   const token = localStorage.getItem("token");
   const decodedUser = token ? jwtDecode(token) : null;
   const userLoged = decodedUser?.userId;
   const userRole = decodedUser?.role;
-
 
   useEffect(() => {
     fetchCommands();
@@ -31,34 +49,20 @@ const AllDevis = () => {
     }
   }, [allCommands, userLoged]);
 
-  // const fetchCommands = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await axios.get('/command', {
-  //       headers: { Authorization: `Bearer ${token}` }
-  //     });
-  //     console.log("API Response:", response);
-  //     const commandsData = response?.data?.data || response?.data || [];
-  //     setAllCommands(commandsData);
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.error("Error fetching commands:", error);
-  //     message.error("Failed to fetch commands");
-  //     setLoading(false);
-  //   }
-  // };
   const fetchCommands = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/command', {
-        headers: { Authorization: `Bearer ${token}` }
+      const response = await axios.get("/command", {
+        headers: { Authorization: `Bearer ${token}` },
       });
       console.log("API Response:", response);
       const commandsData = response?.data?.data || response?.data || [];
-  
+
       // Filter commands to display only "devis" type
-      const devisCommands = commandsData.filter(command => command.command === 'devis');
-      
+      const devisCommands = commandsData.filter(
+        (command) => command.command === "devis"
+      );
+
       setAllCommands(devisCommands); // Set only the "devis" commands
       setLoading(false);
     } catch (error) {
@@ -67,32 +71,35 @@ const AllDevis = () => {
       setLoading(false);
     }
   };
-  
 
   const filterCommands = () => {
     let commandsToDisplay = allCommands;
-    
-    if (userRole === 'Commercial') {  // Match exact case from your token
-      commandsToDisplay = allCommands.filter(cmd => 
-        String(cmd.commercial) === String(userLoged)  // Strict comparison
+
+    if (userRole === "Commercial") {
+      // Match exact case from your token
+      commandsToDisplay = allCommands.filter(
+        (cmd) => String(cmd.commercial) === String(userLoged) // Strict comparison
       );
-    } 
-    else if (userRole === 'admin') {  // Assuming admin is lowercase
-      commandsToDisplay = allCommands.filter(cmd => 
-        String(cmd.admin) === String(userLoged)
+    } else if (userRole === "admin") {
+      // Assuming admin is lowercase
+      commandsToDisplay = allCommands.filter(
+        (cmd) => String(cmd.admin) === String(userLoged)
       );
     }
-  
+
     setFilteredCommands(commandsToDisplay);
     updateStatistics(commandsToDisplay);
   };
 
   const updateStatistics = (commands) => {
-    const totals = commands.reduce((acc, cmd) => ({
-      montantHT: acc.montantHT + (cmd.montantHT || 0),
-      montantTTC: acc.montantTTC + (cmd.montantTTC || 0),
-      totalCommands: acc.totalCommands + 1
-    }), { montantHT: 0, montantTTC: 0, totalCommands: 0 });
+    const totals = commands.reduce(
+      (acc, cmd) => ({
+        montantHT: acc.montantHT + (cmd.montantHT || 0),
+        montantTTC: acc.montantTTC + (cmd.montantTTC || 0),
+        totalCommands: acc.totalCommands + 1,
+      }),
+      { montantHT: 0, montantTTC: 0, totalCommands: 0 }
+    );
 
     setStats(totals);
   };
@@ -105,30 +112,30 @@ const AllDevis = () => {
   const handleDelete = (id, e) => {
     e.stopPropagation();
     confirm({
-      title: 'Confirm Deletion',
+      title: "Confirmation de suppression",
       icon: <ExclamationCircleOutlined />,
-      content: 'Are you sure you want to delete this command?',
-      okText: 'Delete',
-      okType: 'danger',
-      cancelText: 'Cancel',
-      onOk: () => deleteCommand(id)
+      content: "Êtes-vous sûr de vouloir supprimer ce devis ?",
+      okText: "Delete",
+      okType: "danger",
+      cancelText: "Cancel",
+      onOk: () => deleteCommand(id),
     });
   };
 
   const deleteCommand = async (id) => {
     try {
       await axios.delete(`/command/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      message.success('Command deleted successfully');
+      message.success("Devis supprimé avec succès");
       fetchCommands(); // Refresh the list after deletion
     } catch (error) {
       console.error("Error deleting command:", error);
-      message.error('Failed to delete command');
+      message.error("Failed to delete command");
     }
   };
 
-  const safeRender = (value, fallback = 'N/A') => {
+  const safeRender = (value, fallback = "N/A") => {
     return value !== undefined && value !== null ? value : fallback;
   };
 
@@ -252,20 +259,11 @@ const AllDevis = () => {
       align: "right",
     });
 
-    // doc.text(
-    //   "Paiement par virement bancaire ou par carte bleue.",
-    //   15,
-    //   rowY + rowHeight + 15
-    // );
     doc.setFont(undefined, "bold");
-    doc.text(
-      "Le client",
-      30,
-      rowY + rowHeight + 50
-    );
+    doc.text("Le client", 30, rowY + rowHeight + 50);
     const infoBoxWidths = 80;
-    const infoBoxXs = 30; 
-    const infoStartYs = 190
+    const infoBoxXs = 30;
+    const infoStartYs = 190;
     const infoBoxHeightss = 28;
 
     doc.setFillColor(229, 231, 235);
@@ -273,17 +271,9 @@ const AllDevis = () => {
     doc.setFontSize(8);
     doc.rect(infoBoxXs, infoStartYs, infoBoxWidths, infoBoxHeightss, "F");
     // Add text on top of the background
-    doc.text(
-      "Mention manuscrite et datée :",
-      infoBoxXs + 5,
-      infoStartYs + 8
-    );
+    doc.text("Mention manuscrite et datée :", infoBoxXs + 5, infoStartYs + 8);
 
-    doc.text(
-      "« Bon pour accord. »",
-      infoBoxXs + 5,
-      infoStartYs + 12
-    );
+    doc.text("« Bon pour accord. »", infoBoxXs + 5, infoStartYs + 12);
 
     const pageWidth = doc.internal.pageSize.getWidth(); // Get full width of the page
     const paymentY = rowY + rowHeight + 15;
@@ -319,7 +309,6 @@ const AllDevis = () => {
     doc.setFillColor(255, 255, 255);
     doc.setDrawColor(209, 213, 219);
     doc.setLineWidth(0.2);
-
 
     // Add rows
     totalsData.forEach((row, index) => {
@@ -360,48 +349,275 @@ const AllDevis = () => {
     doc.save(`Devis_${command.numCommand}.pdf`);
   };
 
+  const handleSendPdf = async (commandId, e) => {
+    e.stopPropagation();
+  
+    const command = allCommands.find((cmd) => cmd._id === commandId);
+    if (command.command_type !== "devis") {
+      return message.warning("Le devis est déjà validé et converti en commande.");
+
+    }
+  
+    const doc = new jsPDF();
+  
+     // === Add logo ===
+     const logoWidth = 40;
+     const logoHeight = 20;
+     doc.addImage(logo, "JPEG", 10, 15, logoWidth, logoHeight);
+ 
+     // === Company info just below logo ===
+     const infoStartY = 10 + logoHeight + 8; // e.g., 40
+     doc.setFontSize(10);
+     doc.setTextColor(40, 40, 40);
+     doc.text("Strategic Partner", 15, infoStartY);
+     doc.text("99c boulevard Constantin Descat", 15, infoStartY + 6);
+     doc.text("9200 Tourcoing, France", 15, infoStartY + 12);
+     doc.text("Tél: +33 6 10 08 33 86", 15, infoStartY + 20);
+     doc.text("Email: strategic.partnerfrance@gmail.com", 15, infoStartY + 24);
+     doc.setTextColor(0, 102, 204);
+     doc.setFont(undefined, "bold");
+     doc.text(`Devis n°: ${command.numCommand}`, 15, infoStartY + 50);
+     doc.setTextColor(0, 0, 0);
+     doc.setFont(undefined, "normal");
+     doc.setFontSize(8);
+     doc.text(`Valable 10 jours`, 15, infoStartY + 55);
+     doc.text(
+       `En date du: ${moment(command.date).format("DD/MM/YYYY")}`,
+       120,
+       infoStartY + 50
+     );
+ 
+     const infoBoxWidth = 80;
+     const infoBoxX = 120; // Starting X position
+ 
+     // Set text color that contrasts with the background
+     doc.setTextColor(40, 40, 40); // Dark gray text
+     const maxAddressWidth = 80; // Maximum width in points (about 80mm)
+ 
+     // Split the address into multiple lines if needed
+     const addressLines = doc.splitTextToSize(
+       command.address || "Non spécifié",
+       maxAddressWidth
+     );
+ 
+     const lineHeight = 7; // Height per line in points
+ 
+     const infoBoxHeights = 28 + (addressLines.length - 1) * lineHeight;
+     doc.setFillColor(229, 231, 235);
+     doc.setTextColor(40, 40, 40);
+     doc.rect(infoBoxX, infoStartY, infoBoxWidth, infoBoxHeights, "F");
+     // Add text on top of the background
+     doc.setFontSize(8);
+     doc.text(
+       `MONSIEUR: ${command.nom || "Non spécifié"}`,
+       infoBoxX + 5,
+       infoStartY + 8
+     );
+     // doc.text(`${command.address || "Non spécifié"}`, infoBoxX + 5, infoStartY + 16);
+     addressLines.forEach((line, index) => {
+       doc.text(line, infoBoxX + 5, infoStartY + 16 + index * lineHeight);
+     });
+     doc.text(
+       `${command.siret || "Non spécifié"}`,
+       infoBoxX + 5,
+       infoStartY + 16 + addressLines.length * lineHeight
+     );
+     // doc.text(`SIRET: ${command.siret || "Non spécifié"}`, infoBoxX + 5, infoBoxX + 24);
+ 
+     // === Table headers ===
+     const tableStartY = infoStartY + 70;
+     doc.setFillColor(0, 102, 204);
+     doc.setTextColor(255, 255, 255);
+     doc.setDrawColor(209, 213, 219);
+     doc.rect(15, tableStartY, 190, 10, "F");
+ 
+     doc.text("N°", 20, tableStartY + 6);
+     doc.text("Désignation", 35, tableStartY + 6);
+     doc.text("Qté", 125, tableStartY + 6);
+     doc.text("PU HT", 145, tableStartY + 6);
+     doc.text("TVA", 165, tableStartY + 6);
+     doc.text("Total HT", 200, tableStartY + 6, { align: "right" });
+ 
+     // === Table row ===
+     const cleanDescription = command.description.split(",")[0].trim();
+     const splitDescription = doc.splitTextToSize(cleanDescription, 90);
+     const rowHeight = Math.max(10, splitDescription.length * 10);
+     const rowY = tableStartY + 10;
+ 
+     doc.setFillColor(255, 255, 255);
+     doc.setTextColor(40, 40, 40);
+ 
+     // Borders
+     doc.rect(15, rowY, 15, rowHeight); // N°
+     doc.rect(30, rowY, 90, rowHeight); // Désignation
+     doc.rect(120, rowY, 20, rowHeight); // Qté
+     doc.rect(140, rowY, 20, rowHeight); // PU HT
+     doc.rect(160, rowY, 20, rowHeight); // TVA
+     doc.rect(180, rowY, 25, rowHeight); // Total HT
+ 
+     // Content
+     doc.text("1", 20, rowY + 12);
+     doc.text(splitDescription, 32, rowY + 12);
+     doc.text(command.quantite.toString() + " u", 125, rowY + 12);
+     doc.text(
+       `${(command.montantHT / command.quantite).toFixed(2)} €`,
+       142,
+       rowY + 12
+     );
+     doc.text("(20%)", 165, rowY + 12);
+     doc.text(`${command.montantHT.toFixed(2)} €`, 200, rowY + 12, {
+       align: "right",
+     });
+ 
+     doc.setFont(undefined, "bold");
+     doc.text("Le client", 30, rowY + rowHeight + 50);
+     const infoBoxWidths = 80;
+     const infoBoxXs = 30;
+     const infoStartYs = 190;
+     const infoBoxHeightss = 28;
+ 
+     doc.setFillColor(229, 231, 235);
+     doc.setTextColor(40, 40, 40);
+     doc.setFontSize(8);
+     doc.rect(infoBoxXs, infoStartYs, infoBoxWidths, infoBoxHeightss, "F");
+     // Add text on top of the background
+     doc.text("Mention manuscrite et datée :", infoBoxXs + 5, infoStartYs + 8);
+ 
+     doc.text("« Bon pour accord. »", infoBoxXs + 5, infoStartYs + 12);
+ 
+     const pageWidth = doc.internal.pageSize.getWidth(); // Get full width of the page
+     const paymentY = rowY + rowHeight + 15;
+     const totalsColWidth = 60;
+     const totalsRowHeight = 8;
+ 
+     // Align table to the far right
+     const totalsX = pageWidth - totalsColWidth - 5;
+ 
+     // Payment info (left side)
+     doc.setTextColor(40, 40, 40);
+     doc.text(
+       "Paiement par virement bancaire ou par carte bleue.",
+       15,
+       paymentY
+     );
+     doc.setDrawColor(209, 213, 219); // black line
+     doc.setLineWidth(0.2);
+     doc.line(totalsX, paymentY - 3, totalsX + totalsColWidth, paymentY - 3);
+     // Totals table data
+     const totalsData = [
+       { label: "Total HT", value: `${command.montantHT.toFixed(2)} €` },
+       { label: "TVA à 20%", value: `${command.montantTVA.toFixed(2)} €` },
+       {
+         label: "Total TTC",
+         value: `${command.montantTTC.toFixed(2)} €`,
+         bold: true,
+         bgColor: [229, 231, 235], // gray-200
+       },
+     ];
+ 
+     // Draw table background and border
+     doc.setFillColor(255, 255, 255);
+     doc.setDrawColor(209, 213, 219);
+     doc.setLineWidth(0.2);
+ 
+     // Add rows
+     totalsData.forEach((row, index) => {
+       const rowY = paymentY + index * totalsRowHeight;
+ 
+       // Background
+       if (row.bgColor) {
+         doc.setFillColor(...row.bgColor);
+         doc.rect(totalsX, rowY - 1, totalsColWidth, totalsRowHeight, "F");
+       }
+ 
+       // Text
+       if (row.bold) {
+         doc.setFont(undefined, "normal");
+       } else {
+         doc.setFont(undefined, "normal");
+       }
+ 
+       // Label and value
+       doc.setTextColor(40, 40, 40);
+       doc.text(row.label, totalsX + 4, rowY + 5);
+       doc.text(row.value, totalsX + totalsColWidth - 4, rowY + 5, {
+         align: "right",
+       });
+ 
+       // Divider line between rows
+       if (index < totalsData.length - 1) {
+         doc.line(
+           totalsX,
+           rowY + totalsRowHeight,
+           totalsX + totalsColWidth,
+           rowY + totalsRowHeight
+         );
+       }
+     });
+ 
+    const pdfBase64 = doc.output("datauristring"); // OR use doc.output("dataurlstring");
+  
+    try {
+      await axios.post(
+        `/command/send-devis-email/${commandId}`, 
+        {
+          email: command.email,
+          pdf: pdfBase64,
+          commandId: command._id,
+          commandNum: command.numCommand,
+        },
+      );
+  
+      message.success("Devis envoyé avec succès par email !");
+    } catch (error) {
+      console.error("Erreur lors de l'envoi par email :", error);
+      message.error("Échec de l'envoi du devis.");
+    }
+  };
+  
+
   const columns = [
     {
-      title: 'Devis',
-      dataIndex: 'command',
-      key: 'command',
+      title: "Devis",
+      dataIndex: "command",
+      key: "command",
       render: (text) => safeRender(text),
-      sorter: (a, b) => (a.command || '').localeCompare(b.command || '')
+      sorter: (a, b) => (a.command || "").localeCompare(b.command || ""),
     },
     {
-      title: 'Date',
-      dataIndex: 'date',
-      key: 'date',
-      render: (date) => moment(safeRender(date)).format('DD/MM/YYYY'),
-      sorter: (a, b) => new Date(a.date) - new Date(b.date)
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      render: (date) => moment(safeRender(date)).format("DD/MM/YYYY"),
+      sorter: (a, b) => new Date(a.date) - new Date(b.date),
     },
     {
-      title: 'Client',
-      dataIndex: 'nom',
-      key: 'client',
+      title: "Client",
+      dataIndex: "nom",
+      key: "client",
       render: (text) => safeRender(text),
-      ellipsis: true
+      ellipsis: true,
     },
     {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
       render: (text) => safeRender(text),
-      ellipsis: true
+      ellipsis: true,
     },
     {
-      title: 'Total HT',
-      dataIndex: 'montantHT',
-      key: 'montantHT',
-      render: (text) => `${safeRender(text, '0')} €`,
-      sorter: (a, b) => (a.totalHT || 0) - (b.totalHT || 0)
+      title: "Total HT",
+      dataIndex: "montantHT",
+      key: "montantHT",
+      render: (text) => `${safeRender(text, "0")} €`,
+      sorter: (a, b) => (a.totalHT || 0) - (b.totalHT || 0),
     },
     {
-      title: 'Total TTC',
-      dataIndex: 'montantTTC',
-      key: 'montantTTC',
-      render: (text) => `${safeRender(text, '0')} €`,
-      sorter: (a, b) => (a.totalTTC || 0) - (b.totalTTC || 0)
+      title: "Total TTC",
+      dataIndex: "montantTTC",
+      key: "montantTTC",
+      render: (text) => `${safeRender(text, "0")} €`,
+      sorter: (a, b) => (a.totalTTC || 0) - (b.totalTTC || 0),
     },
     // {
     //   title: 'Status',
@@ -415,32 +631,37 @@ const AllDevis = () => {
     //   }
     // },
     {
-      title: 'Actions',
-      key: 'actions',
+      title: "Actions",
+      key: "actions",
       render: (_, record) => (
         <Space size="middle">
-          <Button 
-            icon={<EditOutlined />} 
+          <Button
+            icon={<EditOutlined />}
             onClick={(e) => handleEdit(record._id, e)}
           />
-          <Button 
-            icon={<FilePdfOutlined />} 
+          <Button
+            icon={<FilePdfOutlined />}
             onClick={(e) => handleDownload(record._id, e)}
           />
-          <Button 
-            danger 
-            icon={<DeleteOutlined />} 
+          <Button
+            danger
+            icon={<DeleteOutlined />}
             onClick={(e) => handleDelete(record._id, e)}
           />
+           <Button
+    icon={<SendOutlined />}
+    onClick={(e) => handleSendPdf(record._id, e)}
+    title="Envoyer le devis"
+  />
         </Space>
-      )
-    }
+      ),
+    },
   ];
 
   return (
     <div className="container mx-auto px-4 py-6">
       <h1 className="text-2xl font-bold mb-6">Devis Management</h1>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <Card>
           <Statistic title="Total Devis" value={stats.totalCommands} />
@@ -456,7 +677,7 @@ const AllDevis = () => {
       <div className="bg-white p-4 rounded-lg shadow">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">
-            {userRole === 'commercial' ? 'Mes Devis' : 'Tous les Devis'}
+            {userRole === "commercial" ? "Mes Devis" : "Tous les Devis"}
           </h2>
           {/* <Button 
             type="primary" 
@@ -482,8 +703,8 @@ const AllDevis = () => {
           scroll={{ x: true }}
           bordered
           onRow={(record) => ({
-            onClick: () => window.location.href = `/lead/${record.lead}`,
-            style: { cursor: 'pointer' }
+            onClick: () => (window.location.href = `/lead/${record.lead}`),
+            style: { cursor: "pointer" },
           })}
         />
       </div>
