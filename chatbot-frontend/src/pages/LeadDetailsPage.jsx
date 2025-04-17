@@ -315,7 +315,7 @@ const LeadDetailsPage = () => {
         </h1>
         <div className="flex justify-center mb-4">
           <span className="px-4 py-2 bg-purple-900 text-white font-bold rounded-full">
-            {lead.request_name}
+            {lead.nom}
           </span>
         </div>
       </div>
