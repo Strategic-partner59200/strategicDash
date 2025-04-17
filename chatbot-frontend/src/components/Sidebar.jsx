@@ -139,18 +139,6 @@ const SideBar = () => {
         },
       ]},
    
-  
-    // {
-    //   key: "/command",
-    //   icon: (
-    //     <FontAwesomeIcon
-    //       icon={faFileContract}
-    //       style={{ fontSize: "23px", marginRight: "10px" }}
-    //     />
-    //   ),
-    //   label: "Comandes",
-    //   role: "Commercial",
-    // },
     {
       key: "/programmes",
       icon: (
@@ -182,12 +170,12 @@ const SideBar = () => {
         />
       ),
       label: "Campagnes",
-      role: "Admin",
+      role: ["Admin"],
       children: [
         {
           key: "/ads",
           label: "Statistiques Ads",
-
+          role: ["Admin"],
           icon: (
             <FontAwesomeIcon
               icon={faPlusCircle}
@@ -198,7 +186,7 @@ const SideBar = () => {
         {
           key: "/publicités",
           label: "Publicités",
-
+          role: ["Admin"],
           icon: (
             <FontAwesomeIcon
               icon={faBullhorn}
@@ -238,15 +226,44 @@ const SideBar = () => {
   //   }
   //   return true;
   // });
-  const filteredItems = items.filter((item) => {
-    if (item.role) {
-      // Check if the user's role matches the item's role(s)
-      return Array.isArray(item.role)
-        ? item.role.includes(decodedToken.role)
-        : item.role === decodedToken.role;
-    }
-    return true;
-  });
+  // const filteredItems = items.filter((item) => {
+  //   if (item.role) {
+  //     // Check if the user's role matches the item's role(s)
+  //     return Array.isArray(item.role)
+  //       ? item.role.includes(decodedToken.role)
+  //       : item.role === decodedToken.role;
+  //   }
+  //   return true;
+  // });
+  const hasAccess = (roleSetting, userRole) => {
+    if (!roleSetting) return true;
+    return Array.isArray(roleSetting)
+      ? roleSetting.includes(userRole)
+      : roleSetting === userRole;
+  };
+  
+  const filteredItems = items
+    .map((item) => {
+      // Admin sees everything
+      if (decodedToken.role === "Admin") return item;
+  
+      // For others (e.g., Commercial)
+      if (item.children) {
+        const filteredChildren = item.children.filter((child) =>
+          hasAccess(child.role, decodedToken.role)
+        );
+  
+        if (filteredChildren.length > 0) {
+          return { ...item, children: filteredChildren };
+        }
+  
+        return null; // no visible children, hide this item
+      }
+  
+      return hasAccess(item.role, decodedToken.role) ? item : null;
+    })
+    .filter(Boolean);
+  
   
 
   const toggleSidebar = () => {

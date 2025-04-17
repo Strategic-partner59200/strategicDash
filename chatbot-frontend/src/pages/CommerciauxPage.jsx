@@ -19,7 +19,7 @@ import {
 
 } from "@ant-design/icons";
 import ListAdmin from "./Admin/ListAdmin";
-import ListManager from "./Manager/ListManager";
+// import ListManager from "./Manager/ListManager";
 
 
 const getInitials = (prenom, nom) => {
@@ -252,9 +252,9 @@ const CommerciauxPage = () => {
     <div className="p-4 border rounded shadow-lg mt-4">
       <ListAdmin />
     </div>
-    <div className="p-4 border rounded shadow-lg mt-4">
+    {/* <div className="p-4 border rounded shadow-lg mt-4">
       <ListManager />
-    </div>
+    </div> */}
    </>
   );
 };

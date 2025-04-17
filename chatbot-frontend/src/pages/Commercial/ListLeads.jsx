@@ -3,6 +3,8 @@ import {
   Table,
   Select,
   message,
+  Spin,
+  Input,
 } from "antd";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
@@ -21,6 +23,47 @@ const ListLeads = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  
+  const handleColumnSearch = async (e, columnKey) => {
+    const value = e.target.value.toLowerCase().trim();
+    setSearchQuery(value);
+
+    try {
+      // If search value is empty, show all data
+      if (value === "") {
+        setFilteredData(chatData);
+        return;
+      }
+
+      // If searching on 'commercial', handle 'N/A' or empty value cases
+      if (columnKey === "commercial") {
+        const filteredData = chatData.filter((item) => {
+          const commercialValue = item[columnKey]
+            ? `${item[columnKey].prenom} ${item[columnKey].nom}`.toLowerCase()
+            : "n/a"; // Set 'n/a' as default if commercial is empty or null
+
+          return commercialValue.includes(value);
+        });
+        setFilteredData(filteredData);
+        return;
+      }
+
+      // Default search (for other fields)
+      const response = await axios.get("/search", {
+        params: {
+          query: value,
+          columnKey: columnKey,
+        },
+      });
+      setFilteredData(response.data);
+    } catch (error) {
+      console.error("Error in search:", error);
+      message.error("Error while searching.");
+    }
+  };
+
 
 
   const handlePageChange = (value) => {
@@ -117,35 +160,53 @@ const ListLeads = () => {
 
   if (error)
     return <Alert message="Error" description={error} type="error" showIcon />;
+
+  
+
+
   const columns = [
-     {
+    // {
+    //   title: "Prénom",
+    //   key: "request_lastname",
+    //   dataIndex: "request_lastname",
+    //   render: (text, record) => (
+    //     <div className="cursor-pointer" onClick={() => handleLeadClick(record)}>
+    //       <div>{record.request_lastname || "-"}</div>
+    //     </div>
+    //   ),
+    // },
+    // {
+    //   title: "Nom",
+    //   key: "request_name",
+    //   dataIndex: "request_name",
+    //   render: (text, record) => (
+    //     <div className="cursor-pointer" onClick={() => handleLeadClick(record)}>
+    //       <div>{record.request_name || "-"}</div>
+    //     </div>
+    //   ),
+    // },
+    {
       title: "Prénom et Nom", // Changed title to "Prenom and Nom"
-      key: "request_lastname",
-      dataIndex: "request_fullname",
+      key: "nom",
+      dataIndex: "nom",
       render: (text, record) => (
         <div className="cursor-pointer" onClick={() => handleLeadClick(record)}>
-          <div>{`${record.prénom || ""} ${
-            record.nom || ""
-          }`}</div>
+          <div>{record.nom || ""}</div>
         </div>
       ),
     },
- 
+
     {
       title: "Email",
-      key: "request_email" || "request_add_email",
-      dataIndex: "request_email" || "request_add_email",
+      key: "email" || "email1",
+      dataIndex: "email" || "email1",
       render: (text, record) => (
-        <div
-          className="cursor-pointer"
-          onClick={() => handleCoachClick(record)}
-        >
-         <div className="text-gray-500 text-xs">
+        <div className="cursor-pointer" onClick={() => handleLeadClick(record)}>
+          <div className="text-gray-500 text-xs">
             {record.verification_email === "Non"
-              ? record.email1 || "-"
-              : record.email || "-"}
+              ? record.email1
+              : record.email}
           </div>
-         
         </div>
       ),
     },
@@ -164,7 +225,7 @@ const ListLeads = () => {
         return (
           <div
             className="cursor-pointer"
-            onClick={() => handleCoachClick(record)}
+            onClick={() => handleLeadClick(record)}
           >
             <div>{day}</div>
             <div className="text-gray-500 text-sm">{time}</div>
@@ -176,67 +237,224 @@ const ListLeads = () => {
       title: "TELEPHONE",
       dataIndex: "phone",
       key: "phone",
-      render: (text) => text || "-",
+      render: (text) => text || "",
     },
     {
-      title: "Status",
-      dataIndex: "course_details",
-      key: "course_details",
-      render: (text, record) => text || record.status || "-",
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+      render: (text) => text || "",
+    },
+    {
+      title: "code postal",
+      dataIndex: "codepostal",
+      key: "codepostal",
+      render: (text) => text || "",
+    },
+    {
+      title: "Ville",
+      dataIndex: "ville",
+      key: "ville",
+      render: (text) => text || "",
+    },
+    {
+      title: "Niche",
+      dataIndex: "status",
+      key: "status",
+      render: (text, record) => text || record.status || "",
+    },
+    {
+      title: "Nom société",
+      dataIndex: "demande",
+      key: "demande",
+      render: (text, record) => text || record.nom_societé || "",
+    },
+    // {
+    //   title: "STATUS LEAD",
+    //   key: "statusLead",
+    //   render: (text, record) => (
+    //     <Select
+    //       defaultValue={record.type}
+    //       style={{ width: 80 }}
+    //       onChange={(value) => handleStatusLeadChange(value, record)}
+    //     >
+    //       <Option value="all">Nouveau</Option>
+    //       <Option value="prospect">Prospect</Option>
+    //       <Option value="client">Client</Option>
+    //     </Select>
+    //   ),
+    // },
+    {
+      title: "STATUS LEAD",
+      key: "type",
+      dataIndex: "type",
+      // render: (text, record) => (
+      //   <Select
+      //     value={record.type || "prospect"} // Use record.type as value
+      //     style={{ width: 90 }}
+      //     onChange={(value) => handleStatusLeadChange(value, record)}
+      //   >
+      //     {/* <Option value="nouveau">Nouveau</Option> */}
+      //     <Option value="prospect">Prospect</Option>
+      //     <Option value="client">Client</Option>
+      //   </Select>
+      // ),
     },
     {
       title: "Besoin",
-      dataIndex: "student",
-      key: "student",
-      render: (text, record) =>
-        text || record.demande || "-",
-    },
-    {
-      title: "STATUS LEAD",
-      key: "statusLead",
+      dataIndex: "besoin",
+      key: "besoin",
       render: (text, record) => (
-        <Select
-          defaultValue={record.type}
-          style={{ width: 80 }}
-          onChange={(value) => handleStatusLeadChange(value, record)}
-        >
-          <Option value="prospect">Prospect</Option>
-          <Option value="client">Client</Option>
-        </Select>
+        <div className="text-gray-500 text-xs">{record.besoin || ""}</div>
       ),
     },
+
     {
-      title: "Contacter",
-      dataIndex: "choose_course",
-      key: "choose_course",
-      render: (text, record) => (
-        <div className="text-gray-500 text-xs">
-          {record.besoin ||
-            "-"}
-          ,
-        </div>
-      ),
-    },
-    {
-      title: <span style={{ fontSize: "12px" }}>Commercial</span>,
+      title: "commercial",
       key: "commercial",
+      dataIndex: "commercial",
       render: (text, record) => (
         <div>
           {record.commercial
-            ? `${record.commercial.nom} ${record.commercial.nom}`
+            ? `${record.commercial.prenom} ${record.commercial.nom}`
             : "N/A"}
         </div>
       ),
     },
+    // {
+    //   title: <span style={{ fontSize: "12px" }}>Action</span>,
+    //   key: "action",
+    //   render: (text, record) => (
+    //     <Space size="middle">
+    //       <Popconfirm
+    //         title="Êtes-vous sûr de vouloir supprimer ce prospect ?"
+    //         onConfirm={() => handleDelete(record._id)}
+    //         okText="Yes"
+    //         cancelText="No"
+    //       >
+    //         <Button
+    //           icon={<DeleteOutlined />}
+    //           style={{ backgroundColor: "red", color: "white" }}
+    //           danger
+    //           size="small"
+    //         />
+    //       </Popconfirm>
+    //     </Space>
+    //   ),
+    // },
   ];
-
-  // const rowSelection = {
-  //   onChange: (selectedRowKeys) => {
-  //     setSelectedLeads(selectedRowKeys);
+  // const columns = [
+  //    {
+  //     title: "Prénom et Nom", // Changed title to "Prenom and Nom"
+  //     key: "request_lastname",
+  //     dataIndex: "request_fullname",
+  //     render: (text, record) => (
+  //       <div className="cursor-pointer" onClick={() => handleLeadClick(record)}>
+  //         <div>{`${record.prénom || ""} ${
+  //           record.nom || ""
+  //         }`}</div>
+  //       </div>
+  //     ),
   //   },
-  //   selectedRowKeys: selectedLeads,
-  // };
-
+ 
+  //   {
+  //     title: "Email",
+  //     key: "request_email" || "request_add_email",
+  //     dataIndex: "request_email" || "request_add_email",
+  //     render: (text, record) => (
+  //       <div
+  //         className="cursor-pointer"
+  //         onClick={() => handleCoachClick(record)}
+  //       >
+  //        <div className="text-gray-500 text-xs">
+  //           {record.verification_email === "Non"
+  //             ? record.email1 || "-"
+  //             : record.email || "-"}
+  //         </div>
+         
+  //       </div>
+  //     ),
+  //   },
+  //   {
+  //     title: "DATE",
+  //     dataIndex: "createdAt",
+  //     key: "createdAt",
+  //     render: (date) => {
+  //       if (!date) return "-";
+  //       const formattedDate = new Date(date);
+  //       const day = formattedDate.toLocaleDateString("en-GB");
+  //       const time = formattedDate.toLocaleTimeString("en-US", {
+  //         hour: "2-digit",
+  //         minute: "2-digit",
+  //       });
+  //       return (
+  //         <div
+  //           className="cursor-pointer"
+  //           onClick={() => handleCoachClick(record)}
+  //         >
+  //           <div>{day}</div>
+  //           <div className="text-gray-500 text-sm">{time}</div>
+  //         </div>
+  //       );
+  //     },
+  //   },
+  //   {
+  //     title: "TELEPHONE",
+  //     dataIndex: "phone",
+  //     key: "phone",
+  //     render: (text) => text || "-",
+  //   },
+  //   {
+  //     title: "Status",
+  //     dataIndex: "course_details",
+  //     key: "course_details",
+  //     render: (text, record) => text || record.status || "-",
+  //   },
+  //   {
+  //     title: "Besoin",
+  //     dataIndex: "student",
+  //     key: "student",
+  //     render: (text, record) =>
+  //       text || record.demande || "-",
+  //   },
+  //   {
+  //     title: "STATUS LEAD",
+  //     key: "statusLead",
+  //     render: (text, record) => (
+  //       <Select
+  //         defaultValue={record.type}
+  //         style={{ width: 80 }}
+  //         onChange={(value) => handleStatusLeadChange(value, record)}
+  //       >
+  //         <Option value="prospect">Prospect</Option>
+  //         <Option value="client">Client</Option>
+  //       </Select>
+  //     ),
+  //   },
+  //   {
+  //     title: "Contacter",
+  //     dataIndex: "choose_course",
+  //     key: "choose_course",
+  //     render: (text, record) => (
+  //       <div className="text-gray-500 text-xs">
+  //         {record.besoin ||
+  //           "-"}
+  //         ,
+  //       </div>
+  //     ),
+  //   },
+  //   {
+  //     title: <span style={{ fontSize: "12px" }}>Commercial</span>,
+  //     key: "commercial",
+  //     render: (text, record) => (
+  //       <div>
+  //         {record.commercial
+  //           ? `${record.commercial.nom} ${record.commercial.nom}`
+  //           : "N/A"}
+  //       </div>
+  //     ),
+  //   },
+  // ];
 
   return (
     <div className="p-4">
@@ -258,7 +476,7 @@ const ListLeads = () => {
 
         <span className="font-thin text-gray-600">résultats par page</span>
       </div>
-      <Table
+      {/* <Table
         dataSource={chatData.slice(
           (currentPage - 1) * pageSize,
           currentPage * pageSize
@@ -279,7 +497,44 @@ const ListLeads = () => {
         className="custom-table"
         // rowSelection={rowSelection}
         tableLayout="fixed"
-      />
+      /> */}
+     <div className="bg-white rounded-lg shadow-md w-full md:p-6 overflow-x-auto">
+        <Table
+          columns={[
+            ...columns.map((col) => ({
+              ...col,
+              title: (
+                <div className="flex flex-col items-center">
+                  <div className="text-xs">{col.title}</div>
+                  {col.key !== "action" && (
+                    <Input
+                      placeholder={`${col.title}`}
+                      onChange={(e) => handleColumnSearch(e, col.key)}
+                      // className="mt-2 text-sm sm:text-base w-full sm:w-auto"
+                      size="medium"
+                    />
+                  )}
+                </div>
+              ),
+            })),
+          ]}
+          dataSource={chatData.slice(
+            (currentPage - 1) * pageSize,
+            currentPage * pageSize
+          )}
+          pagination={{
+            current: currentPage,
+            pageSize,
+            total: chatData.length,
+            onChange: (page) => setCurrentPage(page),
+          }}
+          rowKey={(record) => record._id}
+          bordered
+          className="custom-table text-xs sm:text-sm"
+          // rowSelection={rowSelection}
+          tableLayout="auto"
+        />
+      </div>
     </div>
   );
 };
