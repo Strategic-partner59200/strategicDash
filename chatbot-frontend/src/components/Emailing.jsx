@@ -32,14 +32,13 @@ const Emailing = () => {
     fetchLead();
   }, [id]);
 
-  const sendEmailP = async () => {
+  const sendEmail = async () => {
     try {
-      const res = await axios.post("/emailingP", {
+      const res = await axios.post("/emailing", {
         email: lead.email,
         nom: lead.nom,
       });
       console.log("Email sent successfully:", res.data);
-      // setEmailStatus("✅ Email envoyé avec succès !");
       message.success("Email a été envoyé avec succès !");
     } catch (error) {
       console.error("Erreur d'envoi :", error);
@@ -137,7 +136,7 @@ const Emailing = () => {
 
       <div className="mt-10 flex flex-col sm:flex-row flex-wrap gap-4 justify-center items-center">
         <button
-          onClick={sendEmailP}
+          onClick={sendEmail}
           className="bg-blue-600 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 transition duration-200 w-full sm:w-auto"
         >
           📤 Email de Présentation
