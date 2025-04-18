@@ -728,7 +728,8 @@ const LeadDetailsPage = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white rounded-xl shadow-lg p-8 sm:w-3/4 lg:w-2/4 transform transition-transform duration-300 ease-in-out scale-95 hover:scale-100">
+         <div className="bg-white rounded-xl shadow-lg p-6 sm:w-11/12 lg:w-2/3 max-h-[90vh] overflow-y-auto">
+
             <h2 className="text-xl font-semibold text-gray-900 mb-6 text-center">
               Modify Lead
             </h2>
@@ -886,7 +887,7 @@ const LeadDetailsPage = () => {
                 <textarea
                   type="text"
                   name="commetaire"
-                  value={formData.commetaire || ""}
+                  value={formData.commentaire || ""}
                   onChange={handleInputChange}
                   className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
                   placeholder="Enter l'address"
@@ -899,13 +900,13 @@ const LeadDetailsPage = () => {
                   onClick={() => setIsModalOpen(false)}
                   className="bg-gray-400 hover:bg-gray-500 text-white font-medium py-3 px-6 rounded-lg transition-all"
                 >
-                  Cancel
+                    Annuler
                 </button>
                 <button
                   onClick={handleSave}
                   className="bg-purple-800 hover:bg-purple-900 text-white font-medium py-3 px-6 rounded-lg transition-all"
                 >
-                  Save Changes
+                  Enregistrer les modifications
                 </button>
               </div>
             </div>
