@@ -40,7 +40,7 @@ const Emailing = () => {
       });
       console.log("Email sent successfully:", res.data);
       setEmailStatus("✅ Email envoyé avec succès !");
-      Alert("✅ Email a été envoyé avec succès !");
+      message.success("✅ Email a été envoyé avec succès !");
     } catch (error) {
       console.error("Erreur d'envoi :", error);
       setEmailStatus("❌ Échec de l'envoi de l'email.");
