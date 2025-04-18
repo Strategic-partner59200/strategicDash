@@ -124,7 +124,7 @@ router.put('/panier/:id', PanierController.updatePanierItem);
 
 // EMAILING routes
 
-router.post('/emailingP', DataController.createEmailing);
+router.post('/emailing', DataController.createEmailing);
 router.post('/emailingR', DataController.createEmailingR);
 router.post('/emailingC', DataController.createEmailingC);
 
