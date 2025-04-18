@@ -259,11 +259,11 @@ const Programmes = () => {
           className="bg-purple-800 text-white"
           onClick={handleCreateNewBanner}
         >
-          Ajouter produit
+          Ajouter l'offre
         </Button>
       </div>
 
-      <h1 className="text-2xl font-bold mb-4">Produits</h1>
+      <h1 className="text-2xl font-bold mb-4">Offres</h1>
 
       <div className="program-container sm:max-w-full sm:flex-1 sm:w-full">
         {program.map((pro) => (
