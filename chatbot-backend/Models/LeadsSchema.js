@@ -58,6 +58,14 @@ const chatSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    commentaire: {
+      type: String,
+      default: "",
+    },
+    siret: {
+      type: Number,
+      default: "",
+    },
     type: { type: String, default: "prospect" },
     verification_phone: { type: String, default: "" },
     verification_email: { type: String, default: "" },
