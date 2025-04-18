@@ -409,7 +409,7 @@ const formattedDate = dueDate.toISOString().split('T')[0];
 
   <p>Veuillez trouver ci-joint la facture correspondant à <strong>${description}</strong> réalisée pour <strong>${societeName || 'votre projet'}</strong>.</p>
 
-  <p>Le montant total est de <strong>montant HT: ${montantHT}$ et montant TTC: ${montantTTC}$</strong>, avec une échéance de règlement au <strong>${formattedDate}</strong>.</p>
+  <p>Le montant total est de <strong>montant HT: ${montantHT}€ et montant TTC: ${montantTTC}€</strong>, avec une échéance de règlement au <strong>${formattedDate}</strong>.</p>
 
   <p>N’hésitez pas à me contacter si vous avez besoin d’informations complémentaires ou si vous souhaitez échanger à ce sujet.</p>
 
