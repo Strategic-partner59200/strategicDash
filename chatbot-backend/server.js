@@ -30,7 +30,7 @@ app.use(cookieParser());
 
 // middleware to connect with frontend
 app.use(cors({
-    origin: ["https://strategic-dash.vercel.app", "https://strategic-chatbot.vercel.app"],
+    origin: ["https://www.strategicdash.com", "https://strategic-chatbot.vercel.app"],
     credentials: true,
 }));
 
