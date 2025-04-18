@@ -136,7 +136,8 @@ class ProgramController {
       command,
       email,
       panierId,
-    
+      phone,
+      nom_societé,
       date,
       nom,
        siret,
@@ -171,6 +172,8 @@ class ProgramController {
         siret,
         raissociale,
         address,
+        phone,
+        nom_societé,
         numCommand,
       });
       console.log("newCommands", newCommand)
@@ -307,7 +310,8 @@ const { id } = req.params;
 
 static async sendDevisEmail(req, res) {
   try {
-    const { email, pdf, commandNum } = req.body;
+    const { email, pdf, commandNum, phone, clientName,
+      societeName, code, description } = req.body;
 
    
 
@@ -332,8 +336,24 @@ static async sendDevisEmail(req, res) {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: `Votre Devis #${commandNum}`,
-      text: 'Veuillez trouver ci-joint votre devis.',
+      subject: `Envoi de votre devis – ${code}`,
+      html: `
+        <p>Bonjour ${clientName},</p>
+      
+        <p>Comme convenu, vous trouverez ci-joint le devis correspondant à la prestation suivante : <strong>${description}</strong>.</p>
+      
+        <p>Ce devis détaille l’ensemble des prestations proposées ainsi que les conditions tarifaires. N’hésitez pas à me faire part de vos questions ou remarques si certains points nécessitent des précisions.</p>
+      
+        <p>Je reste bien entendu disponible pour en discuter ensemble.</p>
+      
+        <p>Dans l’attente de votre retour,<br/>
+        Bien cordialement,</p>
+      
+        <p>${clientName}<br/>
+        ${societeName}<br/>
+        ${phone}<br/>
+        ${email}</p>
+      `,
       attachments: [
         {
           filename: `Devis-${commandNum}.pdf`,
@@ -355,9 +375,12 @@ static async sendDevisEmail(req, res) {
 
 static async sendFactureEmail(req, res) {
   try {
-    const { email, pdf, commandNum } = req.body;
+    const { email, pdf, commandNum, phone, societeName, montantTTC, description, code, montantHT, clientName, date } = req.body;
 
-   
+    // const formattedDate = new Date(date).toISOString().split('T')[0];
+    const dueDate = new Date(date);
+dueDate.setDate(dueDate.getDate() + 7);
+const formattedDate = dueDate.toISOString().split('T')[0];
 
     if (!email || !pdf) {
       return res.status(400).json({ message: 'Email and PDF are required.' });
@@ -380,8 +403,24 @@ static async sendFactureEmail(req, res) {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: `Votre Facuture #${commandNum}`,
-      text: 'Veuillez trouver ci-joint votre Facture.',
+      subject: ` Facture ${commandNum} – ${code}`,
+      html: `
+  <p>Bonjour ${clientName},</p>
+
+  <p>Veuillez trouver ci-joint la facture correspondant à <strong>${description}</strong> réalisée pour <strong>${societeName || 'votre projet'}</strong>.</p>
+
+  <p>Le montant total est de <strong>montant HT: ${montantHT} et montant TTC: ${montantTTC}</strong>, avec une échéance de règlement au <strong>${formattedDate}</strong>.</p>
+
+  <p>N’hésitez pas à me contacter si vous avez besoin d’informations complémentaires ou si vous souhaitez échanger à ce sujet.</p>
+
+  <p>Merci encore pour votre confiance,<br/>
+  Bien cordialement,</p>
+
+  <p>${clientName}<br/>
+  ${societeName}<br/>
+  ${phone}<br/>
+  ${email}</p>
+`,
       attachments: [
         {
           filename: `Facture-${commandNum}.pdf`,
