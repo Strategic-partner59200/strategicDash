@@ -640,16 +640,24 @@ doc.rect(bankInfoX, bankInfoY, tableWidth, rowHeights * bankData.length);
     const pdfBase64 = doc.output("datauristring"); // OR use doc.output("dataurlstring");
   
     try {
-      await axios.post(
+     const res =  await axios.post(
         `/command/send-facture-email/${commandId}`, 
         {
           email: command.email,
           pdf: pdfBase64,
           commandId: command._id,
           commandNum: newNumCommand,
+          clientName: command.nom,
+          societeName: command.nom_societé,
+          code: command.code,
+          phone: command.phone,
+          description: command.description,
+          date: command.date,
+          montantHT: command.montantHT,
+          montantTTC: command.montantTTC,
         },
       );
-  
+    console.log("Email sent successfully:", res);
       message.success("Facture envoyée avec succès par email !");
     } catch (error) {
       console.error("Erreur lors de l'envoi par email :", error);

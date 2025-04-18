@@ -121,6 +121,12 @@ const CreateCommand = () => {
             // ville: commandData.ville,
             // adresse: commandData.adresse,
             numCommand: commandData.numCommand,
+            phone: commandData.phone,
+            email: commandData.email,
+            nom_societé: commandData.nom_societé,
+            quantite: commandData.quantite,
+            code: commandData.code,
+            description: commandData.description,
           });
 
           // if (commandData.panierItems) {
@@ -152,7 +158,9 @@ const CreateCommand = () => {
             nom: foundLead.nom,
             siret: foundLead.siret,
             address: foundLead.address,
+            phone: foundLead.phone,
             email: foundLead.email,
+            nom_societé: foundLead.nom_societé,
           });
         }
       } catch (error) {
@@ -215,153 +223,140 @@ const CreateCommand = () => {
 
   return (
     <div className="p-12">
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={handleFormSubmit}
-        className="space-y-4 border p-12 rounded-md shadow-md bg-white"
+    <Form
+  form={form}
+  layout="vertical"
+  onFinish={handleFormSubmit}
+  className="space-y-4 border p-12 rounded-md shadow-md bg-white"
+>
+  <div className="flex items-center justify-center mr-6">
+    <Form.Item
+      name="command_type"
+      className="font-bold"
+      rules={[{ required: true, message: "Type de commande est requis" }]}
+    >
+      <Radio.Group onChange={(e) => handleCommandTypeChange(e.target.value)}>
+        <Radio value="devis">Devis</Radio>
+        <Radio value="commande">Commande</Radio>
+      </Radio.Group>
+    </Form.Item>
+  </div>
+
+  <Row gutter={16}>
+    <Col span={12}>
+      <Form.Item
+        label="Numéro de Commande"
+        name="numCommand"
+        rules={[{ required: true, message: "Numéro de commande est requis" }]}
       >
-        <div className="flex items-center justify-center mr-6">
-          <Form.Item
-            name="command_type"
-            className="font-bold"
-            rules={[{ required: true, message: "Type de commande est requis" }]}
-          >
-            <Radio.Group onChange={(e) => handleCommandTypeChange(e.target.value)}>
-              <Radio value="devis">Devis</Radio>
-              <Radio value="commande">Commande</Radio>
-            </Radio.Group>
-          </Form.Item>
-        </div>
+        <Input disabled />
+      </Form.Item>
+    </Col>
 
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item label="Numéro de Commande" name="numCommand" rules={[{ required: true, message: "Numéro de commande est requis" }]}>
-              <Input disabled />
-            </Form.Item>
-          </Col>
+    <Col span={12}>
+      <Form.Item
+        label="Date"
+        name="date"
+        rules={[{ required: true, message: "La date est requise" }]}
+      >
+        <DatePicker
+          style={{ width: "100%" }}
+          placeholder="Sélectionnez une date"
+          format="YYYY-MM-DD"
+        />
+      </Form.Item>
+    </Col>
+  </Row>
 
-          <Col span={12}>
-            <Form.Item
-              label="Date"
-              name="date"
-              rules={[{ required: true, message: "La date est requise" }]}
-            >
-              <DatePicker style={{ width: "100%" }} placeholder="Sélectionnez une date" format="YYYY-MM-DD" />
-            </Form.Item>
-          </Col>
-        </Row>
+  <Row gutter={16}>
+    <Col span={12}>
+      <Form.Item
+        label="Prénom et Nom"
+        name="nom"
+        rules={[{ required: false, message: "Le prénom est requis" }]}
+      >
+        <Input placeholder="Prénom du client" />
+      </Form.Item>
+    </Col>
+    <Col span={12}>
+      <Form.Item
+        label="Adresse"
+        name="address"
+        rules={[{ required: false, message: "Adresse est requise" }]}
+      >
+        <TextArea placeholder="Adresse" />
+      </Form.Item>
+    </Col>
+  </Row>
 
-                <Row gutter={16}>
-                <Col span={12}>
-            <Form.Item
-              label="Prénom et Nom"
-              name="nom"
-              rules={[{ required: false, message: "Le prénom est requis" }]}
-            >
-              <Input placeholder="Prénom du client" />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              label="Address"
-              name="address"
-              rules={[{ required: false, message: "Adresse est requis" }]}
-            >
-              <TextArea placeholder="Adresse" />
-            </Form.Item>
-          </Col>
-         
-        </Row>
-{/* 
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              label="Email"
-              name="request_email"
-              rules={[{ required: false, message: "L'email est requis" }]}
-            >
-              <Input placeholder="Email du client" />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              label="Téléphone"
-              name="request_phone"
-              rules={[{ required: false, message: "Le téléphone est requis" }]}
-            >
-              <Input placeholder="Téléphone du client" />
-            </Form.Item>
-          </Col>
-        </Row> */}
-    
-        <Row gutter={16}>
-        <Col span={12}>
-            <Form.Item label="TVA">
-              <Input value={`${TVA}%`} disabled />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              label="Quantite"
-              name="quantite"
-              rules={[{ required: false, message: "Ce champ est requis" }]}
-            >
-              <Input placeholder="Quantite" />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              label="Siret"
-              name="siret"
-              rules={[{ required: false, message: "Ce champ est requis" }]}
-            >
-              <Input placeholder="Siret" />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              label="Email"
-              name="email"
-              rules={[{ required: false, message: "Ce champ est requis" }]}
-            >
-              <Input placeholder="Email client" />
-            </Form.Item>
-          </Col>
-        </Row>
-        {/* <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              label="Code Postal"
-              name="codepostal"
-              rules={[{ required: false, message: "Code postal est requis" }]}
-            >
-              <Input placeholder="Code Postal" />
-            </Form.Item>
-          </Col>
-       
-        </Row> */}
-        {/* <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              label="Ville"
-              name="ville"
-              rules={[{ required: false, message: "La ille est requis" }]}
-            >
-              <Input placeholder="Ville" />
-            </Form.Item>
-          </Col>
-        
-        </Row> */}
+  <Row gutter={16}>
+    <Col span={12}>
+      <Form.Item
+        label="Nom de la société"
+        name="nom_societé"
+        rules={[{ required: false, message: "Ce champ est requis" }]}
+      >
+        <Input placeholder="Nom de la société" />
+      </Form.Item>
+    </Col>
+    <Col span={12}>
+      <Form.Item
+        label="Téléphone"
+        name="phone"
+        rules={[{ required: false, message: "Ce champ est requis" }]}
+      >
+        <Input placeholder="Téléphone du client" />
+      </Form.Item>
+    </Col>
+  </Row>
 
-        <Row gutter={16}>
-          <Col span={12}>
-            <Button type="primary" htmlType="submit" className="mt-8 bg-blue-600 text-white rounded-lg">
-              Enregistrer la commande
-            </Button>
-          </Col>
-        </Row>
-      </Form>
+  <Row gutter={16}>
+    <Col span={12}>
+      <Form.Item
+        label="Email"
+        name="email"
+        rules={[{ required: false, message: "Ce champ est requis" }]}
+      >
+        <Input placeholder="Email client" />
+      </Form.Item>
+    </Col>
+    <Col span={12}>
+      <Form.Item label="TVA">
+        <Input value={`${TVA}%`} disabled />
+      </Form.Item>
+    </Col>
+  </Row>
+
+  <Row gutter={16}>
+    <Col span={12}>
+      <Form.Item
+        label="Quantité"
+        name="quantite"
+        rules={[{ required: false, message: "Ce champ est requis" }]}
+      >
+        <Input placeholder="Quantité" />
+      </Form.Item>
+    </Col>
+    <Col span={12}>
+      <Form.Item
+        label="Siret"
+        name="siret"
+        rules={[{ required: false, message: "Ce champ est requis" }]}
+      >
+        <Input placeholder="Siret" />
+      </Form.Item>
+    </Col>
+  </Row>
+
+  <Row gutter={16}>
+    <Col span={12}>
+      <Button type="primary" htmlType="submit" className="mt-8 bg-blue-600 text-white rounded-lg">
+        Enregistrer la commande
+      </Button>
+    </Col>
+  </Row>
+</Form>
+
       
       {/* <div className="mt-6">
         <Table

@@ -565,6 +565,11 @@ const AllDevis = () => {
           pdf: pdfBase64,
           commandId: command._id,
           commandNum: command.numCommand,
+          phone: command.phone,
+          clientName: command.nom,
+          societeName: command.nom_societé,
+          code: command.code,
+          description: command.description,
         },
       );
   
