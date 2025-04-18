@@ -39,8 +39,8 @@ const Emailing = () => {
         nom: lead.nom,
       });
       console.log("Email sent successfully:", res.data);
-      setEmailStatus("✅ Email envoyé avec succès !");
-      message.success("✅ Email a été envoyé avec succès !");
+      // setEmailStatus("✅ Email envoyé avec succès !");
+      message.success("Email a été envoyé avec succès !");
     } catch (error) {
       console.error("Erreur d'envoi :", error);
       setEmailStatus("❌ Échec de l'envoi de l'email.");
@@ -57,7 +57,7 @@ const Emailing = () => {
         lien: formRdv.lien,
       });
       console.log("Email sent successfully:", res.data);
-      setEmailStatus("✅ Email envoyé avec succès !");
+      // setEmailStatus("✅ Email envoyé avec succès !");
       message.success("✅ Email a été envoyé avec succès !");
       setShowForm(false);
       setFormRdv({ jour: "", heure: "", lien: "" });
@@ -78,7 +78,7 @@ const Emailing = () => {
         reference: formCommande.reference,
       });
       console.log("Email sent successfully:", res.data);
-      setEmailStatus("✅ Email envoyé avec succès !");
+      // setEmailStatus("✅ Email envoyé avec succès !");
       message.success("✅ Email envoyé avec succès !");
       setShowCommandeForm(false);
       setFormCommande({
