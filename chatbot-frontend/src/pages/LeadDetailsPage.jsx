@@ -341,9 +341,12 @@ const LeadDetailsPage = () => {
                     { label: "Email", value: lead.email || "-" },
                     { label: "Téléphone", value: lead.phone || "-" },
                     { label: "Niche", value: lead.status || "-" },
-                    { label: "Contacter", value: lead.besoin || "-" },
                     { label: "Nom société", value: lead.nom_societé || "-" },
+                    { label: "Adresse", value: lead.address || "-" },
+                    { label: "Ville", value: lead.ville || "-" },
+                    { label: "Code postal", value: lead.codepostal || "-" },
                     { label: "Status de lead", value: lead.type || "-" },
+                    { label: "Siret", value: lead.siret || "-" },
                   ].map(({ label, value }) => (
                     <div className="flex items-center gap-2" key={label}>
                       <p className="text-gray-600 font-semibold">{label}:</p>

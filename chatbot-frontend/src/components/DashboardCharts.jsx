@@ -10,6 +10,7 @@ import {
     LineElement,
     Title,
   } from "chart.js";
+import { useEffect, useState } from "react";
   
   ChartJS.register(
     CategoryScale,
@@ -24,27 +25,32 @@ import {
   );
   import { Pie } from "react-chartjs-2";
 
-const DashboardCharts = ({ totalLeads, categoryCounts }) => {
+const DashboardCharts = ({ totalLeads, leads }) => {
+  const [statusLabels, setStatusLabels] = useState([]);
+  const [statusCounts, setStatusCounts] = useState([]);
+  const chartColors = [
+    "#6366F1", "#EF4444", "#F59E0B", "#10B981", "#3B82F6",
+    "#8B5CF6", "#EC4899", "#14B8A6", "#F43F5E", "#84CC16"
+  ];
+  useEffect(() => {
+    const statusMap = {};
+    leads.forEach((lead) => {
+      if (lead.status) {
+        statusMap[lead.status] = (statusMap[lead.status] || 0) + 1;
+      }
+    });
+
+    setStatusLabels(Object.keys(statusMap));
+    setStatusCounts(Object.values(statusMap));
+  }, [leads]);
     const pieChartDataLeft = {
-      labels: [
-        "Auto_Entrepreneur",
-        "PME",
-        "Artisan",
-        "Autre"
-      ],
-      datasets: [
-        {
-          data: categoryCounts,
-          backgroundColor: [
-            "#3B82F6",
-            "#FBBF24",
-            "#F87171",
-            "#34D399",
-            "#A78BFA",
-          ],
-          hoverOffset: 4,
-        },
-      ],
+      labels: statusLabels,
+  datasets: [
+    {
+      data: statusCounts,
+      backgroundColor: statusLabels.map((_, i) => chartColors[i % chartColors.length]),
+    },
+  ],
     };
   
     return (

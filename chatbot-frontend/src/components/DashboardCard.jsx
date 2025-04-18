@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCalendarAlt,
-  faArrowUp,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt, faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { Pie, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -35,7 +32,6 @@ import DashboardCharts from "./DashboardCharts";
 import AdsCard from "./AdsCard";
 import DeviceCard from "./DeviceCard";
 import Statistics from "./Statistics";
-
 
 const TauxCapture = () => {
   const [chatData, setChatData] = useState([]);
@@ -123,7 +119,7 @@ const TauxCapture = () => {
         Taux de captation
       </h1>
       <div className="relative w-40 h-40 mb-8">
-        <Pie data={data}  />
+        <Pie data={data} />
       </div>
       <div className="flex justify-between w-full mt-8">
         <div className="flex flex-col items-center">
@@ -147,42 +143,23 @@ const DashboardCards = () => {
   const [totalLeads, setTotalLeads] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [categoryCounts, setCategoryCounts] = useState([0, 0, 0, 0, 0]);
+  const [categoryCounts, setCategoryCounts] = useState([]);
   const [courseDetails, setCourseDetails] = useState([0, 0, 0]);
   const [leads, setLeads] = useState([]);
   const [mobileVisits, setMobileVisits] = useState(0);
   const [desktopVisits, setDesktopVisits] = useState(0);
   const [averageDailyLeads, setAverageDailyLeads] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState(null);
-
-  
+  const [categories, setCategories] = useState([]);
+  const [filteredLeads, setFilteredLeads] = useState([]);
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
-    const filteredLeads = leads.filter(
-      (lead) =>
-        (lead.request_who && lead.request_who.includes(category)) 
+
+    const filtered = leads.filter(
+      (lead) => lead.status && lead.status.includes(category)
     );
-
-    const courseCounts = {  Auto_Entrepreneur: 0, PME: 0,  Artisan: 0, Autre: 0 };
-   
-    filteredLeads.forEach((lead) => {
-      const course = lead.request_who;
-      if (courseCounts[course] !== undefined) {
-        courseCounts[course] += 1;
-      }
-    });
-
-    const totalCourses = filteredLeads.length;
-    const newCourseDetails = [
-      (courseCounts.Artisan) || 0,
-      (courseCounts.PME)  || 0,
-      (courseCounts.Auto_Entrepreneur)  || 0,
-      (courseCounts.Autre) || 0,
-    ];
-   
-
-    setCourseDetails(newCourseDetails);
+    setFilteredLeads(filtered);
   };
 
   useEffect(() => {
@@ -191,7 +168,19 @@ const DashboardCards = () => {
         const response = await axios.get("/data");
         const leadsData = response.data.chatData;
         setLeads(leadsData);
+        setFilteredLeads(leadsData);
         setTotalLeads(leadsData.length);
+        // Get unique statuses from the leads
+        const uniqueStatuses = Array.from(
+          new Set(leadsData.map((lead) => lead.status).filter(Boolean))
+        );
+
+        // Convert them to objects with a label for consistency
+        const formattedCategories = uniqueStatuses.map((status) => ({
+          label: status,
+        }));
+
+        setCategories(formattedCategories);
 
         // Calculate average daily leads
         const uniqueDates = [
@@ -203,25 +192,11 @@ const DashboardCards = () => {
         ];
         const average = leadsData.length / uniqueDates.length;
         setAverageDailyLeads(average);
-
-        const mobileVisitCount = leadsData.filter(
-          (lead) => lead.device === "mobile"
-        ).length;
-        const desktopVisitCount = leadsData.filter(
-          (lead) => lead.device === "desktop"
-        ).length;
-
-        const categories = [
-          "Auto_Entrepreneur",
-           "PME",
-           "Artisan",
-           "Autre"
-        ];
+        const categories = leadsData.map((lead) => lead.status);
         const counts = categories.map(
           (category) =>
             leadsData.filter(
-              (lead) =>
-                (lead.request_who && lead.request_who.includes(category)) 
+              (lead) => lead.status && lead.status.includes(category)
             ).length
         );
 
@@ -235,13 +210,7 @@ const DashboardCards = () => {
     fetchData();
   }, []);
 
-  const categories = [
-    { label: "Auto_Entrepreneur", color: "bg-blue-500" },
-    { label: "PME", color: "bg-yellow-500" },
-    { label: "Artisan", color: "bg-pink-500" },
-    { label: "Autre", color: "bg-green-500" },
-  ]
- 
+
 
   const prepareChartData = () => {
     const groupedLeads = leads.reduce((acc, lead) => {
@@ -299,8 +268,11 @@ const DashboardCards = () => {
             <h2 className="text-lg font-semibold px-6 py-4 text-gray-700 ">
               Contacts
             </h2>
-            {/* <div className="flex items-center  w-full">
-              <div className="flex flex-col space-y-12 justify-between w-1/6">
+        
+            <div className="flex flex-col sm:flex-row items-center w-full">
+              {/* Titles Section */}
+              <div className="flex flex-col space-y-6 sm:space-y-12 justify-between w-full sm:w-1/6">
+                {/* Prévisions annuelles */}
                 <div className="text-center">
                   <div className="mt-4">
                     <FontAwesomeIcon
@@ -313,6 +285,8 @@ const DashboardCards = () => {
                   </h3>
                   <p className="text-xl font-bold">{totalLeads}</p>
                 </div>
+
+                {/* Moyenne quotidienne */}
                 <div className="text-center">
                   <div className="mb-2">
                     <FontAwesomeIcon
@@ -329,16 +303,16 @@ const DashboardCards = () => {
                 </div>
               </div>
 
-              <div className="w-5/6 h-[300px]">
+              {/* Chart Container */}
+              <div className="w-full sm:w-5/6 h-[200px] sm:h-[300px] overflow-x-auto">
                 <Line
                   data={chartData}
                   options={{
                     responsive: true,
+                    maintainAspectRatio: false,
                     scales: {
                       x: {
-                        title: {
-                          display: false,
-                        },
+                        title: { display: false },
                         ticks: {
                           display: false,
                           beginAtZero: true,
@@ -346,78 +320,16 @@ const DashboardCards = () => {
                         },
                       },
                       y: {
-                        title: {
-                          display: false,
-                        },
+                        title: { display: false },
                         min: 0,
                         max: 50,
-                        ticks: {
-                          stepSize: 10,
-                        },
+                        ticks: { stepSize: 10 },
                       },
                     },
                   }}
                 />
               </div>
-            </div> */}
-            <div className="flex flex-col sm:flex-row items-center w-full">
-  {/* Titles Section */}
-  <div className="flex flex-col space-y-6 sm:space-y-12 justify-between w-full sm:w-1/6">
-    {/* Prévisions annuelles */}
-    <div className="text-center">
-      <div className="mt-4">
-        <FontAwesomeIcon
-          icon={faCalendarAlt}
-          className="text-blue-200 text-xl mx-auto"
-        />
-      </div>
-      <h3 className="text-xs text-gray-400 font-semibold">
-        Prévisions annuelles
-      </h3>
-      <p className="text-xl font-bold">{totalLeads}</p>
-    </div>
-
-    {/* Moyenne quotidienne */}
-    <div className="text-center">
-      <div className="mb-2">
-        <FontAwesomeIcon
-          icon={faArrowUp}
-          className="text-green-400 text-xl mx-auto"
-        />
-      </div>
-      <h3 className="text-xs text-gray-400 font-semibold">
-        Moyenne quotidienne
-      </h3>
-      <p className="text-xl font-bold">
-        {getOneDecimalPlace(averageDailyLeads)}
-      </p>
-    </div>
-  </div>
-
-  {/* Chart Container */}
-  <div className="w-full sm:w-5/6 h-[200px] sm:h-[300px] overflow-x-auto">
-    <Line
-      data={chartData}
-      options={{
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: {
-            title: { display: false },
-            ticks: { display: false, beginAtZero: true, stepSize: 1 },
-          },
-          y: {
-            title: { display: false },
-            min: 0,
-            max: 50,
-            ticks: { stepSize: 10 },
-          },
-        },
-      }}
-    />
-  </div>
-</div>
-
+            </div>
           </div>
           <div className="flex gap-4">
             <Statistics
@@ -431,15 +343,16 @@ const DashboardCards = () => {
       </div>
 
       <div className=" flex-1 lg:flex gap-2 items-center">
-       <div className="max-w-full">
-       <DashboardCharts
-          totalLeads={totalLeads}
-          categoryCounts={categoryCounts}
-        />
-       </div>
+        <div className="max-w-full">
+          <DashboardCharts
+            totalLeads={totalLeads}
+            // categoryCounts={categoryCounts}
+            leads={filteredLeads}
+          />
+        </div>
 
         <div className="w-full flex flex-col pb-14 mt-8 space-y-2 bg-white rounded-lg shadow-[0px_2px_6px_rgba(0,0,0,0.1),0px_8px_24px_rgba(0,0,0,0.15)]">
-           <div className="flex gap-2 p-2 mb-2">
+          {/* <div className="flex gap-2 p-2 mb-2">
         {categories.map((category, index) => (
           <button
             key={index}
@@ -455,9 +368,26 @@ const DashboardCards = () => {
             </span>
           </button>
         ))}
-      </div>
+      </div> */}
+          <div className="w-full flex flex-col pb-14 mt-8 space-y-2 bg-white rounded-lg shadow-[0px_2px_6px_rgba(0,0,0,0.1),0px_8px_24px_rgba(0,0,0,0.15)]">
+            <div className="flex gap-2 p-2 mb-2 flex-wrap">
+              {categories.map((category, index) => (
+                <button
+                  key={index}
+                  className={`py-2 text-xs rounded w-full sm:w-auto px-4 ${
+                    selectedCategory === category.label
+                      ? "bg-pink-600 text-white"
+                      : "bg-gray-100 text-black"
+                  }`}
+                  onClick={() => handleCategorySelect(category.label)}
+                >
+                  <span className="text-xs lg:text-xs">{category.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
 
-          <DashboardPourcentage courseDetails={courseDetails} />
+          <DashboardPourcentage leads={filteredLeads} />
         </div>
       </div>
       <div className=" flex flex-row  gap-8">
