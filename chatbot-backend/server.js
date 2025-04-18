@@ -5,9 +5,11 @@ const app = express();
 const cookieParser = require('cookie-parser')
 const mongoose = require("mongoose");
 require('dotenv').config();
+
+app.use('/static', express.static('public'));
 // Connecter à MongoDB
 const uri = process.env.MONGODB_URI;
-app.use('/static', express.static('public'));
+
 
 // Connection to the database
 mongoose
@@ -31,7 +33,6 @@ app.use(cors({
     origin: ["https://strategic-dash.vercel.app", "https://strategic-chatbot.vercel.app"],
     credentials: true,
 }));
-
 
 
 

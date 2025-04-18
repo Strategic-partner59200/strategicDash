@@ -529,8 +529,7 @@ static async createEmailing(req, res) {
     html: `
       <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; max-width: 700px; margin: auto;">
        <img 
-  src="https://strategicdash.onrender.com/static/logo.jpeg" 
-  alt="Logo" 
+  src="https://strategicdash.onrender.com/static/logo.jpeg"
   style="width: 80px; height: auto; display: block; margin-bottom: 20px;" 
 />
     
