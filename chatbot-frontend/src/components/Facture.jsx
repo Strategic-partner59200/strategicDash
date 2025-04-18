@@ -113,7 +113,7 @@ const Facture = () => {
     confirm({
       title: "Confirmation de suppression",
       icon: <ExclamationCircleOutlined />,
-      content: "Êtes-vous sûr de vouloir supprimer ce devis ?",
+      content: "Êtes-vous sûr de vouloir supprimer la facture ?",
       okText: "Delete",
       okType: "danger",
       cancelText: "Cancel",
@@ -750,7 +750,7 @@ doc.rect(bankInfoX, bankInfoY, tableWidth, rowHeights * bankData.length);
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold mb-6">Devis Management</h1>
+      <h1 className="text-2xl font-bold mb-6">Facture Management</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <Card>
@@ -767,7 +767,7 @@ doc.rect(bankInfoX, bankInfoY, tableWidth, rowHeights * bankData.length);
       <div className="bg-white p-4 rounded-lg shadow">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">
-            {userRole === "commercial" ? "Mes Devis" : "Tous les Devis"}
+            {userRole === "commercial" ? "Mes Devis" : "Tous les factures"}
           </h2>
           {/* <Button 
             type="primary" 
