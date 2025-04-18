@@ -109,7 +109,7 @@ const Devis = ({ onValidate, shouldRefresh }) => {
             : command
         )
       );
-      message.success("✅ Commande validée avec succès !");
+      message.success("Devis validée avec succès !");
       onValidate();
     } catch (error) {
       console.error("Error validating command:", error);

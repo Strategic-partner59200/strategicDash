@@ -259,11 +259,11 @@ const AllDevis = () => {
       align: "right",
     });
 
-    doc.setFont(undefined, "bold");
-    doc.text("Le client", 30, rowY + rowHeight + 50);
+    // doc.setFont(undefined, "bold");
+    // doc.text("Le client", 30, rowY + rowHeight + 40);
     const infoBoxWidths = 80;
     const infoBoxXs = 30;
-    const infoStartYs = 190;
+    const infoStartYs = 250;
     const infoBoxHeightss = 28;
 
     doc.setFillColor(229, 231, 235);
@@ -271,6 +271,7 @@ const AllDevis = () => {
     doc.setFontSize(8);
     doc.rect(infoBoxXs, infoStartYs, infoBoxWidths, infoBoxHeightss, "F");
     // Add text on top of the background
+    doc.text("Le client", infoBoxXs + 5, infoStartYs + 4);
     doc.text("Mention manuscrite et datée :", infoBoxXs + 5, infoStartYs + 8);
 
     doc.text("« Bon pour accord. »", infoBoxXs + 5, infoStartYs + 12);
@@ -469,11 +470,11 @@ const AllDevis = () => {
        align: "right",
      });
  
-     doc.setFont(undefined, "bold");
-     doc.text("Le client", 30, rowY + rowHeight + 50);
+    //  doc.setFont(undefined, "bold");
+    //  doc.text("Le client", 30, rowY + rowHeight + 40);
      const infoBoxWidths = 80;
      const infoBoxXs = 30;
-     const infoStartYs = 190;
+     const infoStartYs = 250;
      const infoBoxHeightss = 28;
  
      doc.setFillColor(229, 231, 235);
@@ -481,6 +482,7 @@ const AllDevis = () => {
      doc.setFontSize(8);
      doc.rect(infoBoxXs, infoStartYs, infoBoxWidths, infoBoxHeightss, "F");
      // Add text on top of the background
+     doc.text("Le client", infoBoxXs + 5, infoStartYs + 4);
      doc.text("Mention manuscrite et datée :", infoBoxXs + 5, infoStartYs + 8);
  
      doc.text("« Bon pour accord. »", infoBoxXs + 5, infoStartYs + 12);

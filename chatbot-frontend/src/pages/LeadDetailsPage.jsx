@@ -271,7 +271,7 @@ const LeadDetailsPage = () => {
     try {
       const response = await axios.put(`/lead/${id}`, formData);
       if (response.status === 200) {
-        alert("Changes saved successfully!");
+        alert("Modifications enregistrées avec succès !");
         setLead(formData);
         setIsModalOpen(false);
       }
