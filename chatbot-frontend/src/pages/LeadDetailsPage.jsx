@@ -855,7 +855,7 @@ const LeadDetailsPage = () => {
                   <label className="text-lg font-medium text-gray-700">
                     Address
                   </label>
-                  <input
+                  <textarea
                     type="text"
                     name="address"
                     value={formData.address || ""}
@@ -864,7 +864,35 @@ const LeadDetailsPage = () => {
                     placeholder="Enter l'address"
                   />
                 </div>
+                <div className="flex flex-col gap-2 w-full">
+                  <label className="text-lg font-medium text-gray-700">
+                    Siret
+                  </label>
+                  <input
+                    type="text"
+                    name="siret"
+                    value={formData.siret || ""}
+                    onChange={handleInputChange}
+                    className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="Enter l'address"
+                  />
+                </div>
               </div>
+              <div className="flex gap-4">
+              <div className="flex flex-col gap-2 w-full">
+                <label className="text-lg font-medium text-gray-700">
+                Commetaire
+                </label>
+                <textarea
+                  type="text"
+                  name="commetaire"
+                  value={formData.commetaire || ""}
+                  onChange={handleInputChange}
+                  className="w-full border-2 border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-blue-500 transition-all"
+                  placeholder="Enter l'address"
+                />
+              </div>
+            </div>
               {/* Action Buttons */}
               <div className="flex justify-between space-x-4 mt-8">
                 <button

@@ -269,6 +269,19 @@ const ListLeads = () => {
       key: "demande",
       render: (text, record) => text || record.nom_societé || "",
     },
+   
+    {
+      title: "Siret",
+      dataIndex: "siret",
+      key: "siret",
+      render: (text, record) => text || record.siret || "",
+    },
+    {
+      title: "Commentaire",
+      dataIndex: "commentaire",
+      key: "commentaire",
+      render: (text, record) => text || record.commentaire || "",
+    },
     // {
     //   title: "STATUS LEAD",
     //   key: "statusLead",

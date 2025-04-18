@@ -769,9 +769,21 @@ const Leads = () => {
     },
     {
       title: "Nom société",
-      dataIndex: "demande",
-      key: "demande",
+      dataIndex: "nom_societé",
+      key: "nom_societé",
       render: (text, record) => text || record.nom_societé || "",
+    },
+    {
+      title: "Siret",
+      dataIndex: "siret",
+      key: "siret",
+      render: (text, record) => text || record.siret || "",
+    },
+    {
+      title: "Commentaire",
+      dataIndex: "commentaire",
+      key: "commentaire",
+      render: (text, record) => text || record.commentaire || "",
     },
     // {
     //   title: "STATUS LEAD",
