@@ -93,14 +93,15 @@ const SideBar = () => {
     },
     {
       key: "/list-leads",
+      label: "Contacts",
+      role: ["Commercial"],
       icon: (
         <FontAwesomeIcon
           icon={faUserTie}
           style={{ fontSize: "23px", marginRight: "10px" }}
         />
       ),
-      label: "Contacts",
-      role: "Commercial",
+      
     },
     {
       key: '/CalendarCommerciale', // Update the key if necessary
@@ -195,16 +196,6 @@ const SideBar = () => {
           ),
         },
         
-          // {
-          //   key: "/magic-sms",
-          //   label: "Magic SMS",
-          //   icon: (
-          //     <FontAwesomeIcon
-          //       icon={faList}
-          //       style={{ fontSize: "23px", marginRight: "10px" }}
-          //     />
-          //   ),
-          // },
       ],
     },
     {
@@ -245,7 +236,21 @@ const SideBar = () => {
   const filteredItems = items
     .map((item) => {
       // Admin sees everything
-      if (decodedToken.role === "Admin") return item;
+      // if (decodedToken.role === "Admin") return item;
+      if (item.children) {
+        const filteredChildren = item.children.filter((child) =>
+          hasAccess(child.role, decodedToken.role)
+        );
+      
+        if (filteredChildren.length > 0) {
+          return { ...item, children: filteredChildren };
+        }
+      
+        return null; // No visible children, hide the item
+      }
+      
+      return hasAccess(item.role, decodedToken.role) ? item : null;
+      
   
       // For others (e.g., Commercial)
       if (item.children) {
@@ -374,14 +379,6 @@ const SideBar = () => {
           selectedKeys={[location.pathname]}
           theme="white"
         >
-          {/* <Menu.Item
-            key="settings"
-            icon={<FontAwesomeIcon icon={faCog} style={{ fontSize: "23px" }} />}
-            onClick={handleSettingsClick}
-          >
-            {"Settings"}
-          </Menu.Item> */}
-
           <Menu.Item
             key="logout"
             icon={

@@ -297,19 +297,19 @@ useEffect(() => {
     // },
     {
       title: "Prénom et Nom", // Changed title to "Prenom and Nom"
-      key: "request_lastname",
-      dataIndex: "request_fullname",
+      key: "nom",
+      dataIndex: "nom",
       render: (text, record) => (
         <div className="cursor-pointer" onClick={() => handleLeadClick(record)}>
-          <div>{`${record.prénom || "-"} ${record.nom || "-"}`}</div>
+          <div>{`${record.nom || ""}`}</div>
         </div>
       ),
     },
  
     {
       title: "Email",
-      key: "request_email" || "request_add_email",
-      dataIndex: "request_email" || "request_add_email",
+      key: "email" || "email1",
+      dataIndex: "email" || "email1",
       render: (text, record) => (
         <div
           className="cursor-pointer"
@@ -317,8 +317,8 @@ useEffect(() => {
         >
          <div className="text-gray-500 text-xs">
             {record.verification_email === "Non"
-              ? record.email1 || "-"
-              : record.email || "-"}
+              ? record.email1 || ""
+              : record.email || ""}
           </div>
          
         </div>
@@ -328,19 +328,19 @@ useEffect(() => {
       title: "Address",
       dataIndex: "address",
       key: "address",
-      render: (text) => text || "",
+      render: (text) => text || ""
     },
     {
       title: "code postal",
       dataIndex: "codepostal",
       key: "codepostal",
-      render: (text) => text || "",
+      render: (text) => text || ""
     },
     {
       title: "Ville",
       dataIndex: "ville",
       key: "ville",
-      render: (text) => text || "",
+      render: (text) => text || ""
     },
     {
       title: "DATE",
@@ -369,29 +369,51 @@ useEffect(() => {
       title: "TELEPHONE",
       dataIndex: "phone",
       key: "phone",
-      render: (text) => text || "-",
+      render: (text) => text || ""
     },
     {
       title: "Status",
       dataIndex: "request_who",
       key: "request_who",
-      render: (text, record) => text || record.status || "-",
+      render: (text, record) => text || record.status || ""
     },
     {
       title: "Besoin",
       dataIndex: "information_request",
       key: "information_request",
       render: (text, record) =>
-        text || record.demande || "-",
+        text || record.demande || "",
     },
     {
-      title: "Contacter",
-      dataIndex: "initial",
-      key: "initial",
+      title: "Siret",
+      dataIndex: "siret",
+      key: "siret",
       render: (text, record) => (
         <div className="text-gray-500 text-xs">
-          {record.besoin ||
-            "-"},
+          {record.siret ||
+            ""}
+        </div>
+      ),
+    },
+    {
+      title: "Nom de société",
+      dataIndex: "nom_societé",
+      key: "nom_societé",
+      render: (text, record) => (
+        <div className="text-gray-500 text-xs">
+          {record.nom_societé ||
+            ""}
+        </div>
+      ),
+    },
+    {
+      title: "Commentaire",
+      dataIndex: "commentaire",
+      key: "commentaire",
+      render: (text, record) => (
+        <div className="text-gray-500 text-xs">
+          {record.commentaire ||
+            ""}
         </div>
       ),
     },
@@ -455,6 +477,7 @@ useEffect(() => {
   return (
     <div className="md:p-4 p-1 w-full">
       <h1 className="text-xl font-bold mb-4">Affectation des Leads</h1>
+    
       <div className="flex-1 space-y-4 justify-between mb-4">
         <div className="flex md:flex-row md:space-y-0 flex-col space-y-4">
           <Button type="" className="bg-purple-800 text-white" onClick={() => setIsAssignModalVisible(true)}>
@@ -484,6 +507,13 @@ useEffect(() => {
         </Select>
 
         <span className="font-thin text-gray-600">résultats par page</span>
+
+        
+      </div>
+      <div className="mb-4">
+        <span className="font-semibold text-gray-700">
+          Total Leads: {filteredData.length}
+        </span>
       </div>
       <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 overflow-x-auto">
       <Table
