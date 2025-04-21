@@ -265,35 +265,31 @@ const Programmes = () => {
 
       <h1 className="text-2xl font-bold mb-4">Offres</h1>
 
-      <div className="program-container sm:max-w-full sm:flex-1 sm:w-full">
-        {program.map((pro) => (
-          <div className="program-card" key={pro._id}>
-            <div className="program-card-image">
-              <img
-                alt="Programme"
-                src={pro.imageUrl}
-                className="w-full object-cover rounded-t-md"
-                style={{ height: '200px', objectFit: 'cover' }} // Fixed height for the image
-              />
-            </div>
-            <div className="program-card-content">
-              <h2 className="program-title">{pro.title}</h2>
-              <p className="program-description">{pro.mainText}</p>
-            </div>
-            <div className="program-card-actions">
-              <Link to={`/create-programmes/${pro._id}`}>
-                <Button icon={<EditOutlined />} type="primary" />
-              </Link>
-              <Button
-                icon={<DeleteOutlined />}
-                type="danger"
-                onClick={() => handleDeleteBanner(pro._id)}
-                className="text-red-500 text-xl"
-              />
-            </div>
-          </div>
-        ))}
+            <div className="program-container">
+  {program.map((pro) => (
+    <div key={pro._id} className="program-card">
+      <img
+        src={pro.imageUrl}
+        alt={pro.title}
+        className="program-card-image"
+      />
+      <div className="program-card-content">
+        <h2 className="program-title">{pro.title}</h2>
+        <p className="program-description">{pro.mainText}</p>
       </div>
+      <div className="program-card-actions">
+        <Link to={`/create-programmes/${pro._id}`}>
+          <Button icon={<EditOutlined />} type="primary" />
+        </Link>
+        <Button
+          icon={<DeleteOutlined />}
+          type="danger"
+          onClick={() => handleDeleteBanner(pro._id)}
+        />
+      </div>
+    </div>
+  ))}
+</div>
     </div>
   );
 };
